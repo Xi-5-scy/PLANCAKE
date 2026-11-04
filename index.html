@@ -18,55 +18,68 @@
     /* 整体布局 */
     .app-layout { display: flex; height: 100vh; }
 
-    /* 左侧导航栏 */
-    .sidebar { width: 240px; background: var(--card); padding: 30px 20px; display: flex; flex-direction: column; border-right: 1px solid #eee; z-index: 10; }
-    .logo { font-size: 24px; font-weight: 800; color: var(--primary); margin-bottom: 40px; display: flex; align-items: center; gap: 8px; }
-    .btn-new-trip { background: var(--primary); color: #fff; border: none; border-radius: 12px; padding: 15px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 30px; transition: transform 0.2s, background 0.2s; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.2); }
-    .btn-new-trip:hover { background: #5b4bc4; transform: translateY(-2px); }
+    /* 左侧控制台 (加宽且允许滚动) */
+    .sidebar { width: 340px; background: var(--card); padding: 30px 25px; display: flex; flex-direction: column; border-right: 1px solid #eee; z-index: 10; overflow-y: auto; box-shadow: 2px 0 15px rgba(0,0,0,0.02); }
+    .logo { font-size: 26px; font-weight: 800; color: var(--primary); margin-bottom: 25px; display: flex; align-items: center; gap: 8px; }
     
-    .nav-menu { display: flex; flex-direction: column; gap: 10px; }
+    /* 表单区样式 */
+    .sidebar-form { background: var(--bg); padding: 20px; border-radius: 20px; margin-bottom: 30px; border: 1px solid #ebeef5; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+    .form-group input { width: 100%; padding: 12px; border: 1px solid #dcdde1; border-radius: 10px; font-size: 14px; outline: none; background: #fff; transition: border 0.2s; }
+    .form-group input:focus { border-color: var(--primary); }
+    
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
+    .tag { padding: 6px 12px; border-radius: 20px; background: #fff; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #dcdde1; transition: all 0.2s; }
+    .tag.active { background: var(--secondary-light); color: var(--danger); border-color: var(--secondary); }
+
+    /* 显眼的生成按钮 */
+    .btn-generate { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: #fff; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 6px 20px rgba(108, 92, 231, 0.3); display: flex; justify-content: center; align-items: center; gap: 8px;}
+    .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(108, 92, 231, 0.4); }
+
+    /* 导航菜单 */
+    .nav-menu { display: flex; flex-direction: column; gap: 8px; margin-top: auto;}
     .nav-item { padding: 15px 20px; border-radius: 12px; cursor: pointer; font-size: 15px; font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: 12px; transition: all 0.2s; }
     .nav-item:hover { background: var(--bg); color: var(--primary); }
     .nav-item.active { background: var(--secondary-light); color: var(--text); }
-    .nav-item.active .icon { color: var(--secondary); }
-
+    
     /* 右侧主内容区 */
-    .main-content { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 25px; }
+    .main-content { flex: 1; padding: 30px 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
     
     /* 顶部行：Banner + 圆环图 */
-    .top-row { display: flex; gap: 25px; height: 220px; }
+    .top-row { display: flex; gap: 20px; height: 200px; }
     .banner-card { flex: 2; background: linear-gradient(135deg, var(--primary-light), #dfe6e9); border-radius: 24px; padding: 30px; position: relative; overflow: hidden; color: #fff; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 10px 30px rgba(108, 92, 231, 0.15); }
-    .banner-card h1 { font-size: 42px; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    .banner-card .date-text { font-size: 16px; opacity: 0.9; font-weight: 500; }
-    .banner-emoji { position: absolute; right: 20px; bottom: -20px; font-size: 180px; opacity: 0.8; transform: rotate(-10deg); }
+    .banner-card h1 { font-size: 40px; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .banner-card .date-text { font-size: 15px; opacity: 0.9; font-weight: 500; }
+    .banner-emoji { position: absolute; right: 20px; bottom: -20px; font-size: 160px; opacity: 0.8; transform: rotate(-10deg); }
 
-    .expense-card { flex: 1; background: var(--card); border-radius: 24px; padding: 25px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
-    .expense-card h3 { font-size: 16px; color: var(--muted); margin-bottom: 15px; }
-    .donut-chart { width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(var(--primary) 0%, var(--primary) 60%, var(--secondary) 60%, var(--secondary) 100%); display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 15px; }
-    .donut-inner { width: 90px; height: 90px; background: var(--card); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .expense-card { flex: 1; background: var(--card); border-radius: 24px; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+    .expense-card h3 { font-size: 15px; color: var(--muted); margin-bottom: 10px; }
+    .donut-chart { width: 110px; height: 110px; border-radius: 50%; background: conic-gradient(var(--primary) 0%, var(--primary) 0%, var(--secondary) 0%, var(--secondary) 100%); display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 15px; transition: background 0.5s; }
+    .donut-inner { width: 80px; height: 80px; background: var(--card); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .donut-inner span { font-size: 12px; color: var(--muted); }
-    .donut-inner strong { font-size: 20px; color: var(--text); }
+    .donut-inner strong { font-size: 18px; color: var(--text); }
 
     /* 中间行：数据小卡片 */
-    .info-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
-    .info-box { background: var(--card); border-radius: 20px; padding: 20px 25px; display: flex; align-items: center; gap: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
-    .info-icon { width: 50px; height: 50px; border-radius: 16px; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 24px; }
-    .info-text span { font-size: 13px; color: var(--muted); display: block; margin-bottom: 4px; }
-    .info-text strong { font-size: 18px; color: var(--text); }
+    .info-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .info-box { background: var(--card); border-radius: 20px; padding: 20px; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+    .info-icon { width: 45px; height: 45px; border-radius: 14px; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+    .info-text span { font-size: 12px; color: var(--muted); display: block; margin-bottom: 4px; }
+    .info-text strong { font-size: 16px; color: var(--text); }
 
     /* 底部行：地图 + 时间线 */
-    .bottom-row { display: flex; gap: 25px; flex: 1; min-height: 400px; }
+    .bottom-row { display: flex; gap: 20px; flex: 1; min-height: 350px; }
     .map-widget { flex: 1; background: var(--card); border-radius: 24px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); display: flex; flex-direction: column; }
     .map-widget h3 { margin-bottom: 15px; font-size: 16px; }
     #map-container { flex: 1; border-radius: 16px; z-index: 1; }
     
-    .timeline-widget { flex: 1.2; background: var(--card); border-radius: 24px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); display: flex; flex-direction: column; }
-    .timeline-widget h3 { margin-bottom: 20px; font-size: 18px; display: flex; justify-content: space-between; }
+    .timeline-widget { flex: 1; background: var(--card); border-radius: 24px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); display: flex; flex-direction: column; }
+    .timeline-widget h3 { margin-bottom: 20px; font-size: 18px; }
     
     /* 时间线样式 */
     .timeline-list { flex: 1; overflow-y: auto; padding-left: 10px; border-left: 2px dashed #e1e4e8; }
-    .timeline-item { position: relative; padding-left: 25px; margin-bottom: 25px; }
-    .timeline-item::before { content: ''; position: absolute; left: -6px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--secondary); border: 2px solid #fff; box-shadow: 0 0 0 2px var(--secondary-light); }
+    .timeline-item { position: relative; padding-left: 25px; margin-bottom: 20px; }
+    .timeline-item::before { content: ''; position: absolute; left: -6px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--secondary); border: 2px solid #fff; box-shadow: 0 0 0 2px var(--secondary-light); }
     .timeline-item .day { font-size: 14px; font-weight: bold; color: var(--primary); margin-bottom: 5px; }
     .timeline-item .desc { font-size: 14px; color: var(--text); line-height: 1.6; background: var(--bg); padding: 12px; border-radius: 12px; }
 
@@ -74,40 +87,55 @@
     .view-panel { display: none; }
     .view-panel.active { display: block; }
     
-    /* 弹窗表单 */
-    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; }
-    .modal-overlay.active { display: flex; }
-    .modal-card { background: #fff; border-radius: 24px; padding: 30px; width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
-    .modal-card h2 { margin-bottom: 20px; font-size: 22px; color: var(--primary); }
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 8px; color: var(--muted); }
-    .form-group input { width: 100%; padding: 12px; border: 1px solid #e1e4e8; border-radius: 12px; font-size: 14px; outline: none; background: var(--bg); }
-    .form-group input:focus { border-color: var(--primary); }
-    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
-    .tag { padding: 8px 12px; border-radius: 8px; background: var(--bg); font-size: 13px; cursor: pointer; }
-    .tag.active { background: var(--secondary-light); color: var(--danger); border: 1px solid var(--secondary); }
-    .btn-submit { width: 100%; padding: 15px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-
-    /* 预算记账本等页面采用简化布局 */
     .page-title { font-size: 28px; font-weight: 800; margin-bottom: 20px; color: var(--primary); }
+    
+    /* 加载动画 */
+    @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
   </style>
 </head>
 <body>
 
   <div class="app-layout">
-    <!-- 侧边栏 -->
+    <!-- 左侧控制台 -->
     <aside class="sidebar">
       <div class="logo">PlanCake 🍰</div>
-      <button class="btn-new-trip" onclick="openModal()">+ 新建行程</button>
       
+      <!-- 内联的建立行程表单 -->
+      <div class="sidebar-form">
+        <div class="form-group">
+          <label>📍 目的地 (支持全球)</label>
+          <input type="text" id="input-dest" placeholder="例如：巴黎、成都" value="成都">
+        </div>
+        <div class="form-group" style="display:flex; gap:8px;">
+          <div style="flex:1;"><label>📅 出发</label><input type="date" id="input-start"></div>
+          <div style="flex:1;"><label>📅 返回</label><input type="date" id="input-end"></div>
+        </div>
+        <div class="form-group" style="display:flex; gap:8px;">
+          <div style="flex:1;"><label>👥 人数</label><input type="number" id="input-people" value="2" min="1"></div>
+          <div style="flex:1;"><label>💰 预算(¥)</label><input type="number" id="input-budget" value="5000"></div>
+        </div>
+        <div class="form-group">
+          <label>✨ 偏好</label>
+          <div class="tags" id="input-prefs">
+            <div class="tag active" onclick="this.classList.toggle('active')">美食优先</div>
+            <div class="tag active" onclick="this.classList.toggle('active')">自然风光</div>
+            <div class="tag" onclick="this.classList.toggle('active')">人文历史</div>
+          </div>
+        </div>
+        <button class="btn-generate" onclick="generatePlan()">
+          ✨ 开始烘焙行程
+        </button>
+      </div>
+      
+      <!-- 底部导航 -->
       <div class="nav-menu">
-        <div class="nav-item active" onclick="switchNav('dashboard', this)"><span class="icon">🏠</span> 行程概览</div>
-        <div class="nav-item" onclick="switchNav('budget', this)"><span class="icon">💰</span> 预算记账本</div>
-        <div class="nav-item" onclick="switchNav('discover', this)"><span class="icon">🌍</span> 灵感发现</div>
+        <div class="nav-item active" onclick="switchNav('dashboard', this)"><span>🏠</span> 行程概览</div>
+        <div class="nav-item" onclick="switchNav('budget', this)"><span>💰</span> 预算记账本</div>
+        <div class="nav-item" onclick="switchNav('discover', this)"><span>🌍</span> 灵感发现</div>
       </div>
     </aside>
 
-    <!-- 主内容区 -->
+    <!-- 右侧主内容区 -->
     <main class="main-content">
       
       <!-- 视图：概览看板 -->
@@ -116,7 +144,7 @@
         <div class="top-row">
           <div class="banner-card">
             <div>
-              <div class="date-text" id="dash-date">请新建行程</div>
+              <div class="date-text" id="dash-date">选择日期，准备出发</div>
               <h1 id="dash-dest">去哪里玩？</h1>
             </div>
             <div class="banner-emoji" id="dash-emoji">🏝️</div>
@@ -130,7 +158,7 @@
                 <strong id="dash-budget-percent">0%</strong>
               </div>
             </div>
-            <div style="font-size: 14px; color: var(--muted);">已花 <span id="dash-spent" style="color:var(--danger); font-weight:bold;">¥0</span> / 总预算 <span id="dash-total-budget" style="font-weight:bold;">¥5000</span></div>
+            <div style="font-size: 13px; color: var(--muted);">已花 <span id="dash-spent" style="color:var(--danger); font-weight:bold;">¥0</span> / 总预算 <span id="dash-total-budget" style="font-weight:bold;">¥5000</span></div>
           </div>
         </div>
 
@@ -142,7 +170,7 @@
           </div>
           <div class="info-box">
             <div class="info-icon">👥</div>
-            <div class="info-text"><span>同行人数</span><strong id="info-people">2 人</strong></div>
+            <div class="info-text"><span>同行人数</span><strong id="info-people">--</strong></div>
           </div>
           <div class="info-box">
             <div class="info-icon">✨</div>
@@ -160,70 +188,37 @@
           <div class="timeline-widget">
             <h3>🗓️ 每日行程时间线</h3>
             <div class="timeline-list" id="timeline-list">
-              <div style="color: var(--muted); text-align: center; margin-top: 50px;">
-                点击左上角“新建行程”，<br>AI 为你烘焙详细路线 🍰
+              <div style="color: var(--muted); text-align: center; margin-top: 80px;">
+                填写左侧表单，点击生成，<br>AI 为你烘焙详细路线 🍰
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 视图：记账本 (简化) -->
+      <!-- 视图：记账本 -->
       <div id="view-budget" class="view-panel">
         <h2 class="page-title">💰 预算记账本</h2>
         <div style="background: #fff; padding: 30px; border-radius: 24px;">
-          <p style="color: var(--muted); margin-bottom: 20px;">当前的总花费已经实时同步到首页的圆环图中啦！</p>
-          <div class="add-expense" style="display: flex; gap: 10px;">
-             <input type="text" id="exp-desc" placeholder="花费说明 (如：打车)" style="padding:12px; border-radius:8px; border:1px solid #ddd; flex:1;">
-             <input type="number" id="exp-amount" placeholder="金额 (¥)" style="padding:12px; border-radius:8px; border:1px solid #ddd; width:120px;">
-             <button class="btn-new-trip" style="margin:0;" onclick="addExpense()">记一笔</button>
+          <p style="color: var(--muted); margin-bottom: 20px;">添加的账单会实时同步到首页的圆环图中。</p>
+          <div style="display: flex; gap: 10px;">
+             <input type="text" id="exp-desc" placeholder="花费说明 (如：打车、吃火锅)" style="padding:12px; border-radius:10px; border:1px solid #ddd; flex:1;">
+             <input type="number" id="exp-amount" placeholder="金额 (¥)" style="padding:12px; border-radius:10px; border:1px solid #ddd; width:120px;">
+             <button class="btn-generate" style="margin:0; width:auto; padding:10px 20px; font-size:15px;" onclick="addExpense()">记一笔</button>
           </div>
           <div id="expense-list" style="margin-top: 20px;"></div>
         </div>
       </div>
 
-      <!-- 视图：灵感发现 (简化) -->
+      <!-- 视图：灵感发现 -->
       <div id="view-discover" class="view-panel">
         <h2 class="page-title">🌍 灵感发现</h2>
         <div style="background: #fff; padding: 30px; border-radius: 24px;">
-          <p>图文推荐内容依然在这里...</p>
+          <p style="color: var(--muted);">更多全球精选旅行灵感正在准备中...</p>
         </div>
       </div>
 
     </main>
-  </div>
-
-  <!-- 新建行程弹窗 -->
-  <div class="modal-overlay" id="trip-modal">
-    <div class="modal-card">
-      <h2>🍰 定制新行程</h2>
-      <div class="form-group">
-        <label>📍 目的地 (支持全球)</label>
-        <input type="text" id="modal-dest" placeholder="例如：成都、巴黎、东京" value="成都">
-      </div>
-      <div class="form-group" style="display:flex; gap:10px;">
-        <div style="flex:1;"><label>📅 出发日期</label><input type="date" id="modal-start"></div>
-        <div style="flex:1;"><label>📅 返回日期</label><input type="date" id="modal-end"></div>
-      </div>
-      <div class="form-group">
-        <label>👥 人数</label>
-        <input type="number" id="modal-people" value="2" min="1">
-      </div>
-      <div class="form-group">
-        <label>💰 总预算 (¥)</label>
-        <input type="number" id="modal-budget" value="5000">
-      </div>
-      <div class="form-group">
-        <label>✨ 偏好标签</label>
-        <div class="tags" id="modal-prefs">
-          <div class="tag active" onclick="this.classList.toggle('active')">美食优先</div>
-          <div class="tag active" onclick="this.classList.toggle('active')">自然风光</div>
-          <div class="tag" onclick="this.classList.toggle('active')">人文历史</div>
-        </div>
-      </div>
-      <button class="btn-submit" onclick="generatePlan()">开始烘焙行程</button>
-      <button style="width:100%; background:none; border:none; color:var(--muted); margin-top:15px; cursor:pointer;" onclick="closeModal()">取消</button>
-    </div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -232,15 +227,11 @@
     const today = new Date();
     const nextWeek = new Date(today);
     nextWeek.setDate(today.getDate() + 3);
-    document.getElementById('modal-start').value = today.toISOString().split('T')[0];
-    document.getElementById('modal-end').value = nextWeek.toISOString().split('T')[0];
+    document.getElementById('input-start').value = today.toISOString().split('T')[0];
+    document.getElementById('input-end').value = nextWeek.toISOString().split('T')[0];
 
     let appState = { expenses: [], totalBudget: 5000 };
     let mapInstance = null;
-
-    // 弹窗控制
-    function openModal() { document.getElementById('trip-modal').classList.add('active'); }
-    function closeModal() { document.getElementById('trip-modal').classList.remove('active'); }
 
     // 侧边栏切换
     function switchNav(viewId, el) {
@@ -249,8 +240,8 @@
       el.classList.add('active');
       document.getElementById(`view-${viewId}`).classList.add('active');
       
-      if (viewId === 'dashboard') {
-        setTimeout(() => { if(mapInstance) mapInstance.invalidateSize(); }, 100);
+      if (viewId === 'dashboard' && mapInstance) {
+        setTimeout(() => { mapInstance.invalidateSize(); }, 100);
       }
     }
 
@@ -259,16 +250,13 @@
       let spent = appState.expenses.reduce((sum, item) => sum + item.amount, 0);
       let percent = Math.min(100, Math.round((spent / appState.totalBudget) * 100)) || 0;
       
-      // 更新 DOM
       document.getElementById('dash-spent').textContent = `¥${spent}`;
       document.getElementById('dash-total-budget').textContent = `¥${appState.totalBudget}`;
       document.getElementById('dash-budget-percent').textContent = `${percent}%`;
 
-      // 用 CSS 渐变画圆环
       const chart = document.getElementById('donut-chart');
       chart.style.background = `conic-gradient(var(--primary) ${percent}%, var(--secondary) ${percent}% 100%)`;
 
-      // 渲染记账列表
       const list = document.getElementById('expense-list');
       if(list) {
         list.innerHTML = appState.expenses.slice().reverse().map(exp => `
@@ -295,20 +283,20 @@
       updateBudgetUI();
     }
 
-    // 生成核心逻辑
+    // 核心生成逻辑
     async function generatePlan() {
-      const dest = document.getElementById('modal-dest').value;
-      const start = document.getElementById('modal-start').value;
-      const end = document.getElementById('modal-end').value;
-      const people = document.getElementById('modal-people').value;
-      const budget = parseFloat(document.getElementById('modal-budget').value) || 5000;
+      const dest = document.getElementById('input-dest').value;
+      const start = document.getElementById('input-start').value;
+      const end = document.getElementById('input-end').value;
+      const people = document.getElementById('input-people').value;
+      const budget = parseFloat(document.getElementById('input-budget').value) || 5000;
       
       const d1 = new Date(start); const d2 = new Date(end);
       const days = Math.max(1, Math.round((d2 - d1) / (1000 * 60 * 60 * 24)) + 1);
       
       if(!dest || !start || !end) return alert('请填写完整信息');
 
-      // 更新界面基础信息
+      // 更新基础数据
       appState.totalBudget = budget;
       updateBudgetUI();
       document.getElementById('dash-dest').textContent = dest;
@@ -317,16 +305,13 @@
       document.getElementById('info-people').textContent = `${people} 人`;
       
       let prefs = [];
-      document.querySelectorAll('#modal-prefs .tag.active').forEach(t => prefs.push(t.textContent));
+      document.querySelectorAll('#input-prefs .tag.active').forEach(t => prefs.push(t.textContent));
       document.getElementById('info-prefs').textContent = prefs.length > 0 ? prefs.join('、') : '悠闲游';
 
-      // 换一个可爱的 Emoji
       const emojis = ['🏝️','🏔️','🏰','🗼','🏙️','⛩️','🐼'];
       document.getElementById('dash-emoji').textContent = emojis[Math.floor(Math.random() * emojis.length)];
 
-      closeModal();
-      
-      // 时间线展示 Loading
+      // 时间线 loading
       const timeline = document.getElementById('timeline-list');
       timeline.innerHTML = `<div style="text-align:center; margin-top:50px; color:var(--primary); font-weight:bold;">
         <div style="font-size:40px; animation:bounce 1s infinite alternate; margin-bottom:10px;">🎂</div>
@@ -336,7 +321,7 @@
       // 初始化地图
       initMap(dest);
 
-      // 发起 AI 请求
+      // 发起请求
       const prompt = `目的地:${dest}, 天数:${days}天, 偏好:${prefs.join('、')}`;
       try {
         const response = await fetch('/api/parse', {
@@ -356,11 +341,9 @@
       }
     }
 
-    // 渲染时间线
     function renderTimeline(dailyPlan) {
       const timeline = document.getElementById('timeline-list');
       timeline.innerHTML = '';
-      
       dailyPlan.forEach((planText, index) => {
         const item = document.createElement('div');
         item.className = 'timeline-item';
@@ -372,7 +355,6 @@
       });
     }
 
-    // 兜底时间线
     function renderMockTimeline(dest, days) {
       const mockData = Array.from({length: days}).map((_, i) => {
         return `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`;
@@ -380,7 +362,7 @@
       renderTimeline(mockData);
     }
 
-    // 全球地图 (与之前逻辑一致，但适配小窗口)
+    // 地图渲染
     async function initMap(dest) {
       if (mapInstance) mapInstance.remove();
       mapInstance = L.map('map-container').setView([20, 0], 2);
@@ -397,7 +379,6 @@
           
           mapInstance.flyTo([lat, lng], 12, { duration: 2 });
 
-          // 伪景点坐标
           const points = [
             { name: `${dest} 核心地标`, lat: lat + 0.01, lng: lng + 0.01, type: 'spot' },
             { name: `${dest} 历史街区`, lat: lat - 0.008, lng: lng - 0.012, type: 'spot' },
@@ -426,7 +407,6 @@
       }
     }
 
-    // 页面加载时，先渲染一次空预算
     updateBudgetUI();
   </script>
 </body>
