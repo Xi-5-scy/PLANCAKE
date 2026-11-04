@@ -11,7 +11,6 @@
     @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@500;700&display=swap');
 
     :root {
-      /* 治愈系莫兰迪配色 */
       --bg-color: #E8F2F7; 
       --primary: #9AB6C9; 
       --primary-light: #C2D6E1;
@@ -34,9 +33,7 @@
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-    /* 顶部导航栏 */
     .top-navbar { height: 72px; background: #ffffff; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.02); z-index: 100; flex-shrink: 0; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; }
     .logo { font-size: 24px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 6px; transition: color 0.6s; }
     .logo span { font-size: 26px; animation: float 3s ease-in-out infinite; }
@@ -48,7 +45,6 @@
 
     .app-layout { display: flex; flex: 1; overflow: hidden; padding: 20px; gap: 20px; }
     
-    /* 左侧边栏 */
     .sidebar { width: 340px; background: #ffffff; display: flex; flex-direction: column; border-radius: 28px; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); z-index: 10; overflow: hidden; }
     .sidebar-form-wrapper { flex: 1; overflow-y: auto; padding: 20px 20px 0 20px; }
     .sidebar-form { background: var(--bg-color); padding: 20px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.03); transition: background-color 0.6s ease; }
@@ -58,34 +54,26 @@
     .form-group input { width: 100%; padding: 12px; border: 2px solid rgba(0,0,0,0.04); border-radius: 14px; font-size: 13px; outline: none; background: #fff; transition: all 0.2s; font-weight: 600; color: var(--text); }
     .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--bg-color); }
     
-    /* 标签栏 */
     .tags { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 5px; }
     .tag { padding: 8px 4px; border-radius: 12px; background: #fff; font-size: 12px; font-weight: 700; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; user-select: none; display: flex; align-items: center; justify-content: center; gap: 2px; color: var(--muted); box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
     .tag:hover { transform: translateY(-1px); }
     .tag.active { transform: translateY(-1px); font-weight: 800; background: var(--bg-color); color: var(--primary); border-color: var(--primary-light); }
 
-    /* ⭐️ 优化响应速度的果冻按钮 ⭐️ */
-    .btn-generate { 
-      width: 100%; padding: 15px; background: var(--primary); color: #fff; border: none; border-radius: 16px; 
-      font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 10px; 
-      box-shadow: 0 4px 0 var(--btn-shadow); 
-      transition: transform 0.1s, box-shadow 0.1s, background-color 0.6s; 
-      transform: translateY(0); display: flex; justify-content: center; align-items: center; gap: 8px; 
-    }
+    .btn-generate { width: 100%; padding: 15px; background: var(--primary); color: #fff; border: none; border-radius: 16px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 var(--btn-shadow); transition: transform 0.1s, box-shadow 0.1s, background-color 0.6s; transform: translateY(0); display: flex; justify-content: center; align-items: center; gap: 8px; }
     .btn-generate:active { box-shadow: 0 0px 0 var(--btn-shadow); transform: translateY(4px); }
-    
     .btn-export { width: 100%; padding: 12px; background: #fff; color: var(--primary); border: 2px solid var(--primary); border-radius: 14px; font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; transition: all 0.2s; }
     .btn-export:hover { background: var(--bg-color); }
 
-    /* ⭐️ 侧边栏底部：调色盘 + 天气 ⭐️ */
+    /* ⭐️ 优化后的左下角面板 ⭐️ */
     .sidebar-bottom { padding: 15px 20px 20px 20px; border-top: 1px dashed rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 15px; flex-shrink: 0; }
     
-    .theme-picker-mini { display: flex; justify-content: space-between; align-items: center; padding: 0 5px; }
-    .theme-picker-mini span { font-size: 13px; font-weight: 800; color: var(--muted); }
-    .color-dots { display: flex; gap: 8px; }
-    .color-dot { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.1); transition: transform 0.2s; }
+    /* 新的调色盘样式：居中排列，带底板 */
+    .theme-picker { background: var(--bg-color); padding: 10px 15px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; transition: background 0.6s; }
+    .theme-picker span { font-size: 13px; font-weight: 800; color: var(--primary); }
+    .color-dots { display: flex; gap: 10px; }
+    .color-dot { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; }
     .color-dot:hover { transform: scale(1.15); }
-    .color-dot.active { transform: scale(1.15); box-shadow: 0 0 0 2px var(--primary); }
+    .color-dot.active { transform: scale(1.15); box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--primary); }
 
     .weather-card { background: linear-gradient(135deg, var(--primary-light), var(--bg-color)); border-radius: 20px; padding: 16px 20px; display: none; border: 1px solid rgba(255,255,255,0.6); transition: background 0.6s; }
     .weather-top { display: flex; justify-content: space-between; margin-bottom: 6px; font-weight: 800; color: var(--text); }
@@ -93,7 +81,6 @@
     .weather-mid .temp { font-size: 32px; font-weight: 800; color: var(--text); }
     .weather-bottom { display: flex; gap: 15px; font-size: 12px; font-weight: 700; color: var(--muted); }
 
-    /* 右侧主内容区 */
     .main-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; padding-right: 10px; }
     
     .top-row { display: flex; gap: 20px; min-height: 170px; flex-shrink: 0; }
@@ -138,7 +125,6 @@
     .view-panel.active { display: block; }
     #view-diary.view-panel.active, #view-discover.view-panel.active, #view-budget.view-panel.active, #view-checklist.view-panel.active { display: flex; flex-direction: column; height: 100%; }
 
-    /* 其他界面复用之前的样式，调整少许圆角和颜色 */
     .discover-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
     .discover-title { font-size: 26px; font-weight: 800; color: var(--primary); transition: color 0.6s; }
     .discover-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
@@ -225,7 +211,7 @@
       <div class="top-tab" onclick="switchNav('diary', this)">📔 旅行日记</div>
       <div class="top-tab" onclick="switchNav('budget', this)">💰 预算与分账</div>
     </div>
-    <div style="width: 120px;"></div> <!-- 占位保持居中 -->
+    <div style="width: 120px;"></div> 
   </header>
 
   <div class="app-layout">
@@ -265,18 +251,18 @@
         </div>
       </div>
       
-      <!-- 左下角：主题 + 天气 -->
+      <!-- ⭐️ 优化后的侧边栏底部：带底板且居中的调色盘 ⭐️ -->
       <div class="sidebar-bottom">
-        <div class="theme-picker-mini">
+        <div class="theme-picker">
           <span>🎨 主题色</span>
           <div class="color-dots">
-            <!-- 换成莫兰迪低饱和色系 -->
-            <div class="color-dot active" style="background-color: #9AB6C9;" onclick="changeTheme(1, this)" title="晨曦灰蓝"></div>
-            <div class="color-dot" style="background-color: #D9A3B1;" onclick="changeTheme(2, this)" title="樱花灰粉"></div>
-            <div class="color-dot" style="background-color: #9FC2B1;" onclick="changeTheme(3, this)" title="薄荷灰绿"></div>
-            <div class="color-dot" style="background-color: #B4A4C6;" onclick="changeTheme(4, this)" title="香芋灰紫"></div>
-            <div class="color-dot" style="background-color: #E5CD91;" onclick="changeTheme(5, this)" title="奶油暖黄"></div>
-            <div class="color-dot" style="background-color: #E8B4A2;" onclick="changeTheme(6, this)" title="蜜桃灰橙"></div>
+            <!-- 修复了参数，从 0 开始 -->
+            <div class="color-dot active" style="background-color: #9AB6C9;" onclick="changeTheme(0)" title="晨曦灰蓝"></div>
+            <div class="color-dot" style="background-color: #D9A3B1;" onclick="changeTheme(1)" title="樱花灰粉"></div>
+            <div class="color-dot" style="background-color: #9FC2B1;" onclick="changeTheme(2)" title="薄荷灰绿"></div>
+            <div class="color-dot" style="background-color: #B4A4C6;" onclick="changeTheme(3)" title="香芋灰紫"></div>
+            <div class="color-dot" style="background-color: #E5CD91;" onclick="changeTheme(4)" title="奶油暖黄"></div>
+            <div class="color-dot" style="background-color: #E8B4A2;" onclick="changeTheme(5)" title="蜜桃灰橙"></div>
           </div>
         </div>
 
@@ -445,16 +431,17 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    // ⭐️ 莫兰迪/治愈系颜色配置 ⭐️
+    // ⭐️ 治愈系莫兰迪配色 ⭐️
     const themes = [
-      { bg: '#E8F2F7', primary: '#9AB6C9', light: '#C2D6E1', shadow: '#7692A5' }, // 晨曦灰蓝
-      { bg: '#FAF0F2', primary: '#D9A3B1', light: '#F0D3D8', shadow: '#B57D8B' }, // 樱花灰粉
-      { bg: '#E9F5EE', primary: '#9FC2B1', light: '#CBE2D6', shadow: '#7B9E8D' }, // 薄荷灰绿
-      { bg: '#F2EDF5', primary: '#B4A4C6', light: '#DCD2E4', shadow: '#8D7D9F' }, // 香芋灰紫
-      { bg: '#FCF7E6', primary: '#E5CD91', light: '#F2E5C1', shadow: '#C0A86C' }, // 奶油暖黄
-      { bg: '#FDF2EE', primary: '#E8B4A2', light: '#F2D0C5', shadow: '#C28B79' }  // 蜜桃灰橙
+      { bg: '#E8F2F7', primary: '#9AB6C9', light: '#C2D6E1', shadow: '#7692A5' }, 
+      { bg: '#FAF0F2', primary: '#D9A3B1', light: '#F0D3D8', shadow: '#B57D8B' }, 
+      { bg: '#E9F5EE', primary: '#9FC2B1', light: '#CBE2D6', shadow: '#7B9E8D' }, 
+      { bg: '#F2EDF5', primary: '#B4A4C6', light: '#DCD2E4', shadow: '#8D7D9F' }, 
+      { bg: '#FCF7E6', primary: '#E5CD91', light: '#F2E5C1', shadow: '#C0A86C' }, 
+      { bg: '#FDF2EE', primary: '#E8B4A2', light: '#F2D0C5', shadow: '#C28B79' }  
     ];
     
+    // ⭐️ 修复了错位 bug：严格根据传入的 index 进行颜色激活 ⭐️
     function applyTheme(index) {
       const t = themes[index];
       document.documentElement.style.setProperty('--bg-color', t.bg);
@@ -463,10 +450,13 @@
       document.documentElement.style.setProperty('--btn-shadow', t.shadow);
       localStorage.setItem('pc_theme_idx', index);
       
-      document.querySelectorAll('.color-dot').forEach((dot, i) => {
-        if (i === index) dot.classList.add('active'); else dot.classList.remove('active');
+      const dots = document.querySelectorAll('.color-dot');
+      dots.forEach((dot, i) => {
+        if (i === index) dot.classList.add('active'); 
+        else dot.classList.remove('active');
       });
     }
+    
     function changeTheme(index) { applyTheme(index); }
     
     window.addEventListener('DOMContentLoaded', () => {
