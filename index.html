@@ -13,17 +13,21 @@
     :root {
       --primary: #8c7ae6; --primary-light: #b2a4ff;
       --secondary: #ffb8b8; --secondary-light: #ffe4e1;
-      --bg: #fdfbf7; --card: #ffffff; --text: #4a4a4a; --muted: #9e9e9e;
+      --text: #4a4a4a; --muted: #9e9e9e;
       --danger: #ff7675; --shadow-cute: 0 8px 24px rgba(140, 122, 230, 0.12);
+      
+      /* ⭐️ 动态背景色 ⭐️ */
+      --bg-color: #EAF6FF; /* 默认晨曦淡蓝 */
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', 'Quicksand', -apple-system, sans-serif; }
     
+    /* ⭐️ 治愈系星星与云朵背景图案 (替换掉波点) ⭐️ */
     body { 
-      background-color: var(--bg); 
-      background-image: radial-gradient(#e8e2f5 1.5px, transparent 1.5px);
-      background-size: 25px 25px;
+      background-color: var(--bg-color); 
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.6'%3E%3Cpath d='M30 10 L32 16 L38 18 L32 20 L30 26 L28 20 L22 18 L28 16 Z'/%3E%3Ccircle cx='10' cy='40' r='3'/%3E%3Ccircle cx='50' cy='20' r='3'/%3E%3Cpath d='M15 15 L17 19 L21 21 L17 23 L15 27 L13 23 L9 21 L13 19 Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
       color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; 
+      transition: background-color 0.5s ease;
     }
     
     ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -37,14 +41,20 @@
     
     .top-tabs { display: flex; gap: 15px; }
     .top-tab { padding: 10px 20px; border-radius: 20px; font-size: 15px; font-weight: 700; color: var(--muted); cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 6px; }
-    .top-tab:hover { background: var(--bg); color: var(--primary); transform: translateY(-2px); }
+    .top-tab:hover { background: var(--bg-color); color: var(--primary); transform: translateY(-2px); }
     .top-tab.active { background: var(--secondary-light); color: var(--danger); box-shadow: 0 4px 10px rgba(255, 184, 184, 0.3); }
+
+    /* ⭐️ 右上角调色盘 ⭐️ */
+    .theme-picker { display: flex; gap: 10px; align-items: center; background: rgba(255,255,255,0.6); padding: 8px 15px; border-radius: 30px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); }
+    .color-dot { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.2s; }
+    .color-dot:hover { transform: scale(1.2); }
+    .color-dot.active { transform: scale(1.2); box-shadow: 0 0 0 2px var(--primary); }
 
     .app-layout { display: flex; flex: 1; overflow: hidden; padding: 20px; gap: 20px; }
     
     .sidebar { width: 340px; background: var(--card); display: flex; flex-direction: column; border-radius: 28px; box-shadow: var(--shadow-cute); border: 2px solid #fff; z-index: 10; overflow: hidden; }
     .sidebar-form-wrapper { flex: 1; overflow-y: auto; padding: 20px 20px 0 20px; }
-    .sidebar-form { background: var(--bg); padding: 18px; border-radius: 20px; margin-bottom: 15px; border: 2px dashed #e8e2f5; }
+    .sidebar-form { background: var(--bg-color); padding: 18px; border-radius: 20px; margin-bottom: 15px; border: 2px dashed #e8e2f5; transition: background-color 0.5s ease; }
     
     .form-group { margin-bottom: 14px; }
     .form-group label { display: block; font-size: 13px; font-weight: 800; margin-bottom: 6px; color: var(--primary); }
@@ -69,7 +79,7 @@
     .btn-generate:active { box-shadow: 0 0px 0 #6c5ce7; transform: translateY(5px); }
     
     .btn-export { width: 100%; padding: 12px; background: #fff; color: var(--primary); border: 2px solid var(--primary); border-radius: 14px; font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; transition: all 0.2s; }
-    .btn-export:hover { background: var(--bg); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(140,122,230,0.1); }
+    .btn-export:hover { background: var(--bg-color); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(140,122,230,0.1); }
 
     .weather-card { background: linear-gradient(135deg, #e0c3fc, #8ec5fc); border-radius: 20px; padding: 16px 20px; margin: 0 20px 20px 20px; display: none; flex-shrink: 0; box-shadow: 0 6px 15px rgba(140,122,230,0.15); border: 2px solid rgba(255,255,255,0.5); }
     .weather-top { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 800; color: #4a4a4a; }
@@ -92,7 +102,7 @@
     .info-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; flex-shrink: 0; }
     .info-box { background: var(--card); border-radius: 22px; padding: 20px; display: flex; gap: 15px; box-shadow: var(--shadow-cute); border: 2px solid #fff; transition: transform 0.2s; }
     .info-box:hover { transform: translateY(-3px); }
-    .info-icon { width: 50px; height: 50px; border-radius: 16px; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    .info-icon { width: 50px; height: 50px; border-radius: 16px; background: var(--bg-color); display: flex; align-items: center; justify-content: center; font-size: 24px; transition: background-color 0.5s ease; }
     .info-text span { font-size: 13px; color: var(--muted); display: block; margin-bottom: 4px; font-weight: 700;}
     .info-text strong { font-size: 16px; font-weight: 800; color: var(--text);}
 
@@ -105,7 +115,7 @@
     .map-tools button:active { box-shadow: 0 0 0 #6c5ce7; transform: translateY(4px); }
     #map-container { flex: 1; border-radius: 20px; z-index: 1; min-height: 250px; border: 2px solid #e8e2f5; }
     .route-config { margin-top: 15px; max-height: 120px; overflow-y: auto; padding-top: 10px; }
-    .config-item { display: flex; align-items: center; justify-content: space-between; font-size: 13px; background: var(--bg); margin-bottom: 8px; padding: 10px 15px; border-radius: 14px; border: 1px solid #e8e2f5; font-weight: 700;}
+    .config-item { display: flex; align-items: center; justify-content: space-between; font-size: 13px; background: var(--bg-color); margin-bottom: 8px; padding: 10px 15px; border-radius: 14px; border: 1px solid #e8e2f5; font-weight: 700; transition: background-color 0.5s ease;}
     .config-item select { padding: 6px 10px; border-radius: 10px; border: 2px solid #e8e2f5; outline: none; background: #fff; color: var(--primary); font-weight: 800; cursor: pointer; }
 
     .timeline-widget { flex: 1; background: var(--card); border-radius: 28px; padding: 25px; display: flex; flex-direction: column; box-shadow: var(--shadow-cute); border: 2px solid #fff; }
@@ -113,26 +123,23 @@
     .timeline-item { position: relative; padding-left: 25px; margin-bottom: 20px; }
     .timeline-item::before { content: '🌸'; position: absolute; left: -15px; top: 2px; font-size: 20px; background: #fff; border-radius: 50%; line-height: 1; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
     .timeline-item .day { font-size: 14px; font-weight: 800; color: var(--primary); margin-bottom: 5px; }
-    .timeline-item .desc { font-size: 14px; color: var(--text); background: var(--bg); padding: 14px; border-radius: 16px; line-height: 1.6; font-weight: 600;}
+    .timeline-item .desc { font-size: 14px; color: var(--text); background: var(--bg-color); padding: 14px; border-radius: 16px; line-height: 1.6; font-weight: 600; transition: background-color 0.5s ease;}
 
     .view-panel { display: none; height: 100%; }
     .view-panel.active { display: block; }
-    #view-diary.view-panel.active { display: flex; flex-direction: column; height: 100%; }
+    #view-diary.view-panel.active, #view-discover.view-panel.active { display: flex; flex-direction: column; height: 100%; }
 
-    /* ⭐️ 灵感发现版块样式 ⭐️ */
-    #view-discover.view-panel.active { display: flex; flex-direction: column; height: 100%; }
     .discover-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
     .discover-title { font-size: 28px; font-weight: 800; color: var(--primary); }
     .discover-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
     .inspire-card { background: var(--card); border-radius: 24px; padding: 25px; box-shadow: var(--shadow-cute); border: 2px solid #fff; transition: transform 0.2s; }
     .inspire-card:hover { transform: translateY(-5px); }
     .inspire-card h3 { font-size: 18px; font-weight: 800; color: var(--primary); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-    .inspire-item { background: var(--bg); border-radius: 16px; padding: 15px; margin-bottom: 12px; border-left: 4px solid var(--secondary); }
+    .inspire-item { background: var(--bg-color); border-radius: 16px; padding: 15px; margin-bottom: 12px; border-left: 4px solid var(--secondary); transition: background-color 0.5s ease;}
     .inspire-item:last-child { margin-bottom: 0; }
     .inspire-item strong { display: block; font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
     .inspire-item p { font-size: 13px; color: var(--muted); font-weight: 600; line-height: 1.5; }
 
-    /* 日记与记账 */
     .diary-container { display: flex; gap: 20px; height: 100%; }
     .diary-form { width: 320px; background: var(--card); padding: 25px; border-radius: 28px; height: fit-content; box-shadow: var(--shadow-cute); border: 2px solid #fff; flex-shrink: 0;}
     .diary-form textarea { width: 100%; height: 120px; padding: 15px; border: 2px solid #e8e2f5; border-radius: 16px; resize: none; margin-bottom: 15px; font-size: 14px; font-weight: 600; outline: none; }
@@ -163,12 +170,20 @@
     <div class="logo"><span>🍰</span> PlanCake</div>
     <div class="top-tabs">
       <div class="top-tab active" onclick="switchNav('dashboard', this)">🏠 行程概览</div>
-      <!-- ⭐️ 新增灵感发现 Tab ⭐️ -->
       <div class="top-tab" onclick="switchNav('discover', this)">🌍 灵感发现</div>
       <div class="top-tab" onclick="switchNav('diary', this)">📔 旅行日记</div>
       <div class="top-tab" onclick="switchNav('budget', this)">💰 预算记账本</div>
     </div>
-    <div style="width: 100px;"></div>
+    
+    <!-- ⭐️ 治愈系调色盘 ⭐️ -->
+    <div class="theme-picker">
+      <div class="color-dot active" style="background-color: #EAF6FF;" onclick="changeTheme('#EAF6FF', this)" title="晨曦淡蓝"></div>
+      <div class="color-dot" style="background-color: #FFF0F5;" onclick="changeTheme('#FFF0F5', this)" title="樱花蜜粉"></div>
+      <div class="color-dot" style="background-color: #EBFAF4;" onclick="changeTheme('#EBFAF4', this)" title="薄荷微绿"></div>
+      <div class="color-dot" style="background-color: #F4F0FF;" onclick="changeTheme('#F4F0FF', this)" title="香芋淡紫"></div>
+      <div class="color-dot" style="background-color: #FFFBF0;" onclick="changeTheme('#FFFBF0', this)" title="奶油暖黄"></div>
+      <div class="color-dot" style="background-color: #FFF4EE;" onclick="changeTheme('#FFF4EE', this)" title="蜜桃甜橙"></div>
+    </div>
   </header>
 
   <div class="app-layout">
@@ -216,7 +231,6 @@
     </aside>
 
     <main class="main-content">
-      <!-- 视图：概览 -->
       <div id="view-dashboard" class="view-panel active">
         <div class="top-row">
           <div class="banner-card">
@@ -252,7 +266,6 @@
         </div>
       </div>
 
-      <!-- ⭐️ 视图：灵感发现 (动态加载) ⭐️ -->
       <div id="view-discover" class="view-panel">
         <div class="discover-header">
           <div class="discover-title">🌍 目的地灵感探索</div>
@@ -265,7 +278,6 @@
         </div>
       </div>
 
-      <!-- 视图：旅行日记 -->
       <div id="view-diary" class="view-panel">
         <h2 style="margin-bottom:20px; color:var(--primary); font-weight:800;">📔 我的旅行日记</h2>
         <div class="diary-container">
@@ -280,7 +292,6 @@
         </div>
       </div>
 
-      <!-- 视图：预算记账本 -->
       <div id="view-budget" class="view-panel">
         <h2 style="margin-bottom:20px; color:var(--primary); font-weight:800;">💰 预算记账本</h2>
         <div style="background: #fff; padding: 30px; border-radius: 28px; box-shadow: var(--shadow-cute); border: 2px solid #fff;">
@@ -319,6 +330,37 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
+    // ⭐️ 主题颜色切换逻辑 ⭐️
+    function changeTheme(color, el) {
+      document.documentElement.style.setProperty('--bg-color', color);
+      localStorage.setItem('pc_theme', color);
+      
+      document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // 页面加载时初始化主题
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('pc_theme') || '#EAF6FF';
+      document.documentElement.style.setProperty('--bg-color', savedTheme);
+      
+      const dots = document.querySelectorAll('.color-dot');
+      dots.forEach(dot => {
+        dot.classList.remove('active');
+        if(dot.style.backgroundColor && rgbToHex(dot.style.backgroundColor) === savedTheme.toLowerCase()) {
+          dot.classList.add('active');
+        }
+      });
+    });
+
+    // 辅助函数：将 rgb 转为 hex (用于匹配保存的颜色)
+    function rgbToHex(rgb) {
+      const res = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+      if (!res) return rgb;
+      function hex(x) { return ("0" + parseInt(x).toString(16)).slice(-2); }
+      return ("#" + hex(res[1]) + hex(res[2]) + hex(res[3])).toLowerCase();
+    }
+
     const today = new Date(); const nextWeek = new Date(today); nextWeek.setDate(today.getDate() + 3);
     document.getElementById('input-start').value = today.toISOString().split('T')[0];
     document.getElementById('input-end').value = nextWeek.toISOString().split('T')[0];
@@ -352,15 +394,11 @@
       document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
       el.classList.add('active'); document.getElementById(`view-${viewId}`).classList.add('active');
       if (viewId === 'dashboard' && mapInstance) setTimeout(() => mapInstance.invalidateSize(), 100);
-      // ⭐️ 如果切到灵感发现，且没数据，自动拉取一次 ⭐️
       if (viewId === 'discover') {
-        if (document.getElementById('inspire-content').innerHTML.includes('点击上方')) {
-          fetchInspiration();
-        }
+        if (document.getElementById('inspire-content').innerHTML.includes('点击上方')) { fetchInspiration(); }
       }
     }
 
-    // ⭐️ 动态获取目的地灵感 ⭐️
     async function fetchInspiration() {
       const dest = document.getElementById('input-dest').value || '成都';
       const container = document.getElementById('inspire-content');
@@ -371,57 +409,18 @@
       </div>`;
 
       try {
-        const res = await fetch('/api/inspire', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dest })
-        });
+        const res = await fetch('/api/inspire', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dest }) });
         const data = await res.json();
-
-        if (data.ok && data.data) {
-          renderInspiration(data.data, dest);
-        } else {
-          // 兜底数据
-          renderInspiration({
-            attractions: [
-              {name: dest+"地标景点", desc: "这是当地最著名的打卡地，风景优美。"},
-              {name: dest+"历史博物馆", desc: "了解当地文化底蕴的必去之地。"}
-            ],
-            foods: [
-              {name: dest+"特色小吃", desc: "不可错过的地道风味。"},
-              {name: dest+"传统名菜", desc: "当地老字号，一定要尝尝。"}
-            ]
-          }, dest, true);
-        }
-      } catch (err) {
-        container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--danger); font-weight: 800;">网络错误，获取灵感失败。</div>`;
-      }
+        if (data.ok && data.data) { renderInspiration(data.data, dest); } 
+        else { renderInspiration({ attractions: [{name: dest+"地标景点", desc: "这是当地最著名的打卡地，风景优美。"}, {name: dest+"历史博物馆", desc: "了解当地文化底蕴的必去之地。"}], foods: [{name: dest+"特色小吃", desc: "不可错过的地道风味。"}, {name: dest+"传统名菜", desc: "当地老字号，一定要尝尝。"}] }, dest, true); }
+      } catch (err) { container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--danger); font-weight: 800;">网络错误，获取灵感失败。</div>`; }
     }
 
     function renderInspiration(data, dest, isMock = false) {
       const container = document.getElementById('inspire-content');
-      let attrHtml = data.attractions.map(a => `
-        <div class="inspire-item">
-          <strong>🏛️ ${a.name}</strong>
-          <p>${a.desc}</p>
-        </div>
-      `).join('');
-
-      let foodHtml = data.foods.map(f => `
-        <div class="inspire-item" style="border-left-color: #ffb8b8;">
-          <strong>🍜 ${f.name}</strong>
-          <p>${f.desc}</p>
-        </div>
-      `).join('');
-
-      container.innerHTML = `
-        <div class="inspire-card">
-          <h3>📍 ${dest} 著名景点</h3>
-          ${attrHtml}
-        </div>
-        <div class="inspire-card">
-          <h3>🍽️ ${dest} 特色美食</h3>
-          ${foodHtml}
-        </div>
-      `;
+      let attrHtml = data.attractions.map(a => `<div class="inspire-item"><strong>🏛️ ${a.name}</strong><p>${a.desc}</p></div>`).join('');
+      let foodHtml = data.foods.map(f => `<div class="inspire-item" style="border-left-color: #ffb8b8;"><strong>🍜 ${f.name}</strong><p>${f.desc}</p></div>`).join('');
+      container.innerHTML = `<div class="inspire-card"><h3>📍 ${dest} 著名景点</h3>${attrHtml}</div><div class="inspire-card"><h3>🍽️ ${dest} 特色美食</h3>${foodHtml}</div>`;
       if(isMock) alert("AI 服务器繁忙，已展示基础灵感草案。");
     }
 
