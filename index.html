@@ -9,3 +9,48 @@
   <p>AI 旅行规划助手</p>
 </body>
 </html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>PlanCake</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; }
+    input { width: 100%; padding: 10px; margin-bottom: 10px; font-size: 16px; box-sizing: border-box; }
+    button { padding: 10px 20px; font-size: 16px; cursor: pointer; background: #0070f3; color: white; border: none; border-radius: 5px; }
+    pre { background: #f4f4f4; padding: 15px; border-radius: 5px; white-space: pre-wrap; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h1>PlanCake</h1>
+  <p>输入你的旅行需求，让 AI 解析：</p>
+  
+  <input type="text" id="user-input" placeholder="例如：想去关西玩5天，带爸妈，不想太赶，预算一万以内" />
+  <button onclick="testAI()">开始解析</button>
+
+  <h3>AI 返回的结果：</h3>
+  <pre id="result">等待输入...</pre>
+
+  <script>
+    async function testAI() {
+      const text = document.getElementById('user-input').value;
+      const resultBox = document.getElementById('result');
+      if (!text) return alert('请先输入需求');
+      
+      resultBox.textContent = 'AI 正在思考中，请稍候（大概需要几秒钟）...';
+
+      try {
+        const response = await fetch('/api/parse', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: text })
+        });
+        const data = await response.json();
+        resultBox.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        resultBox.textContent = '出错了：' + error.message;
+      }
+    }
+  </script>
+</body>
+</html>
