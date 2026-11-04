@@ -11,138 +11,156 @@
     @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@500;700&display=swap');
 
     :root {
-      --bg-color: #EAF6FF; 
-      --primary: #74B9FF; 
-      --primary-light: #B2E2FF;
-      --btn-shadow: #4A90E2; 
-      --secondary: #ffb8b8; --secondary-light: #ffe4e1;
-      --text: #4a4a4a; --muted: #9e9e9e;
-      --danger: #ff7675; --shadow-cute: 0 8px 24px rgba(0, 0, 0, 0.05);
+      /* 治愈系莫兰迪配色 */
+      --bg-color: #E8F2F7; 
+      --primary: #9AB6C9; 
+      --primary-light: #C2D6E1;
+      --btn-shadow: #7692A5; 
+      --secondary: #E8B4A2; --secondary-light: #FDF2EE;
+      --text: #5A5A5A; --muted: #999999;
+      --danger: #E5989B; 
+      --shadow-cute: 0 8px 24px rgba(0, 0, 0, 0.04);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', 'Quicksand', -apple-system, sans-serif; }
     
     body { 
       background-color: var(--bg-color); 
-      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.6'%3E%3Cpath d='M30 10 L32 16 L38 18 L32 20 L30 26 L28 20 L22 18 L28 16 Z'/%3E%3Ccircle cx='10' cy='40' r='3'/%3E%3Ccircle cx='50' cy='20' r='3'/%3E%3Cpath d='M15 15 L17 19 L21 21 L17 23 L15 27 L13 23 L9 21 L13 19 Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.5'%3E%3Cpath d='M30 10 L32 16 L38 18 L32 20 L30 26 L28 20 L22 18 L28 16 Z'/%3E%3Ccircle cx='10' cy='40' r='3'/%3E%3Ccircle cx='50' cy='20' r='3'/%3E%3Cpath d='M15 15 L17 19 L21 21 L17 23 L15 27 L13 23 L9 21 L13 19 Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
       color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; 
-      transition: background-color 0.5s ease;
+      transition: background-color 0.6s ease;
     }
     
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 10px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-    .top-navbar { height: 70px; background: #ffffff; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); z-index: 100; flex-shrink: 0; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; }
-    .logo { font-size: 24px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 6px; transition: color 0.5s; }
-    .logo span { font-size: 28px; animation: float 3s ease-in-out infinite; }
+    /* 顶部导航栏 */
+    .top-navbar { height: 72px; background: #ffffff; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.02); z-index: 100; flex-shrink: 0; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; }
+    .logo { font-size: 24px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 6px; transition: color 0.6s; }
+    .logo span { font-size: 26px; animation: float 3s ease-in-out infinite; }
     
-    .top-tabs { display: flex; gap: 15px; }
-    .top-tab { padding: 10px 20px; border-radius: 20px; font-size: 15px; font-weight: 700; color: var(--muted); cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 6px; }
-    .top-tab:hover { background: var(--bg-color); color: var(--primary); transform: translateY(-2px); }
-    .top-tab.active { background: var(--secondary-light); color: var(--danger); box-shadow: 0 4px 10px rgba(255, 184, 184, 0.3); }
-
-    .theme-picker { display: flex; gap: 10px; align-items: center; background: rgba(0,0,0,0.03); padding: 8px 15px; border-radius: 30px; }
-    .color-dot { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.2s; }
-    .color-dot:hover { transform: scale(1.2); }
-    .color-dot.active { transform: scale(1.2); box-shadow: 0 0 0 2px var(--primary); }
+    .top-tabs { display: flex; gap: 10px; }
+    .top-tab { padding: 10px 22px; border-radius: 16px; font-size: 15px; font-weight: 700; color: var(--muted); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; user-select: none; }
+    .top-tab:hover { background: var(--bg-color); color: var(--primary); }
+    .top-tab.active { background: var(--bg-color); color: var(--primary); box-shadow: inset 0 2px 5px rgba(0,0,0,0.03); }
 
     .app-layout { display: flex; flex: 1; overflow: hidden; padding: 20px; gap: 20px; }
     
-    .sidebar { width: 340px; background: #ffffff; display: flex; flex-direction: column; border-radius: 28px; box-shadow: var(--shadow-cute); border: 2px solid #fff; z-index: 10; overflow: hidden; }
+    /* 左侧边栏 */
+    .sidebar { width: 340px; background: #ffffff; display: flex; flex-direction: column; border-radius: 28px; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); z-index: 10; overflow: hidden; }
     .sidebar-form-wrapper { flex: 1; overflow-y: auto; padding: 20px 20px 0 20px; }
-    .sidebar-form { background: var(--bg-color); padding: 18px; border-radius: 20px; margin-bottom: 15px; border: 2px dashed rgba(0,0,0,0.05); transition: background-color 0.5s ease; }
+    .sidebar-form { background: var(--bg-color); padding: 20px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.03); transition: background-color 0.6s ease; }
     
     .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; font-size: 13px; font-weight: 800; margin-bottom: 6px; color: var(--primary); transition: color 0.5s; }
-    .form-group input { width: 100%; padding: 12px; border: 2px solid rgba(0,0,0,0.05); border-radius: 14px; font-size: 13px; outline: none; background: #fff; transition: all 0.2s; font-weight: 600; color: var(--text); }
-    .form-group input:focus { border-color: var(--primary-light); box-shadow: 0 0 0 4px var(--bg-color); }
+    .form-group label { display: block; font-size: 13px; font-weight: 800; margin-bottom: 6px; color: var(--primary); transition: color 0.6s; }
+    .form-group input { width: 100%; padding: 12px; border: 2px solid rgba(0,0,0,0.04); border-radius: 14px; font-size: 13px; outline: none; background: #fff; transition: all 0.2s; font-weight: 600; color: var(--text); }
+    .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--bg-color); }
     
+    /* 标签栏 */
     .tags { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 5px; }
-    .tag { padding: 8px 4px; border-radius: 12px; background: #fff; font-size: 12px; font-weight: 700; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; user-select: none; display: flex; align-items: center; justify-content: center; gap: 2px; color: var(--muted); box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
-    .tag:hover { transform: scale(1.05); }
-    .tag.active { transform: scale(1.05); font-weight: 800; background: var(--bg-color); color: var(--primary); border-color: var(--primary-light); }
+    .tag { padding: 8px 4px; border-radius: 12px; background: #fff; font-size: 12px; font-weight: 700; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; user-select: none; display: flex; align-items: center; justify-content: center; gap: 2px; color: var(--muted); box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+    .tag:hover { transform: translateY(-1px); }
+    .tag.active { transform: translateY(-1px); font-weight: 800; background: var(--bg-color); color: var(--primary); border-color: var(--primary-light); }
 
-    .btn-generate { width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 16px; font-size: 17px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 5px 0 var(--btn-shadow); transition: all 0.1s, background-color 0.5s, box-shadow 0.5s; transform: translateY(0); display: flex; justify-content: center; align-items: center; gap: 8px; }
-    .btn-generate:active { box-shadow: 0 0px 0 var(--btn-shadow); transform: translateY(5px); }
+    /* ⭐️ 优化响应速度的果冻按钮 ⭐️ */
+    .btn-generate { 
+      width: 100%; padding: 15px; background: var(--primary); color: #fff; border: none; border-radius: 16px; 
+      font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 10px; 
+      box-shadow: 0 4px 0 var(--btn-shadow); 
+      transition: transform 0.1s, box-shadow 0.1s, background-color 0.6s; 
+      transform: translateY(0); display: flex; justify-content: center; align-items: center; gap: 8px; 
+    }
+    .btn-generate:active { box-shadow: 0 0px 0 var(--btn-shadow); transform: translateY(4px); }
+    
     .btn-export { width: 100%; padding: 12px; background: #fff; color: var(--primary); border: 2px solid var(--primary); border-radius: 14px; font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; transition: all 0.2s; }
-    .btn-export:hover { background: var(--bg-color); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .btn-export:hover { background: var(--bg-color); }
 
-    .weather-card { background: linear-gradient(135deg, var(--primary-light), var(--bg-color)); border-radius: 20px; padding: 16px 20px; margin: 0 20px 20px 20px; display: none; flex-shrink: 0; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border: 2px solid rgba(255,255,255,0.8); transition: background 0.5s; }
-    .weather-top { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 800; color: #4a4a4a; }
+    /* ⭐️ 侧边栏底部：调色盘 + 天气 ⭐️ */
+    .sidebar-bottom { padding: 15px 20px 20px 20px; border-top: 1px dashed rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 15px; flex-shrink: 0; }
+    
+    .theme-picker-mini { display: flex; justify-content: space-between; align-items: center; padding: 0 5px; }
+    .theme-picker-mini span { font-size: 13px; font-weight: 800; color: var(--muted); }
+    .color-dots { display: flex; gap: 8px; }
+    .color-dot { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.1); transition: transform 0.2s; }
+    .color-dot:hover { transform: scale(1.15); }
+    .color-dot.active { transform: scale(1.15); box-shadow: 0 0 0 2px var(--primary); }
+
+    .weather-card { background: linear-gradient(135deg, var(--primary-light), var(--bg-color)); border-radius: 20px; padding: 16px 20px; display: none; border: 1px solid rgba(255,255,255,0.6); transition: background 0.6s; }
+    .weather-top { display: flex; justify-content: space-between; margin-bottom: 6px; font-weight: 800; color: var(--text); }
     .weather-mid { display: flex; align-items: baseline; gap: 10px; margin-bottom: 5px; }
-    .weather-mid .temp { font-size: 34px; font-weight: 800; color: #2d3436; }
-    .weather-bottom { display: flex; gap: 15px; font-size: 12px; font-weight: 700; color: #636e72; opacity: 0.9; }
+    .weather-mid .temp { font-size: 32px; font-weight: 800; color: var(--text); }
+    .weather-bottom { display: flex; gap: 15px; font-size: 12px; font-weight: 700; color: var(--muted); }
 
+    /* 右侧主内容区 */
     .main-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; padding-right: 10px; }
     
-    /* 概览视图 */
-    .top-row { display: flex; gap: 20px; min-height: 180px; flex-shrink: 0; }
-    .banner-card { flex: 2; background: linear-gradient(135deg, var(--primary), var(--primary-light)); border-radius: 28px; padding: 25px 30px; position: relative; color: #fff; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow-cute); overflow: hidden; border: 2px solid #fff; transition: background 0.5s; }
-    .banner-card h1 { font-size: 38px; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 2; position: relative;}
-    .banner-emoji { position: absolute; right: 20px; bottom: -10px; font-size: 130px; opacity: 0.9; animation: float 4s ease-in-out infinite; z-index: 1;}
-    .expense-card { flex: 1; background: #ffffff; border-radius: 28px; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: var(--shadow-cute); border: 2px solid #fff; transition: all 0.3s; }
+    .top-row { display: flex; gap: 20px; min-height: 170px; flex-shrink: 0; }
+    .banner-card { flex: 2; background: linear-gradient(135deg, var(--primary), var(--primary-light)); border-radius: 28px; padding: 25px 30px; position: relative; color: #fff; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow-cute); overflow: hidden; border: 2px solid #fff; transition: background 0.6s; }
+    .banner-card h1 { font-size: 36px; font-weight: 800; text-shadow: 0 2px 8px rgba(0,0,0,0.05); z-index: 2; position: relative;}
+    .banner-emoji { position: absolute; right: 20px; bottom: -10px; font-size: 120px; opacity: 0.9; animation: float 4s ease-in-out infinite; z-index: 1;}
+    
+    .expense-card { flex: 1; background: #ffffff; border-radius: 28px; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); transition: all 0.3s; }
     .expense-card.over-budget { background: #FFF0F0; border-color: #FFB8B8; animation: shake 0.5s ease-in-out; }
-    .donut-chart { width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.05); transition: background 0.5s;}
-    .donut-inner { width: 76px; height: 76px; background: #ffffff; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .donut-inner strong { font-size: 18px; font-weight: 800; color: var(--primary); transition: color 0.5s; }
+    .donut-chart { width: 95px; height: 95px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.05); transition: background 0.6s;}
+    .donut-inner { width: 72px; height: 72px; background: #ffffff; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .donut-inner strong { font-size: 16px; font-weight: 800; color: var(--primary); transition: color 0.6s; }
+    
     .info-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; flex-shrink: 0; }
-    .info-box { background: #ffffff; border-radius: 22px; padding: 20px; display: flex; gap: 15px; box-shadow: var(--shadow-cute); border: 2px solid #fff; transition: transform 0.2s; }
-    .info-box:hover { transform: translateY(-3px); }
-    .info-icon { width: 50px; height: 50px; border-radius: 16px; background: var(--bg-color); display: flex; align-items: center; justify-content: center; font-size: 24px; transition: background-color 0.5s ease; }
+    .info-box { background: #ffffff; border-radius: 22px; padding: 20px; display: flex; gap: 15px; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); transition: transform 0.2s; }
+    .info-box:hover { transform: translateY(-2px); }
+    .info-icon { width: 45px; height: 45px; border-radius: 14px; background: var(--bg-color); display: flex; align-items: center; justify-content: center; font-size: 22px; transition: background-color 0.6s ease; }
     .info-text span { font-size: 13px; color: var(--muted); display: block; margin-bottom: 4px; font-weight: 700;}
-    .info-text strong { font-size: 16px; font-weight: 800; color: var(--text);}
-    .bottom-row { display: flex; gap: 20px; min-height: 520px; flex-shrink: 0; margin-bottom: 20px; }
-    .map-widget { flex: 1.2; background: #ffffff; border-radius: 28px; padding: 20px; display: flex; flex-direction: column; box-shadow: var(--shadow-cute); border: 2px solid #fff; }
+    .info-text strong { font-size: 15px; font-weight: 800; color: var(--text);}
+
+    .bottom-row { display: flex; gap: 20px; min-height: 500px; flex-shrink: 0; margin-bottom: 20px; }
+    .map-widget { flex: 1.2; background: #ffffff; border-radius: 28px; padding: 20px; display: flex; flex-direction: column; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); }
     .map-tools { display: flex; gap: 10px; margin-bottom: 15px; }
-    .map-tools input { flex: 1; padding: 12px 18px; border-radius: 16px; border: 2px solid rgba(0,0,0,0.05); outline: none; font-size: 14px; font-weight: 600; }
-    .map-tools input:focus { border-color: var(--primary-light); }
-    .map-tools button { background: var(--primary); color: #fff; border: none; padding: 0 20px; border-radius: 16px; cursor: pointer; font-weight: 800; box-shadow: 0 4px 0 var(--btn-shadow); transition: all 0.1s, background-color 0.5s, box-shadow 0.5s; }
+    .map-tools input { flex: 1; padding: 12px 18px; border-radius: 16px; border: 2px solid rgba(0,0,0,0.04); outline: none; font-size: 14px; font-weight: 600; }
+    .map-tools input:focus { border-color: var(--primary); }
+    .map-tools button { background: var(--primary); color: #fff; border: none; padding: 0 20px; border-radius: 16px; cursor: pointer; font-weight: 800; box-shadow: 0 4px 0 var(--btn-shadow); transition: all 0.1s, background-color 0.6s; }
     .map-tools button:active { box-shadow: 0 0 0 var(--btn-shadow); transform: translateY(4px); }
-    #map-container { flex: 1; border-radius: 20px; z-index: 1; min-height: 250px; border: 2px solid rgba(0,0,0,0.05); }
+    #map-container { flex: 1; border-radius: 20px; z-index: 1; min-height: 250px; border: 1px solid rgba(0,0,0,0.05); }
+    
     .route-config { margin-top: 15px; max-height: 120px; overflow-y: auto; padding-top: 10px; }
-    .config-item { display: flex; align-items: center; justify-content: space-between; font-size: 13px; background: var(--bg-color); margin-bottom: 8px; padding: 10px 15px; border-radius: 14px; border: 1px solid rgba(0,0,0,0.05); font-weight: 700; transition: background-color 0.5s ease;}
+    .config-item { display: flex; align-items: center; justify-content: space-between; font-size: 13px; background: var(--bg-color); margin-bottom: 8px; padding: 10px 15px; border-radius: 14px; border: 1px solid rgba(0,0,0,0.03); font-weight: 700; transition: background-color 0.6s ease;}
     .config-item select { padding: 6px 10px; border-radius: 10px; border: 2px solid rgba(0,0,0,0.05); outline: none; background: #fff; color: var(--primary); font-weight: 800; cursor: pointer; }
-    .timeline-widget { flex: 1; background: #ffffff; border-radius: 28px; padding: 25px; display: flex; flex-direction: column; box-shadow: var(--shadow-cute); border: 2px solid #fff; }
+    
+    .timeline-widget { flex: 1; background: #ffffff; border-radius: 28px; padding: 25px; display: flex; flex-direction: column; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); }
     .timeline-list { flex: 1; overflow-y: auto; padding-left: 15px; border-left: 3px dotted rgba(0,0,0,0.05); }
     .timeline-item { position: relative; padding-left: 25px; margin-bottom: 20px; }
-    .timeline-item::before { content: '🌸'; position: absolute; left: -15px; top: 2px; font-size: 20px; background: #fff; border-radius: 50%; line-height: 1; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .timeline-item .day { font-size: 14px; font-weight: 800; color: var(--primary); margin-bottom: 5px; transition: color 0.5s; }
-    .timeline-item .desc { font-size: 14px; color: var(--text); background: var(--bg-color); padding: 14px; border-radius: 16px; line-height: 1.6; font-weight: 600; transition: background-color 0.5s ease;}
+    .timeline-item::before { content: '🌸'; position: absolute; left: -15px; top: 2px; font-size: 20px; background: #fff; border-radius: 50%; line-height: 1; box-shadow: 0 2px 5px rgba(0,0,0,0.08); }
+    .timeline-item .day { font-size: 14px; font-weight: 800; color: var(--primary); margin-bottom: 5px; transition: color 0.6s; }
+    .timeline-item .desc { font-size: 14px; color: var(--text); background: var(--bg-color); padding: 14px; border-radius: 16px; line-height: 1.6; font-weight: 600; transition: background-color 0.6s ease;}
 
     .view-panel { display: none; height: 100%; }
     .view-panel.active { display: block; }
     #view-diary.view-panel.active, #view-discover.view-panel.active, #view-budget.view-panel.active, #view-checklist.view-panel.active { display: flex; flex-direction: column; height: 100%; }
 
-    /* 灵感发现 */
+    /* 其他界面复用之前的样式，调整少许圆角和颜色 */
     .discover-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-    .discover-title { font-size: 28px; font-weight: 800; color: var(--primary); transition: color 0.5s; }
+    .discover-title { font-size: 26px; font-weight: 800; color: var(--primary); transition: color 0.6s; }
     .discover-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-    .inspire-card { background: #ffffff; border-radius: 24px; padding: 25px; box-shadow: var(--shadow-cute); border: 2px solid #fff; transition: transform 0.2s; }
-    .inspire-card:hover { transform: translateY(-5px); }
-    .inspire-card h3 { font-size: 18px; font-weight: 800; color: var(--primary); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; transition: color 0.5s;}
-    .inspire-item { background: var(--bg-color); border-radius: 16px; padding: 15px; margin-bottom: 12px; border-left: 4px solid var(--primary-light); transition: background-color 0.5s ease;}
+    .inspire-card { background: #ffffff; border-radius: 24px; padding: 25px; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); }
+    .inspire-card h3 { font-size: 18px; font-weight: 800; color: var(--primary); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; transition: color 0.6s;}
+    .inspire-item { background: var(--bg-color); border-radius: 16px; padding: 15px; margin-bottom: 12px; border-left: 4px solid var(--primary-light); transition: background-color 0.6s ease;}
     .inspire-item:last-child { margin-bottom: 0; }
     .inspire-item strong { display: block; font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
     .inspire-item p { font-size: 13px; color: var(--muted); font-weight: 600; line-height: 1.5; }
 
-    /* ⭐️ 行李清单版块样式 ⭐️ */
     .checklist-layout { display: flex; gap: 20px; height: 100%; overflow: hidden; }
-    .checklist-left { flex: 1.5; display: flex; flex-direction: column; background: #ffffff; border-radius: 28px; padding: 25px; box-shadow: var(--shadow-cute); border: 2px solid #fff; overflow: hidden; }
+    .checklist-left { flex: 1.5; display: flex; flex-direction: column; background: #ffffff; border-radius: 28px; padding: 25px; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); overflow: hidden; }
     .checklist-right { flex: 1; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; padding-right: 10px;}
-    
-    .checklist-progress { background: var(--bg-color); border-radius: 16px; padding: 15px 20px; margin-bottom: 20px; border: 2px dashed rgba(0,0,0,0.05); }
+    .checklist-progress { background: var(--bg-color); border-radius: 16px; padding: 15px 20px; margin-bottom: 20px; border: 2px dashed rgba(0,0,0,0.04); }
     .progress-bar-bg { width: 100%; height: 10px; background: rgba(0,0,0,0.05); border-radius: 10px; margin-top: 10px; overflow: hidden; }
-    .progress-bar-fill { height: 100%; background: var(--primary); width: 0%; border-radius: 10px; transition: width 0.3s ease, background-color 0.5s; }
-    
+    .progress-bar-fill { height: 100%; background: var(--primary); width: 0%; border-radius: 10px; transition: width 0.3s ease, background-color 0.6s; }
     .add-item-row { display: flex; gap: 10px; margin-bottom: 20px; }
-    .add-item-row input { flex: 1; padding: 14px 20px; border-radius: 16px; border: 2px solid rgba(0,0,0,0.05); font-weight: 600; outline: none; font-size: 14px; }
-    .add-item-row input:focus { border-color: var(--primary-light); }
-    
+    .add-item-row input { flex: 1; padding: 14px 20px; border-radius: 16px; border: 2px solid rgba(0,0,0,0.04); font-weight: 600; outline: none; font-size: 14px; }
+    .add-item-row input:focus { border-color: var(--primary); }
     .checklist-items { flex: 1; overflow-y: auto; padding-right: 10px; }
     .check-item { display: flex; align-items: center; padding: 15px; background: var(--bg-color); border-radius: 14px; margin-bottom: 10px; border: 2px solid transparent; transition: all 0.2s; cursor: pointer; user-select: none; }
-    .check-item:hover { border-color: var(--primary-light); transform: translateX(3px); }
+    .check-item:hover { border-color: var(--primary-light); }
     .check-item.done { opacity: 0.5; background: #f0f0f0; text-decoration: line-through; }
     .custom-checkbox { width: 24px; height: 24px; border-radius: 8px; border: 2px solid var(--primary-light); margin-right: 15px; display: flex; align-items: center; justify-content: center; background: #fff; font-size: 14px; color: #fff; transition: all 0.2s; }
     .check-item.done .custom-checkbox { background: var(--primary); border-color: var(--primary); }
@@ -151,41 +169,38 @@
     .check-item span { font-weight: 700; font-size: 15px; color: var(--text); flex: 1; }
     .del-item { color: var(--danger); font-size: 12px; font-weight: 800; padding: 5px; opacity: 0; transition: opacity 0.2s; }
     .check-item:hover .del-item { opacity: 1; }
-
-    .ai-recommend-card { background: #ffffff; border-radius: 24px; padding: 25px; box-shadow: var(--shadow-cute); border: 2px solid #fff; }
+    .ai-recommend-card { background: #ffffff; border-radius: 24px; padding: 25px; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); }
     .ai-recommend-card h3 { font-size: 18px; font-weight: 800; color: var(--primary); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-    .recommend-tag { display: inline-flex; justify-content: space-between; align-items: center; background: var(--bg-color); border-radius: 12px; padding: 8px 12px; margin: 0 8px 8px 0; font-weight: 700; font-size: 14px; border: 1px solid rgba(0,0,0,0.05); }
+    .recommend-tag { display: inline-flex; justify-content: space-between; align-items: center; background: var(--bg-color); border-radius: 12px; padding: 8px 12px; margin: 0 8px 8px 0; font-weight: 700; font-size: 14px; border: 1px solid rgba(0,0,0,0.03); }
     .recommend-tag button { background: var(--primary); color: #fff; border: none; width: 24px; height: 24px; border-radius: 50%; margin-left: 10px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: transform 0.1s; }
-    .recommend-tag button:active { transform: scale(0.9); }
-    .clothing-tip { background: linear-gradient(135deg, #FFF3E0, #FFE0B2); border-radius: 16px; padding: 15px; color: #E65100; font-weight: 700; font-size: 14px; line-height: 1.6; }
+    .clothing-tip { background: linear-gradient(135deg, #FFFBF0, #FDF2EE); border-radius: 16px; padding: 15px; color: #C28B79; font-weight: 700; font-size: 14px; line-height: 1.6; }
 
-    /* 预算与日记 */
     .budget-layout { display: flex; gap: 20px; height: 100%; overflow: hidden; }
     .budget-left { flex: 1.5; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; padding-right: 10px;}
-    .budget-right { flex: 1; background: #ffffff; border-radius: 28px; padding: 25px; box-shadow: var(--shadow-cute); border: 2px solid #fff; overflow-y: auto;}
+    .budget-right { flex: 1; background: #ffffff; border-radius: 28px; padding: 25px; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); overflow-y: auto;}
     .warning-banner { display: none; background: #FFF0F0; border: 2px dashed #FFB8B8; color: #D63031; padding: 15px; border-radius: 16px; text-align: center; font-weight: 800; font-size: 16px; margin-bottom: 15px; animation: bounce 1s infinite alternate; }
     .warning-banner.active { display: block; }
-    .add-expense-card { background: #ffffff; padding: 25px; border-radius: 28px; box-shadow: var(--shadow-cute); border: 2px solid #fff; }
-    .add-expense-card input, .add-expense-card select { padding:14px; border-radius:16px; border:2px solid rgba(0,0,0,0.05); font-weight:600; outline:none; margin-bottom: 10px; }
-    .add-expense-card input:focus, .add-expense-card select:focus { border-color: var(--primary-light); }
-    .member-tag { display: inline-flex; align-items: center; background: var(--bg-color); padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 13px; margin-right: 8px; margin-bottom: 8px; border: 2px solid rgba(0,0,0,0.05); transition: background-color 0.5s ease;}
+    .add-expense-card { background: #ffffff; padding: 25px; border-radius: 28px; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); }
+    .add-expense-card input, .add-expense-card select { padding:14px; border-radius:16px; border:2px solid rgba(0,0,0,0.04); font-weight:600; outline:none; margin-bottom: 10px; }
+    .add-expense-card input:focus, .add-expense-card select:focus { border-color: var(--primary); }
+    .member-tag { display: inline-flex; align-items: center; background: var(--bg-color); padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 13px; margin-right: 8px; margin-bottom: 8px; border: 2px solid rgba(0,0,0,0.03); transition: background-color 0.6s ease;}
     .member-tag span { cursor: pointer; color: var(--danger); margin-left: 6px; font-weight: 900;}
-    .settlement-card { background: var(--bg-color); border-radius: 16px; padding: 15px; margin-bottom: 12px; border-left: 4px solid var(--primary); transition: background-color 0.5s ease;}
-    .settlement-card strong { font-size: 15px; color: var(--primary); transition: color 0.5s;}
+    .settlement-card { background: var(--bg-color); border-radius: 16px; padding: 15px; margin-bottom: 12px; border-left: 4px solid var(--primary); transition: background-color 0.6s ease;}
+    .settlement-card strong { font-size: 15px; color: var(--primary); transition: color 0.6s;}
     .settlement-card p { font-size: 14px; font-weight: 700; margin-top: 5px; color: var(--text);}
     .diary-container { display: flex; gap: 20px; height: 100%; }
-    .diary-form { width: 320px; background: #ffffff; padding: 25px; border-radius: 28px; height: fit-content; box-shadow: var(--shadow-cute); border: 2px solid #fff; flex-shrink: 0;}
-    .diary-form textarea { width: 100%; height: 120px; padding: 15px; border: 2px solid rgba(0,0,0,0.05); border-radius: 16px; resize: none; margin-bottom: 15px; font-size: 14px; font-weight: 600; outline: none; }
-    .diary-form textarea:focus { border-color: var(--primary-light); }
+    .diary-form { width: 320px; background: #ffffff; padding: 25px; border-radius: 28px; height: fit-content; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); flex-shrink: 0;}
+    .diary-form textarea { width: 100%; height: 120px; padding: 15px; border: 2px solid rgba(0,0,0,0.04); border-radius: 16px; resize: none; margin-bottom: 15px; font-size: 14px; font-weight: 600; outline: none; }
+    .diary-form textarea:focus { border-color: var(--primary); }
     .diary-list-wrapper { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; padding-right: 10px; }
-    .diary-card { background: #ffffff; border-radius: 24px; padding: 20px; box-shadow: var(--shadow-cute); display: flex; gap: 20px; border: 2px solid #fff;}
+    .diary-card { background: #ffffff; border-radius: 24px; padding: 20px; box-shadow: var(--shadow-cute); display: flex; gap: 20px; border: 1px solid rgba(255,255,255,0.8);}
     .diary-card img { width: 150px; height: 150px; object-fit: cover; border-radius: 16px; }
     .diary-card-info .del-btn { color: var(--danger); font-size: 13px; font-weight: 800; cursor: pointer; text-align: right; margin-top: 10px; }
 
-    .transport-icon { background: #fff; border: 2px solid var(--primary); border-radius: 20px; padding: 3px 10px; font-size: 12px; font-weight: 800; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.1); white-space: nowrap; display: flex; align-items: center; gap: 4px; transition: border-color 0.5s, color 0.5s;}
+    .transport-icon { background: #fff; border: 2px solid var(--primary); border-radius: 20px; padding: 3px 10px; font-size: 12px; font-weight: 800; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); white-space: nowrap; display: flex; align-items: center; gap: 4px; transition: border-color 0.6s, color 0.6s;}
     
     @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
-    @keyframes float { 0% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-8px) rotate(3deg); } 100% { transform: translateY(0px) rotate(0deg); } }
+    @keyframes float { 0% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-6px) rotate(2deg); } 100% { transform: translateY(0px) rotate(0deg); } }
     @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-5px); } }
 
     #pdf-template { display: none; padding: 40px; background: #fff; color: #333; }
@@ -210,15 +225,7 @@
       <div class="top-tab" onclick="switchNav('diary', this)">📔 旅行日记</div>
       <div class="top-tab" onclick="switchNav('budget', this)">💰 预算与分账</div>
     </div>
-    
-    <div class="theme-picker">
-      <div class="color-dot active" style="background-color: #74B9FF;" onclick="changeTheme(1, this)" title="晨曦淡蓝"></div>
-      <div class="color-dot" style="background-color: #FF9A9E;" onclick="changeTheme(2, this)" title="樱花蜜粉"></div>
-      <div class="color-dot" style="background-color: #55EFC4;" onclick="changeTheme(3, this)" title="薄荷微绿"></div>
-      <div class="color-dot" style="background-color: #A29BFE;" onclick="changeTheme(4, this)" title="香芋淡紫"></div>
-      <div class="color-dot" style="background-color: #FDCB6E;" onclick="changeTheme(5, this)" title="奶油暖黄"></div>
-      <div class="color-dot" style="background-color: #FAB1A0;" onclick="changeTheme(6, this)" title="蜜桃甜橙"></div>
-    </div>
+    <div style="width: 120px;"></div> <!-- 占位保持居中 -->
   </header>
 
   <div class="app-layout">
@@ -258,10 +265,26 @@
         </div>
       </div>
       
-      <div class="weather-card" id="weather-widget">
-        <div class="weather-top"><span id="weather-city">成都</span><span id="weather-icon">⛅</span></div>
-        <div class="weather-mid"><div class="temp" id="weather-temp">--°C</div><div id="weather-desc">获取中...</div></div>
-        <div class="weather-bottom"><span>💨 风速 <span id="weather-wind">--</span></span><span>💧 湿度 <span id="weather-humidity">--</span>%</span></div>
+      <!-- 左下角：主题 + 天气 -->
+      <div class="sidebar-bottom">
+        <div class="theme-picker-mini">
+          <span>🎨 主题色</span>
+          <div class="color-dots">
+            <!-- 换成莫兰迪低饱和色系 -->
+            <div class="color-dot active" style="background-color: #9AB6C9;" onclick="changeTheme(1, this)" title="晨曦灰蓝"></div>
+            <div class="color-dot" style="background-color: #D9A3B1;" onclick="changeTheme(2, this)" title="樱花灰粉"></div>
+            <div class="color-dot" style="background-color: #9FC2B1;" onclick="changeTheme(3, this)" title="薄荷灰绿"></div>
+            <div class="color-dot" style="background-color: #B4A4C6;" onclick="changeTheme(4, this)" title="香芋灰紫"></div>
+            <div class="color-dot" style="background-color: #E5CD91;" onclick="changeTheme(5, this)" title="奶油暖黄"></div>
+            <div class="color-dot" style="background-color: #E8B4A2;" onclick="changeTheme(6, this)" title="蜜桃灰橙"></div>
+          </div>
+        </div>
+
+        <div class="weather-card" id="weather-widget">
+          <div class="weather-top"><span id="weather-city">成都</span><span id="weather-icon">⛅</span></div>
+          <div class="weather-mid"><div class="temp" id="weather-temp">--°C</div><div id="weather-desc">获取中...</div></div>
+          <div class="weather-bottom"><span>💨 风速 <span id="weather-wind">--</span></span><span>💧 湿度 <span id="weather-humidity">--</span>%</span></div>
+        </div>
       </div>
     </aside>
 
@@ -315,46 +338,32 @@
         </div>
       </div>
 
-      <!-- ⭐️ 行李清单版块 ⭐️ -->
+      <!-- 行李清单 -->
       <div id="view-checklist" class="view-panel">
         <h2 style="margin-bottom:20px; color:var(--primary); font-weight:800;">🎒 智能打包清单</h2>
         <div class="checklist-layout">
-          <!-- 左侧：我的清单 -->
           <div class="checklist-left">
             <div class="checklist-progress">
               <div style="display:flex; justify-content:space-between; font-weight:800; font-size:14px;">
                 <span>打包进度</span>
                 <span id="progress-text" style="color:var(--primary);">0 / 0 (0%)</span>
               </div>
-              <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="progress-bar"></div>
-              </div>
+              <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-bar"></div></div>
             </div>
-
             <div class="add-item-row">
               <input type="text" id="new-item-input" placeholder="自定义添加物品 (如：护照、充电宝)" onkeypress="handleAddItem(event)">
               <button class="btn-generate" style="margin:0; padding:0 20px; font-size:15px; width:auto; border-radius:16px;" onclick="addChecklistItem()">+ 添加</button>
             </div>
-
-            <div class="checklist-items" id="checklist-list">
-              <!-- 动态渲染 -->
-            </div>
+            <div class="checklist-items" id="checklist-list"></div>
           </div>
-
-          <!-- 右侧：AI 推荐 -->
           <div class="checklist-right">
             <div class="ai-recommend-card">
               <h3>👕 天气穿衣建议</h3>
-              <div class="clothing-tip" id="clothing-recommendation">
-                正在获取天气信息...
-              </div>
+              <div class="clothing-tip" id="clothing-recommendation">正在获取天气信息...</div>
             </div>
-
             <div class="ai-recommend-card">
               <h3>💡 目的地必带推荐</h3>
-              <div id="item-recommendations">
-                <!-- 动态渲染推荐标签 -->
-              </div>
+              <div id="item-recommendations"></div>
             </div>
           </div>
         </div>
@@ -392,7 +401,7 @@
                 <button class="btn-generate" style="margin:0; padding:0 25px; font-size:15px; border-radius:16px; width:auto;" onclick="addExpense()">记一笔</button>
               </div>
             </div>
-            <div style="background: #ffffff; padding: 25px; border-radius: 28px; box-shadow: var(--shadow-cute); border: 2px solid #fff;">
+            <div style="background: #ffffff; padding: 25px; border-radius: 28px; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8);">
               <h3 style="margin-bottom: 15px; font-size: 16px; font-weight: 800; color: var(--primary);">🧾 账单明细</h3>
               <div id="expense-list"></div>
             </div>
@@ -401,7 +410,7 @@
             <h3 style="margin-bottom: 15px; font-size: 18px; font-weight: 800; color: var(--primary);">👥 成员管理</h3>
             <div id="member-list" style="margin-bottom: 20px;"></div>
             <div style="display: flex; gap: 10px; margin-bottom: 25px;">
-              <input type="text" id="new-member-name" placeholder="添加成员名字" style="padding:10px; border-radius:12px; border:2px solid rgba(0,0,0,0.05); flex:1; font-weight:600; outline:none;">
+              <input type="text" id="new-member-name" placeholder="添加成员名字" style="padding:10px; border-radius:12px; border:2px solid rgba(0,0,0,0.04); flex:1; font-weight:600; outline:none;">
               <button class="btn-generate" style="margin:0; padding:0 15px; font-size:14px; border-radius:12px; width:auto;" onclick="addMember()">+ 添加</button>
             </div>
             <h3 style="margin-bottom: 15px; font-size: 18px; font-weight: 800; color: var(--primary);">⚖️ 自动 AA 结算</h3>
@@ -436,15 +445,16 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    // 主题配置
+    // ⭐️ 莫兰迪/治愈系颜色配置 ⭐️
     const themes = [
-      { bg: '#EAF6FF', primary: '#74B9FF', light: '#B2E2FF', shadow: '#4A90E2' },
-      { bg: '#FFF0F5', primary: '#FF9A9E', light: '#FFD4D6', shadow: '#E17055' },
-      { bg: '#EBFAF4', primary: '#55EFC4', light: '#B2F5E5', shadow: '#00B894' },
-      { bg: '#F4F0FF', primary: '#A29BFE', light: '#D3CFFF', shadow: '#6C5CE7' },
-      { bg: '#FFFBF0', primary: '#FDCB6E', light: '#FDE9BF', shadow: '#F39C12' },
-      { bg: '#FFF4EE', primary: '#FAB1A0', light: '#FDDCD6', shadow: '#E17055' }
+      { bg: '#E8F2F7', primary: '#9AB6C9', light: '#C2D6E1', shadow: '#7692A5' }, // 晨曦灰蓝
+      { bg: '#FAF0F2', primary: '#D9A3B1', light: '#F0D3D8', shadow: '#B57D8B' }, // 樱花灰粉
+      { bg: '#E9F5EE', primary: '#9FC2B1', light: '#CBE2D6', shadow: '#7B9E8D' }, // 薄荷灰绿
+      { bg: '#F2EDF5', primary: '#B4A4C6', light: '#DCD2E4', shadow: '#8D7D9F' }, // 香芋灰紫
+      { bg: '#FCF7E6', primary: '#E5CD91', light: '#F2E5C1', shadow: '#C0A86C' }, // 奶油暖黄
+      { bg: '#FDF2EE', primary: '#E8B4A2', light: '#F2D0C5', shadow: '#C28B79' }  // 蜜桃灰橙
     ];
+    
     function applyTheme(index) {
       const t = themes[index];
       document.documentElement.style.setProperty('--bg-color', t.bg);
@@ -452,11 +462,13 @@
       document.documentElement.style.setProperty('--primary-light', t.light);
       document.documentElement.style.setProperty('--btn-shadow', t.shadow);
       localStorage.setItem('pc_theme_idx', index);
+      
       document.querySelectorAll('.color-dot').forEach((dot, i) => {
         if (i === index) dot.classList.add('active'); else dot.classList.remove('active');
       });
     }
     function changeTheme(index) { applyTheme(index); }
+    
     window.addEventListener('DOMContentLoaded', () => {
       const savedIdx = parseInt(localStorage.getItem('pc_theme_idx')) || 0;
       applyTheme(savedIdx);
@@ -466,7 +478,6 @@
     document.getElementById('input-start').value = today.toISOString().split('T')[0];
     document.getElementById('input-end').value = nextWeek.toISOString().split('T')[0];
 
-    // 全局状态
     let appState = { 
       expenses: JSON.parse(localStorage.getItem('pc_expenses')) || [], 
       diaries: JSON.parse(localStorage.getItem('pc_diaries')) || [],
@@ -484,135 +495,70 @@
     let mapInstance = null;
     let tempPhotoBase64 = null;
 
-    // ⭐️ 行李清单逻辑 ⭐️
     function renderChecklist() {
-      const list = document.getElementById('checklist-list');
-      list.innerHTML = '';
-      
+      const list = document.getElementById('checklist-list'); list.innerHTML = '';
       let doneCount = 0;
       appState.checklist.forEach(item => {
         if (item.done) doneCount++;
         const div = document.createElement('div');
         div.className = `check-item ${item.done ? 'done' : ''}`;
-        div.onclick = (e) => {
-          // 如果点的是删除按钮，不触发勾选
-          if(e.target.classList.contains('del-item')) return;
-          toggleCheckItem(item.id);
-        };
-        div.innerHTML = `
-          <div class="custom-checkbox"></div>
-          <span>${item.text}</span>
-          <div class="del-item" onclick="deleteCheckItem(${item.id})">删除</div>
-        `;
+        div.onclick = (e) => { if(e.target.classList.contains('del-item')) return; toggleCheckItem(item.id); };
+        div.innerHTML = `<div class="custom-checkbox"></div><span>${item.text}</span><div class="del-item" onclick="deleteCheckItem(${item.id})">删除</div>`;
         list.appendChild(div);
       });
-
-      // 更新进度
       const total = appState.checklist.length;
       const percent = total === 0 ? 0 : Math.round((doneCount / total) * 100);
       document.getElementById('progress-text').textContent = `${doneCount} / ${total} (${percent}%)`;
       document.getElementById('progress-bar').style.width = `${percent}%`;
-
       localStorage.setItem('pc_checklist', JSON.stringify(appState.checklist));
     }
-
     function addChecklistItem() {
-      const input = document.getElementById('new-item-input');
-      const text = input.value.trim();
-      if (!text) return;
-      appState.checklist.push({ id: Date.now(), text, done: false });
-      input.value = '';
-      renderChecklist();
+      const input = document.getElementById('new-item-input'); const text = input.value.trim();
+      if (!text) return; appState.checklist.push({ id: Date.now(), text, done: false }); input.value = ''; renderChecklist();
     }
     function handleAddItem(e) { if (e.key === 'Enter') addChecklistItem(); }
-
-    function toggleCheckItem(id) {
-      const item = appState.checklist.find(i => i.id === id);
-      if (item) { item.done = !item.done; renderChecklist(); }
-    }
-
-    function deleteCheckItem(id) {
-      appState.checklist = appState.checklist.filter(i => i.id !== id);
-      renderChecklist();
-    }
-
+    function toggleCheckItem(id) { const item = appState.checklist.find(i => i.id === id); if (item) { item.done = !item.done; renderChecklist(); } }
+    function deleteCheckItem(id) { appState.checklist = appState.checklist.filter(i => i.id !== id); renderChecklist(); }
     function quickAddRecommend(text) {
-      // 检查是否已存在
-      if (appState.checklist.some(i => i.text === text)) {
-        alert("这个物品已经在清单里啦！");
-        return;
-      }
-      appState.checklist.push({ id: Date.now(), text, done: false });
-      renderChecklist();
+      if (appState.checklist.some(i => i.text === text)) { alert("这个物品已经在清单里啦！"); return; }
+      appState.checklist.push({ id: Date.now(), text, done: false }); renderChecklist();
     }
 
-    // 获取天气并生成穿衣建议
     function updateClothingRecommendation(temp, desc) {
       let tip = "";
-      if (temp < 10) {
-        tip = `当前气温 ${temp}°C（${desc}），天气寒冷。建议带上：羽绒服、保暖内衣、毛衣、围巾和手套。`;
-      } else if (temp >= 10 && temp < 20) {
-        tip = `当前气温 ${temp}°C（${desc}），天气微凉。建议带上：风衣/夹克、卫衣、长裤，怕冷可以带一件薄毛衣。`;
-      } else if (temp >= 20 && temp < 30) {
-        tip = `当前气温 ${temp}°C（${desc}），天气舒适。建议带上：短袖、薄外套、长裤/长裙，适合舒适的步行鞋。`;
-      } else {
-        tip = `当前气温 ${temp}°C（${desc}），天气炎热。建议带上：短袖、短裤/短裙、遮阳帽、墨镜、防晒霜，以及清凉的凉鞋。`;
-      }
-      if (desc.includes('雨')) {
-        tip += ` 另外有雨，别忘了带雨伞或雨衣哦！`;
-      }
+      if (temp < 10) tip = `当前气温 ${temp}°C（${desc}），天气寒冷。建议带上：羽绒服、保暖内衣、毛衣、围巾和手套。`;
+      else if (temp >= 10 && temp < 20) tip = `当前气温 ${temp}°C（${desc}），天气微凉。建议带上：风衣/夹克、卫衣、长裤，怕冷可以带一件薄毛衣。`;
+      else if (temp >= 20 && temp < 30) tip = `当前气温 ${temp}°C（${desc}），天气舒适。建议带上：短袖、薄外套、长裤/长裙，适合舒适的步行鞋。`;
+      else tip = `当前气温 ${temp}°C（${desc}），天气炎热。建议带上：短袖、短裤/短裙、遮阳帽、墨镜、防晒霜，以及清凉的凉鞋。`;
+      if (desc.includes('雨')) tip += ` 另外有雨，别忘了带雨伞或雨衣哦！`;
       document.getElementById('clothing-recommendation').textContent = tip;
     }
 
-    // 根据目的地推荐物品
     function fetchChecklistRecommendations(dest) {
       const container = document.getElementById('item-recommendations');
-      let recommendations = ['充电宝', '洗漱用品', '常用药品', '纸巾/湿巾', '现金/银行卡']; // 基础推荐
-
-      // 简单的规则引擎
+      let recommendations = ['充电宝', '洗漱用品', '常用药品', '纸巾/湿巾', '现金/银行卡'];
       if (dest.includes('成都') || dest.includes('重庆')) recommendations.push('肠胃药', '防晒霜', '平底鞋');
       if (dest.includes('三亚') || dest.includes('海边') || dest.includes('岛')) recommendations.push('泳衣', '拖鞋', '防水手机袋');
       if (dest.includes('西藏') || dest.includes('新疆') || dest.includes('山')) recommendations.push('冲锋衣', '高原反应药', '保温杯');
       if (dest.includes('日本') || dest.includes('韩国')) recommendations.push('转换插头', '随身WiFi');
-      
-      // 随机打乱并取 5-8 个
       recommendations = recommendations.sort(() => 0.5 - Math.random()).slice(0, 8);
-
-      container.innerHTML = recommendations.map(item => `
-        <div class="recommend-tag">
-          ${item}
-          <button onclick="quickAddRecommend('${item}')">+</button>
-        </div>
-      `).join('');
+      container.innerHTML = recommendations.map(item => `<div class="recommend-tag">${item}<button onclick="quickAddRecommend('${item}')">+</button></div>`).join('');
     }
 
     function getWeatherInfo(code) { const map = {0:{icon:'☀️',desc:'晴朗'},1:{icon:'🌤️',desc:'大部晴朗'},2:{icon:'⛅',desc:'多云'},3:{icon:'☁️',desc:'阴天'},45:{icon:'🌫️',desc:'有雾'},51:{icon:'🌦️',desc:'小雨'},61:{icon:'🌧️',desc:'中雨'},71:{icon:'🌨️',desc:'小雪'},95:{icon:'⛈️',desc:'雷暴'}}; return map[code] || {icon:'🌡️',desc:'未知'}; }
-    
     async function fetchWeatherForCity(cityName) { 
       if (!cityName) return; 
       const widget = document.getElementById('weather-widget'); widget.style.display = 'block'; 
       document.getElementById('weather-city').textContent = cityName; document.getElementById('weather-desc').textContent = '获取中...'; 
       try { 
-        const geoRes = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(cityName)}&limit=1`); 
-        const geoData = await geoRes.json(); 
+        const geoRes = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(cityName)}&limit=1`); const geoData = await geoRes.json(); 
         if (!geoData.features || geoData.features.length === 0) return; 
-        const lat = geoData.features[0].geometry.coordinates[1]; 
-        const lon = geoData.features[0].geometry.coordinates[0]; 
+        const lat = geoData.features[0].geometry.coordinates[1]; const lon = geoData.features[0].geometry.coordinates[0]; 
         const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=auto`); 
-        const weatherData = await weatherRes.json(); 
-        const current = weatherData.current; 
-        const wInfo = getWeatherInfo(current.weather_code); 
-        
-        document.getElementById('weather-icon').textContent = wInfo.icon; 
-        document.getElementById('weather-temp').textContent = `${Math.round(current.temperature_2m)}°C`; 
-        document.getElementById('weather-desc').textContent = wInfo.desc; 
-        document.getElementById('weather-wind').textContent = current.wind_speed_10m; 
-        document.getElementById('weather-humidity').textContent = current.relative_humidity_2m; 
-
-        // 更新全局状态并联动衣服推荐
-        appState.currentWeather = { temp: Math.round(current.temperature_2m), desc: wInfo.desc };
-        updateClothingRecommendation(appState.currentWeather.temp, appState.currentWeather.desc);
-        
+        const weatherData = await weatherRes.json(); const current = weatherData.current; const wInfo = getWeatherInfo(current.weather_code); 
+        document.getElementById('weather-icon').textContent = wInfo.icon; document.getElementById('weather-temp').textContent = `${Math.round(current.temperature_2m)}°C`; 
+        document.getElementById('weather-desc').textContent = wInfo.desc; document.getElementById('weather-wind').textContent = current.wind_speed_10m; document.getElementById('weather-humidity').textContent = current.relative_humidity_2m; 
+        appState.currentWeather = { temp: Math.round(current.temperature_2m), desc: wInfo.desc }; updateClothingRecommendation(appState.currentWeather.temp, appState.currentWeather.desc);
       } catch (err) { console.error(err); } 
     }
 
@@ -624,7 +570,6 @@
       if (viewId === 'discover') { if (document.getElementById('inspire-content').innerHTML.includes('点击上方')) { fetchInspiration(); } } 
     }
 
-    // 灵感发现
     async function fetchInspiration() { 
       const dest = document.getElementById('input-dest').value || '成都'; 
       const container = document.getElementById('inspire-content'); 
@@ -644,7 +589,6 @@
       if(isMock) alert("AI 服务器繁忙，已展示基础灵感草案。"); 
     }
 
-    // 成员与分账
     function updateMembersCount(count) {
       let currentCount = appState.members.length; let targetCount = parseInt(count);
       if (targetCount > currentCount) { for (let i = currentCount; i < targetCount; i++) { appState.members.push(`朋友${i}`); } } 
@@ -660,8 +604,7 @@
     function removeMember(name) {
       if (appState.members.length <= 1) return alert("至少需要保留一名成员哦！");
       if (confirm(`确定要移除成员【${name}】吗？相关的账单也会受影响。`)) {
-        appState.members = appState.members.filter(m => m !== name);
-        document.getElementById('input-people').value = appState.members.length; renderMembers();
+        appState.members = appState.members.filter(m => m !== name); document.getElementById('input-people').value = appState.members.length; renderMembers();
       }
     }
     function renderMembers() {
@@ -722,7 +665,6 @@
       localStorage.setItem('pc_expenses', JSON.stringify(appState.expenses));
     }
 
-    // 地图与行程生成
     function handleSpotEnter(e) { if (e.key === 'Enter') addCustomSpot(); }
     async function addCustomSpot() { const input = document.getElementById('spot-input'); const name = input.value.trim(); if (!name) return; input.value = '搜索中...'; try { const dest = document.getElementById('input-dest').value; const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(dest + ' ' + name)}&limit=1`); const data = await res.json(); if (data.features && data.features.length > 0) { const lat = data.features[0].geometry.coordinates[1]; const lng = data.features[0].geometry.coordinates[0]; appState.customSpots.push({ name, lat, lng, transport: '🚗 驾车' }); input.value = ''; renderCustomMap(); } else { alert("未找到该地点，请尝试输入更精确的名称"); input.value = ''; } } catch (err) { alert("网络错误，搜索失败"); input.value = ''; } }
     function changeTransport(index, val) { appState.customSpots[index].transport = val; renderCustomMap(); }
@@ -732,7 +674,6 @@
     async function generatePlan() { const dest = document.getElementById('input-dest').value; const start = document.getElementById('input-start').value; const end = document.getElementById('input-end').value; const people = document.getElementById('input-people').value; const budget = parseFloat(document.getElementById('input-budget').value) || 5000; const days = Math.max(1, Math.round((new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24)) + 1); let prefs = []; document.querySelectorAll('#input-prefs .tag.active').forEach(t => prefs.push(t.textContent.trim())); fetchWeatherForCity(dest); fetchChecklistRecommendations(dest); appState.totalBudget = budget; updateBudgetUI(); document.getElementById('dash-dest').textContent = dest; document.getElementById('dash-date').textContent = `${start} 出发 · ${days}天`; document.getElementById('info-days').textContent = `${days} 天`; document.getElementById('info-people').textContent = `${people} 人`; document.getElementById('info-prefs').textContent = prefs.length > 0 ? prefs.join(' / ') : '无特殊偏好'; appState.customSpots = []; if (mapInstance) { mapInstance.remove(); mapInstance = null; } mapInstance = L.map('map-container').setView([20, 0], 2); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(mapInstance); try { const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(dest)}&limit=1`); const data = await res.json(); if (data.features?.length > 0) { const lat = data.features[0].geometry.coordinates[1]; const lng = data.features[0].geometry.coordinates[0]; mapInstance.flyTo([lat, lng], 12, { duration: 2 }); appState.customSpots.push({ name: dest + '市中心', lat, lng, transport: '🚗 驾车' }); renderCustomMap(); } } catch (err) {} const timeline = document.getElementById('timeline-list'); timeline.innerHTML = `<div style="text-align:center; margin-top:50px; color:var(--primary);"><div style="font-size:50px; animation:float 2s infinite alternate; margin-bottom:10px;">🎂</div><span style="font-weight:800;">AI 正在为你烘焙...</span></div>`; const prompt = `目的地:${dest}, 天数:${days}天, 旅行偏好:${prefs.join('、')}`; try { const response = await fetch('/api/parse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: prompt }) }); const data = await response.json(); if (data.ok && data.seed && data.seed.dailyPlan) { appState.dailyPlan = data.seed.dailyPlan; renderTimeline(data.seed.dailyPlan); } else { const mock = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`); appState.dailyPlan = mock; renderTimeline(mock); } } catch (e) { const mock = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`); appState.dailyPlan = mock; renderTimeline(mock); } }
     function renderTimeline(dailyPlan) { const timeline = document.getElementById('timeline-list'); timeline.innerHTML = ''; dailyPlan.forEach((text, i) => { timeline.innerHTML += `<div class="timeline-item"><div class="day">Day ${i + 1}</div><div class="desc">${text}</div></div>`; }); }
     
-    // 日记与 PDF
     function previewPhoto(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function(e) { tempPhotoBase64 = e.target.result; document.getElementById('photo-preview').src = e.target.result; document.getElementById('photo-preview').style.display = 'block'; }; reader.readAsDataURL(input.files[0]); } }
     function saveDiary() { const text = document.getElementById('diary-text').value; if (!text && !tempPhotoBase64) return alert("写点什么或者传张照片吧！"); appState.diaries.push({ id: Date.now(), date: new Date().toLocaleDateString(), text: text, photo: tempPhotoBase64 }); document.getElementById('diary-text').value = ''; document.getElementById('diary-photo').value = ''; document.getElementById('photo-preview').style.display = 'none'; tempPhotoBase64 = null; renderDiaries(); }
     function renderDiaries() { localStorage.setItem('pc_diaries', JSON.stringify(appState.diaries)); const list = document.getElementById('diary-list'); list.innerHTML = appState.diaries.length === 0 ? '<div style="color:var(--muted); text-align:center; margin-top:50px; font-weight:700;">还没有日记，快记录下美好的瞬间吧 📸</div>' : ''; appState.diaries.slice().reverse().forEach(d => { list.innerHTML += `<div class="diary-card">${d.photo ? `<img src="${d.photo}">` : ''}<div class="diary-card-info"><div class="date" style="font-size:12px; color:var(--muted); margin-bottom:5px; font-weight:700;">📅 ${d.date}</div><div class="text" style="font-size:15px; line-height:1.6; font-weight:600;">${d.text.replace(/\n/g, '<br>')}</div><div class="del-btn" onclick="deleteDiary(${d.id})">删除</div></div></div>`; }); }
