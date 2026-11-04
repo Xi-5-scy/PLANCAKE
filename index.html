@@ -35,7 +35,7 @@
     ::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 10px; }
 
     .top-navbar { height: 72px; background: #ffffff; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.02); z-index: 100; flex-shrink: 0; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; }
-    .logo { font-size: 24px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 6px; transition: color 0.6s; }
+    .logo { font-size: 24px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 6px; transition: color 0.6s; cursor: pointer; }
     .logo span { font-size: 26px; animation: float 3s ease-in-out infinite; }
     
     .top-tabs { display: flex; gap: 10px; }
@@ -43,8 +43,14 @@
     .top-tab:hover { background: var(--bg-color); color: var(--primary); }
     .top-tab.active { background: var(--bg-color); color: var(--primary); box-shadow: inset 0 2px 5px rgba(0,0,0,0.03); }
 
+    /* ⭐️ 顶部右侧头像 ⭐️ */
+    .nav-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--primary-light); display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s; }
+    .nav-avatar:hover { transform: scale(1.05); }
+    .nav-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
     .app-layout { display: flex; flex: 1; overflow: hidden; padding: 20px; gap: 20px; }
     
+    /* 侧边栏 */
     .sidebar { width: 340px; background: #ffffff; display: flex; flex-direction: column; border-radius: 28px; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); z-index: 10; overflow: hidden; }
     .sidebar-form-wrapper { flex: 1; overflow-y: auto; padding: 20px 20px 0 20px; }
     .sidebar-form { background: var(--bg-color); padding: 20px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.03); transition: background-color 0.6s ease; }
@@ -65,7 +71,6 @@
     .btn-export:hover { background: var(--bg-color); }
 
     .sidebar-bottom { padding: 15px 20px 20px 20px; border-top: 1px dashed rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 15px; flex-shrink: 0; }
-    
     .theme-picker { background: var(--bg-color); padding: 10px 15px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; transition: background 0.6s; }
     .theme-picker span { font-size: 13px; font-weight: 800; color: var(--primary); }
     .color-dots { display: flex; gap: 10px; }
@@ -81,6 +86,7 @@
 
     .main-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; padding-right: 10px; }
     
+    /* 首页概览 */
     .top-row { display: flex; gap: 20px; min-height: 170px; flex-shrink: 0; }
     .banner-card { flex: 2; background: linear-gradient(135deg, var(--primary), var(--primary-light)); border-radius: 28px; padding: 25px 30px; position: relative; color: #fff; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow-cute); overflow: hidden; border: 2px solid #fff; transition: background 0.6s; }
     .banner-card h1 { font-size: 36px; font-weight: 800; text-shadow: 0 2px 8px rgba(0,0,0,0.05); z-index: 2; position: relative;}
@@ -119,10 +125,12 @@
     .timeline-item .day { font-size: 14px; font-weight: 800; color: var(--primary); margin-bottom: 5px; transition: color 0.6s; }
     .timeline-item .desc { font-size: 14px; color: var(--text); background: var(--bg-color); padding: 14px; border-radius: 16px; line-height: 1.6; font-weight: 600; transition: background-color 0.6s ease;}
 
+    /* 视图面板 */
     .view-panel { display: none; height: 100%; }
     .view-panel.active { display: block; }
-    #view-diary.view-panel.active, #view-discover.view-panel.active, #view-budget.view-panel.active, #view-checklist.view-panel.active { display: flex; flex-direction: column; height: 100%; }
+    #view-diary.view-panel.active, #view-discover.view-panel.active, #view-budget.view-panel.active, #view-checklist.view-panel.active, #view-profile.view-panel.active { display: flex; flex-direction: column; height: 100%; }
 
+    /* 灵感发现 */
     .discover-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
     .discover-title { font-size: 26px; font-weight: 800; color: var(--primary); transition: color 0.6s; }
     .discover-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
@@ -133,6 +141,7 @@
     .inspire-item strong { display: block; font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
     .inspire-item p { font-size: 13px; color: var(--muted); font-weight: 600; line-height: 1.5; }
 
+    /* 行李清单 */
     .checklist-layout { display: flex; gap: 20px; height: 100%; overflow: hidden; }
     .checklist-left { flex: 1.5; display: flex; flex-direction: column; background: #ffffff; border-radius: 28px; padding: 25px; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); overflow: hidden; }
     .checklist-right { flex: 1; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; padding-right: 10px;}
@@ -159,6 +168,7 @@
     .recommend-tag button { background: var(--primary); color: #fff; border: none; width: 24px; height: 24px; border-radius: 50%; margin-left: 10px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: transform 0.1s; }
     .clothing-tip { background: linear-gradient(135deg, #FFFBF0, #FDF2EE); border-radius: 16px; padding: 15px; color: #C28B79; font-weight: 700; font-size: 14px; line-height: 1.6; }
 
+    /* 预算与分账 */
     .budget-layout { display: flex; gap: 20px; height: 100%; overflow: hidden; }
     .budget-left { flex: 1.5; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; padding-right: 10px;}
     .budget-right { flex: 1; background: #ffffff; border-radius: 28px; padding: 25px; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); overflow-y: auto;}
@@ -172,6 +182,8 @@
     .settlement-card { background: var(--bg-color); border-radius: 16px; padding: 15px; margin-bottom: 12px; border-left: 4px solid var(--primary); transition: background-color 0.6s ease;}
     .settlement-card strong { font-size: 15px; color: var(--primary); transition: color 0.6s;}
     .settlement-card p { font-size: 14px; font-weight: 700; margin-top: 5px; color: var(--text);}
+
+    /* 旅行日记 */
     .diary-container { display: flex; gap: 20px; height: 100%; }
     .diary-form { width: 320px; background: #ffffff; padding: 25px; border-radius: 28px; height: fit-content; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); flex-shrink: 0;}
     .diary-form textarea { width: 100%; height: 120px; padding: 15px; border: 2px solid rgba(0,0,0,0.04); border-radius: 16px; resize: none; margin-bottom: 15px; font-size: 14px; font-weight: 600; outline: none; }
@@ -180,6 +192,38 @@
     .diary-card { background: #ffffff; border-radius: 24px; padding: 20px; box-shadow: var(--shadow-cute); display: flex; gap: 20px; border: 1px solid rgba(255,255,255,0.8);}
     .diary-card img { width: 150px; height: 150px; object-fit: cover; border-radius: 16px; }
     .diary-card-info .del-btn { color: var(--danger); font-size: 13px; font-weight: 800; cursor: pointer; text-align: right; margin-top: 10px; }
+
+    /* ⭐️ 个人资料页面 ⭐️ */
+    .profile-container { max-width: 800px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+    .profile-header-card { background: #ffffff; border-radius: 28px; padding: 40px; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); display: flex; align-items: center; gap: 30px; position: relative; overflow: hidden; }
+    .profile-header-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 80px; background: linear-gradient(135deg, var(--primary-light), var(--bg-color)); z-index: 0; }
+    
+    .avatar-upload-wrapper { position: relative; z-index: 1; cursor: pointer; }
+    .profile-avatar { width: 120px; height: 120px; border-radius: 50%; background: #fff; border: 4px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); object-fit: cover; display: flex; align-items: center; justify-content: center; font-size: 40px; color: var(--primary-light); transition: transform 0.2s; }
+    .avatar-upload-wrapper:hover .profile-avatar { transform: scale(1.05); }
+    .avatar-upload-wrapper input[type="file"] { display: none; }
+    .avatar-edit-badge { position: absolute; bottom: 5px; right: 5px; background: var(--primary); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
+    .profile-info { z-index: 1; flex: 1; margin-top: 30px; }
+    .profile-name-input { font-size: 28px; font-weight: 800; color: var(--text); border: none; outline: none; background: transparent; border-bottom: 2px dashed transparent; width: 100%; margin-bottom: 10px; transition: border-color 0.2s; }
+    .profile-name-input:focus { border-bottom-color: var(--primary); }
+    .profile-bio { font-size: 14px; color: var(--muted); font-weight: 600; }
+    .btn-save-profile { background: var(--primary); color: #fff; border: none; padding: 10px 20px; border-radius: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 0 var(--btn-shadow); transition: all 0.1s; margin-top: 15px; display: inline-block; }
+    .btn-save-profile:active { box-shadow: 0 0 0 var(--btn-shadow); transform: translateY(4px); }
+
+    .profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+    .stat-box { background: #ffffff; border-radius: 20px; padding: 25px 20px; text-align: center; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); }
+    .stat-box .num { font-size: 32px; font-weight: 800; color: var(--primary); margin-bottom: 5px; transition: color 0.6s; }
+    .stat-box .label { font-size: 13px; color: var(--muted); font-weight: 700; }
+
+    .profile-settings { background: #ffffff; border-radius: 28px; padding: 30px; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); }
+    .profile-settings h3 { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 20px; }
+    .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px dashed rgba(0,0,0,0.05); }
+    .setting-item:last-child { border-bottom: none; }
+    .setting-text strong { font-size: 15px; color: var(--text); display: block; margin-bottom: 4px; }
+    .setting-text span { font-size: 13px; color: var(--muted); font-weight: 600; }
+    .btn-danger-outline { background: transparent; color: var(--danger); border: 2px solid var(--danger); padding: 8px 16px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: all 0.2s; }
+    .btn-danger-outline:hover { background: var(--danger); color: #fff; }
 
     .transport-icon { background: #fff; border: 2px solid var(--primary); border-radius: 20px; padding: 3px 10px; font-size: 12px; font-weight: 800; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); white-space: nowrap; display: flex; align-items: center; gap: 4px; transition: border-color 0.6s, color 0.6s;}
     
@@ -201,7 +245,7 @@
 <body>
 
   <header class="top-navbar">
-    <div class="logo"><span>🍰</span> PlanCake</div>
+    <div class="logo" onclick="switchNav('dashboard', document.querySelectorAll('.top-tab')[0])"><span>🍰</span> PlanCake</div>
     <div class="top-tabs">
       <div class="top-tab active" onclick="switchNav('dashboard', this)">🏠 行程概览</div>
       <div class="top-tab" onclick="switchNav('discover', this)">🌍 灵感发现</div>
@@ -209,7 +253,11 @@
       <div class="top-tab" onclick="switchNav('diary', this)">📔 旅行日记</div>
       <div class="top-tab" onclick="switchNav('budget', this)">💰 预算与分账</div>
     </div>
-    <div style="width: 120px;"></div> 
+    <!-- 顶部右侧：个人头像入口 -->
+    <div class="nav-avatar" onclick="switchNav('profile', document.querySelectorAll('.top-tab')[0])" title="个人中心">
+      <img id="nav-avatar-img" src="" alt="👤" style="display:none;">
+      <span id="nav-avatar-default" style="font-size:20px;">👤</span>
+    </div>
   </header>
 
   <div class="app-layout">
@@ -378,7 +426,6 @@
                 <input type="text" id="exp-desc" placeholder="花费说明 (如：吃火锅)" style="flex: 1;">
                 <input type="number" id="exp-amount" placeholder="金额(¥)" style="width: 100px;">
               </div>
-              <!-- ⭐️ 新增：结算方式选择 ⭐️ -->
               <div style="display: flex; gap: 10px;">
                 <select id="exp-payer" style="flex: 1;"></select>
                 <select id="exp-split-type" style="flex: 1;">
@@ -405,6 +452,70 @@
           </div>
         </div>
       </div>
+
+      <!-- ⭐️ 个人资料页面 ⭐️ -->
+      <div id="view-profile" class="view-panel">
+        <div class="profile-container">
+          
+          <!-- 个人卡片 -->
+          <div class="profile-header-card">
+            <div class="avatar-upload-wrapper" onclick="document.getElementById('avatar-upload').click()">
+              <!-- 默认头像和上传后的预览 -->
+              <img id="profile-avatar-img" class="profile-avatar" src="" style="display:none;">
+              <div id="profile-avatar-default" class="profile-avatar">👤</div>
+              <div class="avatar-edit-badge">📷</div>
+              <input type="file" id="avatar-upload" accept="image/*" onchange="uploadAvatar(this)">
+            </div>
+            
+            <div class="profile-info">
+              <input type="text" id="profile-name-input" class="profile-name-input" value="旅行者" placeholder="输入你的昵称..." onchange="saveProfileData()">
+              <div class="profile-bio">🌍 用脚步丈量世界，用 PlanCake 记录美好。</div>
+              <button class="btn-save-profile" onclick="saveProfileData(true)">保存资料</button>
+            </div>
+          </div>
+
+          <!-- 旅行成就 -->
+          <div class="profile-stats">
+            <div class="stat-box">
+              <div class="num" id="stat-trips">0</div>
+              <div class="label">生成行程</div>
+            </div>
+            <div class="stat-box">
+              <div class="num" id="stat-expenses">0</div>
+              <div class="label">记账笔数</div>
+            </div>
+            <div class="stat-box">
+              <div class="num" id="stat-diaries">0</div>
+              <div class="label">旅行日记</div>
+            </div>
+            <div class="stat-box">
+              <div class="num" id="stat-items">0</div>
+              <div class="label">清单物品</div>
+            </div>
+          </div>
+
+          <!-- 设置 -->
+          <div class="profile-settings">
+            <h3>⚙️ 数据与设置</h3>
+            <div class="setting-item">
+              <div class="setting-text">
+                <strong>导出所有数据</strong>
+                <span>将你的日记、账单等数据保存为 JSON 文件</span>
+              </div>
+              <button class="btn-export" style="width:auto; margin:0;" onclick="exportData()">导出备份</button>
+            </div>
+            <div class="setting-item">
+              <div class="setting-text">
+                <strong style="color:var(--danger);">清空所有数据</strong>
+                <span>删除本地保存的行程、日记、账单等（不可恢复）</span>
+              </div>
+              <button class="btn-danger-outline" onclick="clearAllData()">清空数据</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
     </main>
   </div>
 
@@ -432,7 +543,7 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    // 主题配置
+    // ⭐️ 主题配置 ⭐️
     const themes = [
       { bg: '#E8F2F7', primary: '#9AB6C9', light: '#C2D6E1', shadow: '#7692A5' }, 
       { bg: '#FAF0F2', primary: '#D9A3B1', light: '#F0D3D8', shadow: '#B57D8B' }, 
@@ -454,6 +565,7 @@
       });
     }
     function changeTheme(index) { applyTheme(index); }
+    
     window.addEventListener('DOMContentLoaded', () => {
       const savedIdx = parseInt(localStorage.getItem('pc_theme_idx')) || 0;
       applyTheme(savedIdx);
@@ -463,7 +575,7 @@
     document.getElementById('input-start').value = today.toISOString().split('T')[0];
     document.getElementById('input-end').value = nextWeek.toISOString().split('T')[0];
 
-    // 全局状态
+    // ⭐️ 全局状态：增加 userProfile ⭐️
     let appState = { 
       expenses: JSON.parse(localStorage.getItem('pc_expenses')) || [], 
       diaries: JSON.parse(localStorage.getItem('pc_diaries')) || [],
@@ -473,6 +585,10 @@
         { id: 2, text: '手机充电器', done: false },
         { id: 3, text: '换洗衣物', done: false }
       ],
+      userProfile: JSON.parse(localStorage.getItem('pc_user_profile')) || {
+        name: '旅行者',
+        avatar: ''
+      },
       totalBudget: 5000, 
       dailyPlan: [], 
       customSpots: [],
@@ -481,7 +597,75 @@
     let mapInstance = null;
     let tempPhotoBase64 = null;
 
-    // ⭐️ 行李清单逻辑 ⭐️
+    // ⭐️ 个人资料逻辑 ⭐️
+    function renderProfile() {
+      const p = appState.userProfile;
+      
+      // 昵称
+      document.getElementById('profile-name-input').value = p.name;
+      
+      // 头像
+      const defaultAvatar = document.getElementById('profile-avatar-default');
+      const imgAvatar = document.getElementById('profile-avatar-img');
+      const navDefault = document.getElementById('nav-avatar-default');
+      const navImg = document.getElementById('nav-avatar-img');
+
+      if (p.avatar) {
+        imgAvatar.src = p.avatar; imgAvatar.style.display = 'block'; defaultAvatar.style.display = 'none';
+        navImg.src = p.avatar; navImg.style.display = 'block'; navDefault.style.display = 'none';
+      } else {
+        imgAvatar.style.display = 'none'; defaultAvatar.style.display = 'flex';
+        navImg.style.display = 'none'; navDefault.style.display = 'block';
+      }
+
+      // 统计数据
+      document.getElementById('stat-trips').textContent = appState.dailyPlan.length > 0 ? '1' : '0';
+      document.getElementById('stat-expenses').textContent = appState.expenses.length;
+      document.getElementById('stat-diaries').textContent = appState.diaries.length;
+      document.getElementById('stat-items').textContent = appState.checklist.length;
+    }
+
+    function uploadAvatar(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          appState.userProfile.avatar = e.target.result;
+          renderProfile();
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function saveProfileData(showAlert = false) {
+      const newName = document.getElementById('profile-name-input').value.trim();
+      if (newName) appState.userProfile.name = newName;
+      
+      localStorage.setItem('pc_user_profile', JSON.stringify(appState.userProfile));
+      renderProfile(); // 刷新一下
+      
+      if (showAlert) alert('🎉 资料已保存！');
+    }
+
+    // ⭐️ 数据管理 ⭐️
+    function exportData() {
+      const dataStr = JSON.stringify(appState, null, 2);
+      const blob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `PlanCake_Backup_${new Date().toLocaleDateString()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function clearAllData() {
+      if (confirm('⚠️ 确定要清空所有数据吗？\n这将删除你的行程、账单、日记、清单和头像，且无法恢复！')) {
+        localStorage.clear();
+        location.reload();
+      }
+    }
+
+    // 渲染初始化
     function renderChecklist() {
       const list = document.getElementById('checklist-list'); list.innerHTML = '';
       let doneCount = 0;
@@ -498,6 +682,7 @@
       document.getElementById('progress-text').textContent = `${doneCount} / ${total} (${percent}%)`;
       document.getElementById('progress-bar').style.width = `${percent}%`;
       localStorage.setItem('pc_checklist', JSON.stringify(appState.checklist));
+      renderProfile(); // 联动更新统计
     }
     function addChecklistItem() {
       const input = document.getElementById('new-item-input'); const text = input.value.trim();
@@ -552,9 +737,17 @@
     function switchNav(viewId, el) { 
       document.querySelectorAll('.top-tab').forEach(n => n.classList.remove('active')); 
       document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active')); 
-      el.classList.add('active'); document.getElementById(`view-${viewId}`).classList.add('active'); 
+      
+      // 如果传入的 el 是存在的 Tab，就高亮；如果是点头像进来的，就不高亮任何 Tab
+      if (el && el.classList.contains('top-tab')) {
+        el.classList.add('active'); 
+      }
+      
+      document.getElementById(`view-${viewId}`).classList.add('active'); 
+      
       if (viewId === 'dashboard' && mapInstance) setTimeout(() => mapInstance.invalidateSize(), 100); 
       if (viewId === 'discover') { if (document.getElementById('inspire-content').innerHTML.includes('点击上方')) { fetchInspiration(); } } 
+      if (viewId === 'profile') { renderProfile(); } // 进个人中心时刷新数据
     }
 
     async function fetchInspiration() { 
@@ -600,32 +793,14 @@
       document.getElementById('exp-payer').innerHTML = appState.members.map(m => `<option value="${m}">${m} 付钱</option>`).join('');
       calculateSettlement();
     }
-    
-    // ⭐️ 核心：AA 结算逻辑升级 ⭐️
     function calculateSettlement() {
       const list = document.getElementById('settlement-list'); if (appState.members.length === 0) return;
-      
-      let totalSpent = 0; 
-      let paidAmounts = {}; 
-      appState.members.forEach(m => paidAmounts[m] = 0);
-      
-      // 只计算标明了 "AA" 的账单
-      appState.expenses.forEach(exp => { 
-        if (exp.isAA) {
-          totalSpent += exp.amount; 
-          if (paidAmounts[exp.payer] !== undefined) { paidAmounts[exp.payer] += exp.amount; } 
-        }
-      });
-
-      if (totalSpent === 0) { 
-        list.innerHTML = '<div style="color:var(--muted); font-size:14px; font-weight:600;">暂无 AA 账单记录，无需结算~</div>'; 
-        return; 
-      }
-      
+      let totalSpent = 0; let paidAmounts = {}; appState.members.forEach(m => paidAmounts[m] = 0);
+      appState.expenses.forEach(exp => { if (exp.isAA) { totalSpent += exp.amount; if (paidAmounts[exp.payer] !== undefined) { paidAmounts[exp.payer] += exp.amount; } } });
+      if (totalSpent === 0) { list.innerHTML = '<div style="color:var(--muted); font-size:14px; font-weight:600;">暂无 AA 账单记录，无需结算~</div>'; return; }
       const avg = totalSpent / appState.members.length;
       let balances = appState.members.map(m => ({ name: m, amount: paidAmounts[m] - avg }));
       let html = ''; let debtors = balances.filter(b => b.amount < -0.01).sort((a,b) => a.amount - b.amount); let creditors = balances.filter(b => b.amount > 0.01).sort((a,b) => b.amount - a.amount);
-      
       if (debtors.length === 0 && creditors.length === 0) {
         html = '<div style="color:#00B894; font-weight:800; font-size:15px; background:#E8F8F5; padding:15px; border-radius:16px;">🎉 完美！大家都平摊啦，不需要互相转账！</div>';
       } else {
@@ -640,65 +815,29 @@
       }
       list.innerHTML = html;
     }
-
-    // ⭐️ 添加账单：增加结算方式判断 ⭐️
     function addExpense() {
-      const desc = document.getElementById('exp-desc').value; 
-      const amount = parseFloat(document.getElementById('exp-amount').value); 
-      const payer = document.getElementById('exp-payer').value;
-      const splitType = document.getElementById('exp-split-type').value;
-      
+      const desc = document.getElementById('exp-desc').value; const amount = parseFloat(document.getElementById('exp-amount').value); const payer = document.getElementById('exp-payer').value; const splitType = document.getElementById('exp-split-type').value;
       if (!desc || !amount) return alert("请填写说明和金额");
-      
-      appState.expenses.push({ 
-        id: Date.now(), 
-        desc, 
-        amount, 
-        payer, 
-        isAA: splitType === 'AA' // 如果是 AA，标记为 true，否则 false
-      });
-      
-      document.getElementById('exp-desc').value = ''; 
-      document.getElementById('exp-amount').value = ''; 
-      updateBudgetUI(); 
-      calculateSettlement();
+      appState.expenses.push({ id: Date.now(), desc, amount, payer, isAA: splitType === 'AA' });
+      document.getElementById('exp-desc').value = ''; document.getElementById('exp-amount').value = ''; 
+      updateBudgetUI(); calculateSettlement(); renderProfile();
     }
-
-    function deleteExpense(id) { appState.expenses = appState.expenses.filter(e => e.id !== id); updateBudgetUI(); calculateSettlement(); }
-    
-    // ⭐️ 预算 UI 更新（统计全部花费，包含自费） ⭐️
+    function deleteExpense(id) { appState.expenses = appState.expenses.filter(e => e.id !== id); updateBudgetUI(); calculateSettlement(); renderProfile(); }
     function updateBudgetUI() {
-      let spent = appState.expenses.reduce((sum, item) => sum + item.amount, 0); 
-      let percent = Math.min(100, Math.round((spent / appState.totalBudget) * 100)) || 0;
-      document.getElementById('dash-spent').textContent = `¥${spent}`; 
-      document.getElementById('dash-total-budget').textContent = `¥${appState.totalBudget}`; 
-      document.getElementById('dash-budget-percent').textContent = `${percent}%`;
-      
-      const chart = document.getElementById('donut-chart'); 
-      const card = document.getElementById('dash-expense-card'); 
-      const warning = document.getElementById('budget-warning');
-      
+      let spent = appState.expenses.reduce((sum, item) => sum + item.amount, 0); let percent = Math.min(100, Math.round((spent / appState.totalBudget) * 100)) || 0;
+      document.getElementById('dash-spent').textContent = `¥${spent}`; document.getElementById('dash-total-budget').textContent = `¥${appState.totalBudget}`; document.getElementById('dash-budget-percent').textContent = `${percent}%`;
+      const chart = document.getElementById('donut-chart'); const card = document.getElementById('dash-expense-card'); const warning = document.getElementById('budget-warning');
       chart.style.background = `conic-gradient(var(--primary) ${percent}%, var(--secondary) ${percent}% 100%)`;
-      
       if (spent > appState.totalBudget) {
-        card.classList.add('over-budget'); 
-        chart.style.background = `conic-gradient(var(--danger) 100%, var(--danger) 100%)`;
-        document.getElementById('dash-budget-percent').textContent = `超支!`; 
-        document.getElementById('dash-budget-percent').style.color = `var(--danger)`;
+        card.classList.add('over-budget'); chart.style.background = `conic-gradient(var(--danger) 100%, var(--danger) 100%)`;
+        document.getElementById('dash-budget-percent').textContent = `超支!`; document.getElementById('dash-budget-percent').style.color = `var(--danger)`;
         warning.classList.add('active');
-      } else { 
-        card.classList.remove('over-budget'); 
-        document.getElementById('dash-budget-percent').style.color = `var(--primary)`; 
-        warning.classList.remove('active'); 
-      }
-      
+      } else { card.classList.remove('over-budget'); document.getElementById('dash-budget-percent').style.color = `var(--primary)`; warning.classList.remove('active'); }
       const list = document.getElementById('expense-list');
       if(list) { 
         list.innerHTML = appState.expenses.slice().reverse().map(exp => {
-          // 根据 isAA 显示不同颜色的标签
           let tagColor = exp.isAA ? 'var(--primary-light)' : 'var(--muted)';
           let tagText = exp.isAA ? 'AA' : '自费';
-          
           return `
           <div style="display:flex; justify-content:space-between; padding:15px 0; border-bottom:2px dashed rgba(0,0,0,0.05); font-weight:700;">
             <div>
@@ -719,13 +858,14 @@
     function removeSpot(index) { appState.customSpots.splice(index, 1); renderCustomMap(); }
     function calcDistance(lat1, lon1, lat2, lon2) { const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2); return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))).toFixed(1); }
     function renderCustomMap() { if (!mapInstance) { mapInstance = L.map('map-container').setView([20, 0], 2); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(mapInstance); } mapInstance.eachLayer(layer => { if (layer instanceof L.Marker || layer instanceof L.Polyline) { mapInstance.removeLayer(layer); } }); const spots = appState.customSpots; const latlngs = []; const configList = document.getElementById('route-config'); configList.innerHTML = spots.length > 0 ? '' : '<div style="color:var(--muted); text-align:center; font-size:12px; font-weight:700;">请在上方搜索框添加景点来规划路线</div>'; const transportOptions = ['🚗 驾车', '🚶 步行', '🚌 公交', '🚲 骑行']; spots.forEach((spot, i) => { const latlng = [spot.lat, spot.lng]; latlngs.push(latlng); L.marker(latlng).addTo(mapInstance).bindPopup(`<b>${i+1}. ${spot.name}</b>`); if (i > 0) { const prevSpot = spots[i-1]; const prevLatLng = [prevSpot.lat, prevSpot.lng]; L.polyline([prevLatLng, latlng], { color: 'var(--primary)', weight: 4, dashArray: '6, 6' }).addTo(mapInstance); const dist = calcDistance(prevSpot.lat, prevSpot.lng, spot.lat, spot.lng); const midLat = (prevSpot.lat + spot.lat) / 2; const midLng = (prevSpot.lng + spot.lng) / 2; const transportIcon = L.divIcon({ className: 'custom-div-icon', html: `<div class="transport-icon">${prevSpot.transport} ${dist}km</div>`, iconSize: [80, 24], iconAnchor: [40, 12] }); L.marker([midLat, midLng], { icon: transportIcon }).addTo(mapInstance); configList.innerHTML += `<div class="config-item"><div><b>${i}. ${prevSpot.name}</b> ➔ <b>${i+1}. ${spot.name}</b> <span style="color:var(--muted); font-size:12px;">(${dist}km)</span></div><div><select onchange="changeTransport(${i-1}, this.value)">${transportOptions.map(opt => `<option value="${opt}" ${prevSpot.transport === opt ? 'selected' : ''}>${opt}</option>`).join('')}</select><span style="color:var(--danger); cursor:pointer; margin-left:8px; font-size:13px; font-weight:800;" onclick="removeSpot(${i})">删除</span></div></div>`; } }); if (latlngs.length > 0) { mapInstance.fitBounds(latlngs, { padding: [30, 30] }); } }
-    async function generatePlan() { const dest = document.getElementById('input-dest').value; const start = document.getElementById('input-start').value; const end = document.getElementById('input-end').value; const people = document.getElementById('input-people').value; const budget = parseFloat(document.getElementById('input-budget').value) || 5000; const days = Math.max(1, Math.round((new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24)) + 1); let prefs = []; document.querySelectorAll('#input-prefs .tag.active').forEach(t => prefs.push(t.textContent.trim())); fetchWeatherForCity(dest); fetchChecklistRecommendations(dest); appState.totalBudget = budget; updateBudgetUI(); document.getElementById('dash-dest').textContent = dest; document.getElementById('dash-date').textContent = `${start} 出发 · ${days}天`; document.getElementById('info-days').textContent = `${days} 天`; document.getElementById('info-people').textContent = `${people} 人`; document.getElementById('info-prefs').textContent = prefs.length > 0 ? prefs.join(' / ') : '无特殊偏好'; appState.customSpots = []; if (mapInstance) { mapInstance.remove(); mapInstance = null; } mapInstance = L.map('map-container').setView([20, 0], 2); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(mapInstance); try { const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(dest)}&limit=1`); const data = await res.json(); if (data.features?.length > 0) { const lat = data.features[0].geometry.coordinates[1]; const lng = data.features[0].geometry.coordinates[0]; mapInstance.flyTo([lat, lng], 12, { duration: 2 }); appState.customSpots.push({ name: dest + '市中心', lat, lng, transport: '🚗 驾车' }); renderCustomMap(); } } catch (err) {} const timeline = document.getElementById('timeline-list'); timeline.innerHTML = `<div style="text-align:center; margin-top:50px; color:var(--primary);"><div style="font-size:50px; animation:float 2s infinite alternate; margin-bottom:10px;">🎂</div><span style="font-weight:800;">AI 正在为你烘焙...</span></div>`; const prompt = `目的地:${dest}, 天数:${days}天, 旅行偏好:${prefs.join('、')}`; try { const response = await fetch('/api/parse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: prompt }) }); const data = await response.json(); if (data.ok && data.seed && data.seed.dailyPlan) { appState.dailyPlan = data.seed.dailyPlan; renderTimeline(data.seed.dailyPlan); } else { const mock = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`); appState.dailyPlan = mock; renderTimeline(mock); } } catch (e) { const mock = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`); appState.dailyPlan = mock; renderTimeline(mock); } }
+    async function generatePlan() { const dest = document.getElementById('input-dest').value; const start = document.getElementById('input-start').value; const end = document.getElementById('input-end').value; const people = document.getElementById('input-people').value; const budget = parseFloat(document.getElementById('input-budget').value) || 5000; const days = Math.max(1, Math.round((new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24)) + 1); let prefs = []; document.querySelectorAll('#input-prefs .tag.active').forEach(t => prefs.push(t.textContent.trim())); fetchWeatherForCity(dest); fetchChecklistRecommendations(dest); appState.totalBudget = budget; updateBudgetUI(); document.getElementById('dash-dest').textContent = dest; document.getElementById('dash-date').textContent = `${start} 出发 · ${days}天`; document.getElementById('info-days').textContent = `${days} 天`; document.getElementById('info-people').textContent = `${people} 人`; document.getElementById('info-prefs').textContent = prefs.length > 0 ? prefs.join(' / ') : '无特殊偏好'; appState.customSpots = []; if (mapInstance) { mapInstance.remove(); mapInstance = null; } mapInstance = L.map('map-container').setView([20, 0], 2); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(mapInstance); try { const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(dest)}&limit=1`); const data = await res.json(); if (data.features?.length > 0) { const lat = data.features[0].geometry.coordinates[1]; const lng = data.features[0].geometry.coordinates[0]; mapInstance.flyTo([lat, lng], 12, { duration: 2 }); appState.customSpots.push({ name: dest + '市中心', lat, lng, transport: '🚗 驾车' }); renderCustomMap(); } } catch (err) {} const timeline = document.getElementById('timeline-list'); timeline.innerHTML = `<div style="text-align:center; margin-top:50px; color:var(--primary);"><div style="font-size:50px; animation:float 2s infinite alternate; margin-bottom:10px;">🎂</div><span style="font-weight:800;">AI 正在为你烘焙...</span></div>`; const prompt = `目的地:${dest}, 天数:${days}天, 旅行偏好:${prefs.join('、')}`; try { const response = await fetch('/api/parse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: prompt }) }); const data = await response.json(); if (data.ok && data.seed && data.seed.dailyPlan) { appState.dailyPlan = data.seed.dailyPlan; renderTimeline(data.seed.dailyPlan); } else { const mock = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`); appState.dailyPlan = mock; renderTimeline(mock); } } catch (e) { const mock = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`); appState.dailyPlan = mock; renderTimeline(mock); } renderProfile(); }
     function renderTimeline(dailyPlan) { const timeline = document.getElementById('timeline-list'); timeline.innerHTML = ''; dailyPlan.forEach((text, i) => { timeline.innerHTML += `<div class="timeline-item"><div class="day">Day ${i + 1}</div><div class="desc">${text}</div></div>`; }); }
     
     function previewPhoto(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function(e) { tempPhotoBase64 = e.target.result; document.getElementById('photo-preview').src = e.target.result; document.getElementById('photo-preview').style.display = 'block'; }; reader.readAsDataURL(input.files[0]); } }
-    function saveDiary() { const text = document.getElementById('diary-text').value; if (!text && !tempPhotoBase64) return alert("写点什么或者传张照片吧！"); appState.diaries.push({ id: Date.now(), date: new Date().toLocaleDateString(), text: text, photo: tempPhotoBase64 }); document.getElementById('diary-text').value = ''; document.getElementById('diary-photo').value = ''; document.getElementById('photo-preview').style.display = 'none'; tempPhotoBase64 = null; renderDiaries(); }
+    function saveDiary() { const text = document.getElementById('diary-text').value; if (!text && !tempPhotoBase64) return alert("写点什么或者传张照片吧！"); appState.diaries.push({ id: Date.now(), date: new Date().toLocaleDateString(), text: text, photo: tempPhotoBase64 }); document.getElementById('diary-text').value = ''; document.getElementById('diary-photo').value = ''; document.getElementById('photo-preview').style.display = 'none'; tempPhotoBase64 = null; renderDiaries(); renderProfile(); }
     function renderDiaries() { localStorage.setItem('pc_diaries', JSON.stringify(appState.diaries)); const list = document.getElementById('diary-list'); list.innerHTML = appState.diaries.length === 0 ? '<div style="color:var(--muted); text-align:center; margin-top:50px; font-weight:700;">还没有日记，快记录下美好的瞬间吧 📸</div>' : ''; appState.diaries.slice().reverse().forEach(d => { list.innerHTML += `<div class="diary-card">${d.photo ? `<img src="${d.photo}">` : ''}<div class="diary-card-info"><div class="date" style="font-size:12px; color:var(--muted); margin-bottom:5px; font-weight:700;">📅 ${d.date}</div><div class="text" style="font-size:15px; line-height:1.6; font-weight:600;">${d.text.replace(/\n/g, '<br>')}</div><div class="del-btn" onclick="deleteDiary(${d.id})">删除</div></div></div>`; }); }
-    function deleteDiary(id) { if(confirm('确定要删除这条日记吗？')) { appState.diaries = appState.diaries.filter(d => d.id !== id); renderDiaries(); } }
+    function deleteDiary(id) { if(confirm('确定要删除这条日记吗？')) { appState.diaries = appState.diaries.filter(d => d.id !== id); renderDiaries(); renderProfile(); } }
+    
     function exportPDF() { const dest = document.getElementById('input-dest').value || '未填写'; const start = document.getElementById('input-start').value || '待定'; const end = document.getElementById('input-end').value || '待定'; const people = document.getElementById('input-people').value || '2'; if (appState.dailyPlan.length === 0) return alert("请先点击“开始烘焙行程”，生成行程后再导出哦！"); document.getElementById('pdf-dest-info').textContent = `📍 目的地：${dest}`; document.getElementById('pdf-date-info').textContent = `📅 日期：${start} 至 ${end}`; document.getElementById('pdf-people-info').textContent = `👥 人数：${people} 人`; let timelineHtml = ''; appState.dailyPlan.forEach((text, i) => { timelineHtml += `<div class="pdf-day"><div class="pdf-day-title">Day ${i + 1}</div><div>${text}</div></div>`; }); document.getElementById('pdf-timeline-list').innerHTML = timelineHtml; let expenseHtml = ''; let totalSpent = 0; appState.expenses.forEach(exp => { totalSpent += exp.amount; expenseHtml += `<div class="pdf-expense-row"><span>[${exp.isAA ? 'AA' : '自费'}] [${exp.payer}] ${exp.desc}</span><span>¥${exp.amount}</span></div>`; }); if(appState.expenses.length === 0) expenseHtml = '<div style="color:#999;">暂无记账记录</div>'; document.getElementById('pdf-expense-list').innerHTML = expenseHtml; document.getElementById('pdf-total').innerHTML = `总花费：¥${totalSpent} / 预算：¥${appState.totalBudget}`; let diaryHtml = ''; appState.diaries.forEach(d => { diaryHtml += `<div class="pdf-diary-card"><div style="font-size:12px; color:#999; margin-bottom:5px;">📅 ${d.date}</div><div>${d.text.replace(/\n/g, '<br>')}</div>${d.photo ? `<img src="${d.photo}">` : ''}</div>`; }); if(appState.diaries.length === 0) diaryHtml = '<div style="color:#999;">暂无日记记录</div>'; document.getElementById('pdf-diary-list').innerHTML = diaryHtml; const element = document.getElementById('pdf-template'); element.style.display = 'block'; const opt = { margin: 10, filename: `PlanCake_${dest}_旅行计划.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }; html2pdf().set(opt).from(element).save().then(() => { element.style.display = 'none'; }); }
 
     // 初始化
@@ -733,6 +873,7 @@
     renderMembers();
     renderDiaries(); 
     renderChecklist();
+    renderProfile();
     fetchWeatherForCity(document.getElementById('input-dest').value); 
     fetchChecklistRecommendations(document.getElementById('input-dest').value);
     renderCustomMap();
