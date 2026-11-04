@@ -2,42 +2,167 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <title>PlanCake</title>
-</head>
-<body>
-  <h1>PlanCake</h1>
-  <p>AI 旅行规划助手</p>
-</body>
-</html>
-<!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <title>PlanCake</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PlanCake - AI 旅行规划助手</title>
   <style>
-    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; }
-    input { width: 100%; padding: 10px; margin-bottom: 10px; font-size: 16px; box-sizing: border-box; }
-    button { padding: 10px 20px; font-size: 16px; cursor: pointer; background: #0070f3; color: white; border: none; border-radius: 5px; }
-    pre { background: #f4f4f4; padding: 15px; border-radius: 5px; white-space: pre-wrap; font-size: 14px; }
+    /* 定义颜色变量 */
+    :root {
+      --primary-purple: #6c5ce7; /* 蓝紫色 */
+      --primary-light: #a29bfe;
+      --secondary-yellow: #fdcb6e; /* 淡黄色 */
+      --secondary-light: #fff3d4;
+      --text-main: #2d3436;
+      --text-muted: #636e72;
+      --bg-color: #f7f8fc;
+      --card-bg: #ffffff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .app-container {
+      background-color: var(--card-bg);
+      width: 100%;
+      max-width: 600px;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(108, 92, 231, 0.1);
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 顶部装饰 */
+    .header { text-align: center; margin-bottom: 30px; }
+    .logo {
+      font-size: 32px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary-purple), var(--primary-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    .subtitle { color: var(--text-muted); font-size: 16px; }
+
+    /* 快捷标签 */
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .tag {
+      background-color: var(--secondary-light);
+      color: #d63031;
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid var(--secondary-yellow);
+    }
+    .tag:hover { background-color: var(--secondary-yellow); color: #fff; }
+
+    /* 输入区域 */
+    .input-group { display: flex; gap: 10px; margin-bottom: 25px; }
+    input[type="text"] {
+      flex: 1;
+      padding: 15px 20px;
+      font-size: 16px;
+      border: 2px solid #e1e4e8;
+      border-radius: 12px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    input[type="text"]:focus { border-color: var(--primary-purple); }
+
+    button {
+      background: linear-gradient(135deg, var(--primary-purple), var(--primary-light));
+      color: white;
+      border: none;
+      padding: 0 30px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3); }
+    button:disabled { background: #b2bec3; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* 结果展示区 */
+    .result-container {
+      background-color: #fafafa;
+      border-radius: 12px;
+      padding: 20px;
+      border-left: 4px solid var(--primary-purple);
+    }
+    .result-title { font-size: 14px; color: var(--text-muted); margin-bottom: 10px; font-weight: bold; }
+    pre {
+      background: #2d3436;
+      color: #a29bfe;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      max-height: 300px;
+      overflow-y: auto;
+    }
   </style>
 </head>
 <body>
-  <h1>PlanCake</h1>
-  <p>输入你的旅行需求，让 AI 解析：</p>
-  
-  <input type="text" id="user-input" placeholder="例如：想去关西玩5天，带爸妈，不想太赶，预算一万以内" />
-  <button onclick="testAI()">开始解析</button>
 
-  <h3>AI 返回的结果：</h3>
-  <pre id="result">等待输入...</pre>
+  <div class="app-container">
+    <div class="header">
+      <div class="logo">PlanCake 🍰</div>
+      <div class="subtitle">你的 AI 分层旅行规划师</div>
+    </div>
+
+    <div class="tags-container">
+      <div class="tag" onclick="fillInput('带爸妈去关西玩5天，不想太赶，预算一万')">带爸妈关西5日游</div>
+      <div class="tag" onclick="fillInput('周末去成都吃美食，2天，预算2000，想吃火锅')">成都周末美食</div>
+      <div class="tag" onclick="fillInput('情侣去日本看樱花，5天，节奏慢一点')">日本赏樱慢游</div>
+    </div>
+
+    <div class="input-group">
+      <input type="text" id="user-input" placeholder="例如：想去关西玩5天，带爸妈，预算一万以内..." />
+      <button id="submit-btn" onclick="testAI()">开始规划</button>
+    </div>
+
+    <div class="result-container">
+      <div class="result-title">🪄 解析结果 (JSON):</div>
+      <pre id="result">等待输入你的旅行需求...</pre>
+    </div>
+  </div>
 
   <script>
+    // 点击标签快速填入
+    function fillInput(text) {
+      document.getElementById('user-input').value = text;
+    }
+
     async function testAI() {
       const text = document.getElementById('user-input').value;
       const resultBox = document.getElementById('result');
-      if (!text) return alert('请先输入需求');
+      const btn = document.getElementById('submit-btn');
       
-      resultBox.textContent = 'AI 正在思考中，请稍候（大概需要几秒钟）...';
+      if (!text) return alert('请先输入你的旅行需求哦~');
+      
+      // 按钮变灰，显示加载状态
+      btn.disabled = true;
+      btn.textContent = '正在烘焙...';
+      resultBox.textContent = 'AI 正在思考中，请稍候... 🍰';
 
       try {
         const response = await fetch('/api/parse', {
@@ -46,9 +171,15 @@
           body: JSON.stringify({ text: text })
         });
         const data = await response.json();
+        
+        // 把返回的 JSON 格式化得漂亮一点
         resultBox.textContent = JSON.stringify(data, null, 2);
       } catch (error) {
         resultBox.textContent = '出错了：' + error.message;
+      } finally {
+        // 恢复按钮状态
+        btn.disabled = false;
+        btn.textContent = '开始规划';
       }
     }
   </script>
