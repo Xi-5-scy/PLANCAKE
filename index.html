@@ -64,10 +64,8 @@
     .btn-export { width: 100%; padding: 12px; background: #fff; color: var(--primary); border: 2px solid var(--primary); border-radius: 14px; font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; transition: all 0.2s; }
     .btn-export:hover { background: var(--bg-color); }
 
-    /* ⭐️ 优化后的左下角面板 ⭐️ */
     .sidebar-bottom { padding: 15px 20px 20px 20px; border-top: 1px dashed rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 15px; flex-shrink: 0; }
     
-    /* 新的调色盘样式：居中排列，带底板 */
     .theme-picker { background: var(--bg-color); padding: 10px 15px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; transition: background 0.6s; }
     .theme-picker span { font-size: 13px; font-weight: 800; color: var(--primary); }
     .color-dots { display: flex; gap: 10px; }
@@ -251,12 +249,10 @@
         </div>
       </div>
       
-      <!-- ⭐️ 优化后的侧边栏底部：带底板且居中的调色盘 ⭐️ -->
       <div class="sidebar-bottom">
         <div class="theme-picker">
           <span>🎨 主题色</span>
           <div class="color-dots">
-            <!-- 修复了参数，从 0 开始 -->
             <div class="color-dot active" style="background-color: #9AB6C9;" onclick="changeTheme(0)" title="晨曦灰蓝"></div>
             <div class="color-dot" style="background-color: #D9A3B1;" onclick="changeTheme(1)" title="樱花灰粉"></div>
             <div class="color-dot" style="background-color: #9FC2B1;" onclick="changeTheme(2)" title="薄荷灰绿"></div>
@@ -382,8 +378,13 @@
                 <input type="text" id="exp-desc" placeholder="花费说明 (如：吃火锅)" style="flex: 1;">
                 <input type="number" id="exp-amount" placeholder="金额(¥)" style="width: 100px;">
               </div>
+              <!-- ⭐️ 新增：结算方式选择 ⭐️ -->
               <div style="display: flex; gap: 10px;">
                 <select id="exp-payer" style="flex: 1;"></select>
+                <select id="exp-split-type" style="flex: 1;">
+                  <option value="AA">👥 全员 AA 平摊</option>
+                  <option value="Personal">👤 个人自费 (不参与AA)</option>
+                </select>
                 <button class="btn-generate" style="margin:0; padding:0 25px; font-size:15px; border-radius:16px; width:auto;" onclick="addExpense()">记一笔</button>
               </div>
             </div>
@@ -431,7 +432,7 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    // ⭐️ 治愈系莫兰迪配色 ⭐️
+    // 主题配置
     const themes = [
       { bg: '#E8F2F7', primary: '#9AB6C9', light: '#C2D6E1', shadow: '#7692A5' }, 
       { bg: '#FAF0F2', primary: '#D9A3B1', light: '#F0D3D8', shadow: '#B57D8B' }, 
@@ -441,7 +442,6 @@
       { bg: '#FDF2EE', primary: '#E8B4A2', light: '#F2D0C5', shadow: '#C28B79' }  
     ];
     
-    // ⭐️ 修复了错位 bug：严格根据传入的 index 进行颜色激活 ⭐️
     function applyTheme(index) {
       const t = themes[index];
       document.documentElement.style.setProperty('--bg-color', t.bg);
@@ -449,16 +449,11 @@
       document.documentElement.style.setProperty('--primary-light', t.light);
       document.documentElement.style.setProperty('--btn-shadow', t.shadow);
       localStorage.setItem('pc_theme_idx', index);
-      
-      const dots = document.querySelectorAll('.color-dot');
-      dots.forEach((dot, i) => {
-        if (i === index) dot.classList.add('active'); 
-        else dot.classList.remove('active');
+      document.querySelectorAll('.color-dot').forEach((dot, i) => {
+        if (i === index) dot.classList.add('active'); else dot.classList.remove('active');
       });
     }
-    
     function changeTheme(index) { applyTheme(index); }
-    
     window.addEventListener('DOMContentLoaded', () => {
       const savedIdx = parseInt(localStorage.getItem('pc_theme_idx')) || 0;
       applyTheme(savedIdx);
@@ -468,6 +463,7 @@
     document.getElementById('input-start').value = today.toISOString().split('T')[0];
     document.getElementById('input-end').value = nextWeek.toISOString().split('T')[0];
 
+    // 全局状态
     let appState = { 
       expenses: JSON.parse(localStorage.getItem('pc_expenses')) || [], 
       diaries: JSON.parse(localStorage.getItem('pc_diaries')) || [],
@@ -485,6 +481,7 @@
     let mapInstance = null;
     let tempPhotoBase64 = null;
 
+    // ⭐️ 行李清单逻辑 ⭐️
     function renderChecklist() {
       const list = document.getElementById('checklist-list'); list.innerHTML = '';
       let doneCount = 0;
@@ -603,14 +600,32 @@
       document.getElementById('exp-payer').innerHTML = appState.members.map(m => `<option value="${m}">${m} 付钱</option>`).join('');
       calculateSettlement();
     }
+    
+    // ⭐️ 核心：AA 结算逻辑升级 ⭐️
     function calculateSettlement() {
       const list = document.getElementById('settlement-list'); if (appState.members.length === 0) return;
-      let totalSpent = 0; let paidAmounts = {}; appState.members.forEach(m => paidAmounts[m] = 0);
-      appState.expenses.forEach(exp => { totalSpent += exp.amount; if (paidAmounts[exp.payer] !== undefined) { paidAmounts[exp.payer] += exp.amount; } });
-      if (totalSpent === 0) { list.innerHTML = '<div style="color:var(--muted); font-size:14px; font-weight:600;">还没有花费记录，无需结算~</div>'; return; }
+      
+      let totalSpent = 0; 
+      let paidAmounts = {}; 
+      appState.members.forEach(m => paidAmounts[m] = 0);
+      
+      // 只计算标明了 "AA" 的账单
+      appState.expenses.forEach(exp => { 
+        if (exp.isAA) {
+          totalSpent += exp.amount; 
+          if (paidAmounts[exp.payer] !== undefined) { paidAmounts[exp.payer] += exp.amount; } 
+        }
+      });
+
+      if (totalSpent === 0) { 
+        list.innerHTML = '<div style="color:var(--muted); font-size:14px; font-weight:600;">暂无 AA 账单记录，无需结算~</div>'; 
+        return; 
+      }
+      
       const avg = totalSpent / appState.members.length;
       let balances = appState.members.map(m => ({ name: m, amount: paidAmounts[m] - avg }));
       let html = ''; let debtors = balances.filter(b => b.amount < -0.01).sort((a,b) => a.amount - b.amount); let creditors = balances.filter(b => b.amount > 0.01).sort((a,b) => b.amount - a.amount);
+      
       if (debtors.length === 0 && creditors.length === 0) {
         html = '<div style="color:#00B894; font-weight:800; font-size:15px; background:#E8F8F5; padding:15px; border-radius:16px;">🎉 完美！大家都平摊啦，不需要互相转账！</div>';
       } else {
@@ -625,32 +640,75 @@
       }
       list.innerHTML = html;
     }
+
+    // ⭐️ 添加账单：增加结算方式判断 ⭐️
     function addExpense() {
-      const desc = document.getElementById('exp-desc').value; const amount = parseFloat(document.getElementById('exp-amount').value); const payer = document.getElementById('exp-payer').value;
+      const desc = document.getElementById('exp-desc').value; 
+      const amount = parseFloat(document.getElementById('exp-amount').value); 
+      const payer = document.getElementById('exp-payer').value;
+      const splitType = document.getElementById('exp-split-type').value;
+      
       if (!desc || !amount) return alert("请填写说明和金额");
-      appState.expenses.push({ id: Date.now(), desc, amount, payer });
-      document.getElementById('exp-desc').value = ''; document.getElementById('exp-amount').value = ''; 
-      updateBudgetUI(); calculateSettlement();
+      
+      appState.expenses.push({ 
+        id: Date.now(), 
+        desc, 
+        amount, 
+        payer, 
+        isAA: splitType === 'AA' // 如果是 AA，标记为 true，否则 false
+      });
+      
+      document.getElementById('exp-desc').value = ''; 
+      document.getElementById('exp-amount').value = ''; 
+      updateBudgetUI(); 
+      calculateSettlement();
     }
+
     function deleteExpense(id) { appState.expenses = appState.expenses.filter(e => e.id !== id); updateBudgetUI(); calculateSettlement(); }
+    
+    // ⭐️ 预算 UI 更新（统计全部花费，包含自费） ⭐️
     function updateBudgetUI() {
-      let spent = appState.expenses.reduce((sum, item) => sum + item.amount, 0); let percent = Math.min(100, Math.round((spent / appState.totalBudget) * 100)) || 0;
-      document.getElementById('dash-spent').textContent = `¥${spent}`; document.getElementById('dash-total-budget').textContent = `¥${appState.totalBudget}`; document.getElementById('dash-budget-percent').textContent = `${percent}%`;
-      const chart = document.getElementById('donut-chart'); const card = document.getElementById('dash-expense-card'); const warning = document.getElementById('budget-warning');
+      let spent = appState.expenses.reduce((sum, item) => sum + item.amount, 0); 
+      let percent = Math.min(100, Math.round((spent / appState.totalBudget) * 100)) || 0;
+      document.getElementById('dash-spent').textContent = `¥${spent}`; 
+      document.getElementById('dash-total-budget').textContent = `¥${appState.totalBudget}`; 
+      document.getElementById('dash-budget-percent').textContent = `${percent}%`;
+      
+      const chart = document.getElementById('donut-chart'); 
+      const card = document.getElementById('dash-expense-card'); 
+      const warning = document.getElementById('budget-warning');
+      
       chart.style.background = `conic-gradient(var(--primary) ${percent}%, var(--secondary) ${percent}% 100%)`;
+      
       if (spent > appState.totalBudget) {
-        card.classList.add('over-budget'); chart.style.background = `conic-gradient(var(--danger) 100%, var(--danger) 100%)`;
-        document.getElementById('dash-budget-percent').textContent = `超支!`; document.getElementById('dash-budget-percent').style.color = `var(--danger)`;
+        card.classList.add('over-budget'); 
+        chart.style.background = `conic-gradient(var(--danger) 100%, var(--danger) 100%)`;
+        document.getElementById('dash-budget-percent').textContent = `超支!`; 
+        document.getElementById('dash-budget-percent').style.color = `var(--danger)`;
         warning.classList.add('active');
-      } else { card.classList.remove('over-budget'); document.getElementById('dash-budget-percent').style.color = `var(--primary)`; warning.classList.remove('active'); }
+      } else { 
+        card.classList.remove('over-budget'); 
+        document.getElementById('dash-budget-percent').style.color = `var(--primary)`; 
+        warning.classList.remove('active'); 
+      }
+      
       const list = document.getElementById('expense-list');
       if(list) { 
-        list.innerHTML = appState.expenses.slice().reverse().map(exp => `
+        list.innerHTML = appState.expenses.slice().reverse().map(exp => {
+          // 根据 isAA 显示不同颜色的标签
+          let tagColor = exp.isAA ? 'var(--primary-light)' : 'var(--muted)';
+          let tagText = exp.isAA ? 'AA' : '自费';
+          
+          return `
           <div style="display:flex; justify-content:space-between; padding:15px 0; border-bottom:2px dashed rgba(0,0,0,0.05); font-weight:700;">
-            <div><span style="background:var(--primary-light); color:#fff; padding:2px 8px; border-radius:10px; font-size:12px; margin-right:8px;">${exp.payer}</span>${exp.desc}</div>
+            <div>
+              <span style="background:${tagColor}; color:#fff; padding:2px 8px; border-radius:10px; font-size:12px; margin-right:6px;">${tagText}</span>
+              <span style="background:var(--bg-color); color:var(--text); padding:2px 8px; border-radius:10px; font-size:12px; margin-right:8px;">${exp.payer}付</span>
+              ${exp.desc}
+            </div>
             <div><span style="margin-right:15px; color:var(--danger);">¥${exp.amount}</span><span style="color: var(--muted); cursor: pointer; font-size:13px;" onclick="deleteExpense(${exp.id})">删除</span></div>
           </div>
-        `).join(''); 
+        `}).join(''); 
       }
       localStorage.setItem('pc_expenses', JSON.stringify(appState.expenses));
     }
@@ -668,7 +726,7 @@
     function saveDiary() { const text = document.getElementById('diary-text').value; if (!text && !tempPhotoBase64) return alert("写点什么或者传张照片吧！"); appState.diaries.push({ id: Date.now(), date: new Date().toLocaleDateString(), text: text, photo: tempPhotoBase64 }); document.getElementById('diary-text').value = ''; document.getElementById('diary-photo').value = ''; document.getElementById('photo-preview').style.display = 'none'; tempPhotoBase64 = null; renderDiaries(); }
     function renderDiaries() { localStorage.setItem('pc_diaries', JSON.stringify(appState.diaries)); const list = document.getElementById('diary-list'); list.innerHTML = appState.diaries.length === 0 ? '<div style="color:var(--muted); text-align:center; margin-top:50px; font-weight:700;">还没有日记，快记录下美好的瞬间吧 📸</div>' : ''; appState.diaries.slice().reverse().forEach(d => { list.innerHTML += `<div class="diary-card">${d.photo ? `<img src="${d.photo}">` : ''}<div class="diary-card-info"><div class="date" style="font-size:12px; color:var(--muted); margin-bottom:5px; font-weight:700;">📅 ${d.date}</div><div class="text" style="font-size:15px; line-height:1.6; font-weight:600;">${d.text.replace(/\n/g, '<br>')}</div><div class="del-btn" onclick="deleteDiary(${d.id})">删除</div></div></div>`; }); }
     function deleteDiary(id) { if(confirm('确定要删除这条日记吗？')) { appState.diaries = appState.diaries.filter(d => d.id !== id); renderDiaries(); } }
-    function exportPDF() { const dest = document.getElementById('input-dest').value || '未填写'; const start = document.getElementById('input-start').value || '待定'; const end = document.getElementById('input-end').value || '待定'; const people = document.getElementById('input-people').value || '2'; if (appState.dailyPlan.length === 0) return alert("请先点击“开始烘焙行程”，生成行程后再导出哦！"); document.getElementById('pdf-dest-info').textContent = `📍 目的地：${dest}`; document.getElementById('pdf-date-info').textContent = `📅 日期：${start} 至 ${end}`; document.getElementById('pdf-people-info').textContent = `👥 人数：${people} 人`; let timelineHtml = ''; appState.dailyPlan.forEach((text, i) => { timelineHtml += `<div class="pdf-day"><div class="pdf-day-title">Day ${i + 1}</div><div>${text}</div></div>`; }); document.getElementById('pdf-timeline-list').innerHTML = timelineHtml; let expenseHtml = ''; let totalSpent = 0; appState.expenses.forEach(exp => { totalSpent += exp.amount; expenseHtml += `<div class="pdf-expense-row"><span>[${exp.payer}] ${exp.desc}</span><span>¥${exp.amount}</span></div>`; }); if(appState.expenses.length === 0) expenseHtml = '<div style="color:#999;">暂无记账记录</div>'; document.getElementById('pdf-expense-list').innerHTML = expenseHtml; document.getElementById('pdf-total').innerHTML = `总花费：¥${totalSpent} / 预算：¥${appState.totalBudget}`; let diaryHtml = ''; appState.diaries.forEach(d => { diaryHtml += `<div class="pdf-diary-card"><div style="font-size:12px; color:#999; margin-bottom:5px;">📅 ${d.date}</div><div>${d.text.replace(/\n/g, '<br>')}</div>${d.photo ? `<img src="${d.photo}">` : ''}</div>`; }); if(appState.diaries.length === 0) diaryHtml = '<div style="color:#999;">暂无日记记录</div>'; document.getElementById('pdf-diary-list').innerHTML = diaryHtml; const element = document.getElementById('pdf-template'); element.style.display = 'block'; const opt = { margin: 10, filename: `PlanCake_${dest}_旅行计划.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }; html2pdf().set(opt).from(element).save().then(() => { element.style.display = 'none'; }); }
+    function exportPDF() { const dest = document.getElementById('input-dest').value || '未填写'; const start = document.getElementById('input-start').value || '待定'; const end = document.getElementById('input-end').value || '待定'; const people = document.getElementById('input-people').value || '2'; if (appState.dailyPlan.length === 0) return alert("请先点击“开始烘焙行程”，生成行程后再导出哦！"); document.getElementById('pdf-dest-info').textContent = `📍 目的地：${dest}`; document.getElementById('pdf-date-info').textContent = `📅 日期：${start} 至 ${end}`; document.getElementById('pdf-people-info').textContent = `👥 人数：${people} 人`; let timelineHtml = ''; appState.dailyPlan.forEach((text, i) => { timelineHtml += `<div class="pdf-day"><div class="pdf-day-title">Day ${i + 1}</div><div>${text}</div></div>`; }); document.getElementById('pdf-timeline-list').innerHTML = timelineHtml; let expenseHtml = ''; let totalSpent = 0; appState.expenses.forEach(exp => { totalSpent += exp.amount; expenseHtml += `<div class="pdf-expense-row"><span>[${exp.isAA ? 'AA' : '自费'}] [${exp.payer}] ${exp.desc}</span><span>¥${exp.amount}</span></div>`; }); if(appState.expenses.length === 0) expenseHtml = '<div style="color:#999;">暂无记账记录</div>'; document.getElementById('pdf-expense-list').innerHTML = expenseHtml; document.getElementById('pdf-total').innerHTML = `总花费：¥${totalSpent} / 预算：¥${appState.totalBudget}`; let diaryHtml = ''; appState.diaries.forEach(d => { diaryHtml += `<div class="pdf-diary-card"><div style="font-size:12px; color:#999; margin-bottom:5px;">📅 ${d.date}</div><div>${d.text.replace(/\n/g, '<br>')}</div>${d.photo ? `<img src="${d.photo}">` : ''}</div>`; }); if(appState.diaries.length === 0) diaryHtml = '<div style="color:#999;">暂无日记记录</div>'; document.getElementById('pdf-diary-list').innerHTML = diaryHtml; const element = document.getElementById('pdf-template'); element.style.display = 'block'; const opt = { margin: 10, filename: `PlanCake_${dest}_旅行计划.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }; html2pdf().set(opt).from(element).save().then(() => { element.style.display = 'none'; }); }
 
     // 初始化
     updateBudgetUI(); 
