@@ -36,7 +36,7 @@
     .tag { padding: 8px 12px; border-radius: 8px; background: var(--bg); font-size: 13px; cursor: pointer; border: 1px solid transparent; }
     .tag.active { background: var(--secondary-light); border-color: var(--secondary); color: #d63031; }
 
-    .btn-primary { width: 100%; padding: 15px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    .btn-primary { width: 100%; padding: 15px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
     .btn-primary:hover { background: #5b4bc4; }
 
     .workspace { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -94,9 +94,14 @@
     .map-stat { font-size: 14px; font-weight: bold; color: var(--primary); }
     #map-container { flex: 1; width: 100%; height: 100%; z-index: 1; }
 
+    /* 加载与提示 */
     .loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 99; }
     .loading-overlay.active { display: flex; }
-    @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-20px); } }
+    
+    @keyframes bounce { 
+      from { transform: translateY(0); } 
+      to { transform: translateY(-15px); } 
+    }
   </style>
 </head>
 <body>
@@ -140,20 +145,25 @@
     <div class="workspace" style="position: relative;">
       <div class="loading-overlay" id="loading">
         <div style="font-size: 50px; animation: bounce 1s infinite alternate;">🎂</div>
-        <h2 style="color: var(--primary); margin-top: 20px;">AI 正在为你定制行程...</h2>
+        <h2 style="color: var(--primary); margin-top: 20px;">AI 正在为你烘焙行程...</h2>
       </div>
 
       <div class="tabs">
         <div class="tab active" onclick="switchTab('itinerary', this)">🗺️ 每日行程</div>
-        <div class="tab" onclick="switchTab('map', this)">📍 智能地图</div> <!-- 新增地图页 -->
+        <div class="tab" onclick="switchTab('map', this)">📍 智能地图</div>
         <div class="tab" onclick="switchTab('budget', this)">💰 预算记账本</div>
         <div class="tab" onclick="switchTab('discover', this)">🌍 灵感探索</div>
       </div>
 
-      <!-- 面板 1：行程规划 -->
+      <!-- 面板 1：行程规划 (包含可爱提示语) -->
       <div class="panel active" id="panel-itinerary">
         <div id="empty-tip" style="text-align: center; color: var(--muted); margin-top: 100px;">
-          <h2>请在左侧填写信息并生成</h2>
+          <div style="font-size: 80px; margin-bottom: 20px; animation: bounce 2s infinite alternate;">🧁</div>
+          <h2 style="color: var(--primary); font-size: 26px; font-weight: 800; margin-bottom: 15px;">👈 左边戳一戳，让我猜猜你想去哪玩？</h2>
+          <p style="font-size: 16px; color: #b2bec3; line-height: 1.8;">
+            把目的地和偏好填好，我立刻为你<br>
+            <span style="color: var(--secondary); font-weight: bold; font-size: 18px;">🍰 烘焙一份专属的旅行蛋糕 🍰</span>
+          </p>
         </div>
         <div id="itinerary-content" style="display: none;">
           <h2 id="res-title" style="margin-bottom: 20px;"></h2>
@@ -234,6 +244,14 @@
             </div>
           </div>
         </div>
+
+        <div id="city-dali" class="city-content">
+          <div class="city-hero">
+            <img src="https://images.unsplash.com/photo-1543857770-07d78dcd7d5c?auto=format&fit=crop&w=1200&q=80" alt="大理">
+            <h1>大理 · 风花雪月</h1>
+          </div>
+        </div>
+
       </div>
 
     </div>
@@ -251,116 +269,78 @@
     let appState = { expenses: [] };
     let mapInstance = null;
 
-    // --- 切换标签 ---
     function switchTab(tabId, el) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
       el.classList.add('active');
       document.getElementById(`panel-${tabId}`).classList.add('active');
-
-      // 如果切换到地图页，且地图还没初始化，则初始化地图
       if (tabId === 'map' && !mapInstance) {
-        setTimeout(initMap, 100); // 稍微延迟确保容器可见
+        setTimeout(initMap, 100);
       }
     }
 
     // --- 地图功能 ---
     function initMap() {
-      // 如果已经有地图实例，先销毁
-      if (mapInstance) {
-        mapInstance.remove();
-      }
-
-      // 以成都市中心为初始点
+      if (mapInstance) mapInstance.remove();
       mapInstance = L.map('map-container').setView([30.6598, 104.0633], 12);
-
-      // 加载免费开源地图底图 (CartoDB 亮色主题)
       L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap &copy; CartoDB',
-        maxZoom: 19
+        attribution: '&copy; OpenStreetMap &copy; CartoDB', maxZoom: 19
       }).addTo(mapInstance);
 
-      // 模拟路线数据（成都景点坐标）
       const routePoints = [
         { name: '宽窄巷子', lat: 30.6695, lng: 104.0590, type: 'spot' },
         { name: '人民公园', lat: 30.6637, lng: 104.0633, type: 'spot' },
         { name: '武侯祠', lat: 30.6461, lng: 104.0492, type: 'spot' },
-        { name: '锦里古街', lat: 30.6445, lng: 104.0495, type: 'spot' },
         { name: '春熙路/太古里', lat: 30.6571, lng: 104.0810, type: 'spot' },
-        // 附近餐厅推荐
-        { name: '🍴 蜀大侠火锅 (春熙路店)', lat: 30.6580, lng: 104.0790, type: 'food' },
-        { name: '🍴 钟水饺 (武侯祠附近)', lat: 30.6470, lng: 104.0510, type: 'food' }
+        { name: '🍴 蜀大侠火锅', lat: 30.6580, lng: 104.0790, type: 'food' }
       ];
 
-      // 创建一个红色自定义图标用于餐厅
-      const foodIcon = L.divIcon({
-        className: 'custom-div-icon',
-        html: "<div style='font-size:24px;'>🍴</div>",
-        iconSize: [30, 42],
-        iconAnchor: [15, 42]
-      });
-
+      const foodIcon = L.divIcon({ className: 'custom-div-icon', html: "<div style='font-size:24px;'>🍴</div>", iconSize: [30, 42], iconAnchor: [15, 42] });
       let latlngs = [];
       let totalDistance = 0;
 
-      routePoints.forEach((point, index) => {
+      routePoints.forEach((point) => {
         const latlng = [point.lat, point.lng];
-        
-        // 只有景点计入路线串联
         if (point.type === 'spot') {
           latlngs.push(latlng);
-          // 画圆点标记
-          L.marker(latlng).addTo(mapInstance)
-            .bindPopup(`<b>${point.name}</b><br>第 ${latlngs.length} 站`);
+          L.marker(latlng).addTo(mapInstance).bindPopup(`<b>${point.name}</b>`);
         } else {
-          // 画餐厅图标
-          L.marker(latlng, { icon: foodIcon }).addTo(mapInstance)
-            .bindPopup(`<b>${point.name}</b><br>附近美食推荐`);
+          L.marker(latlng, { icon: foodIcon }).addTo(mapInstance).bindPopup(`<b>${point.name}</b>`);
         }
       });
 
-      // 画串联折线（路线）
       if (latlngs.length > 1) {
         L.polyline(latlngs, { color: '#6c5ce7', weight: 4, opacity: 0.7, dashArray: '10, 10' }).addTo(mapInstance);
       }
 
-      // 计算相邻景点直线距离 (Haversine 公式)
       for (let i = 0; i < latlngs.length - 1; i++) {
         totalDistance += calcDistance(latlngs[i][0], latlngs[i][1], latlngs[i+1][0], latlngs[i+1][1]);
       }
-
-      // 更新 UI 距离
       document.getElementById('total-distance').textContent = totalDistance.toFixed(2);
-
-      // 让地图自动缩放以包含所有点
-      if (latlngs.length > 0) {
-        mapInstance.fitBounds(latlngs, { padding: [50, 50] });
-      }
+      if (latlngs.length > 0) mapInstance.fitBounds(latlngs, { padding: [50, 50] });
     }
 
-    // 计算两经纬度之间的距离 (km)
     function calcDistance(lat1, lon1, lat2, lon2) {
-      const R = 6371; // 地球半径 km
+      const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
       const dLon = (lon2 - lon1) * Math.PI / 180;
-      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      return R * c;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
 
-    // --- 其他逻辑 ---
+    // --- 记账本逻辑 ---
     function updateBudgetUI() {
       const budget = parseFloat(document.getElementById('total-budget').value) || 0;
       const people = parseInt(document.getElementById('people-count').value) || 1;
       let spent = appState.expenses.reduce((sum, item) => sum + item.amount, 0);
       let remain = budget - spent;
       let aa = spent / people;
+
       document.getElementById('ui-total-budget').textContent = `¥${budget}`;
       document.getElementById('ui-spent').textContent = `¥${spent}`;
       document.getElementById('ui-remain').textContent = `¥${remain}`;
       document.getElementById('ui-aa').textContent = `¥${aa.toFixed(2)}`;
+
       const remainCard = document.getElementById('card-remain');
       if (remain < 0) {
         remainCard.classList.add('warn');
@@ -372,13 +352,6 @@
 
     document.getElementById('total-budget').addEventListener('input', updateBudgetUI);
     document.getElementById('people-count').addEventListener('input', updateBudgetUI);
-
-    function switchCity(cityId, el) {
-      document.querySelectorAll('.city-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.city-content').forEach(content => content.classList.remove('active'));
-      el.classList.add('active');
-      document.getElementById(`city-${cityId}`).classList.add('active');
-    }
 
     function addExpense() {
       const type = document.getElementById('exp-type').value;
@@ -411,6 +384,20 @@
       });
     }
 
+    function deleteExpense(id) {
+      appState.expenses = appState.expenses.filter(e => e.id !== id);
+      renderExpenses();
+      updateBudgetUI();
+    }
+
+    function switchCity(cityId, el) {
+      document.querySelectorAll('.city-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.city-content').forEach(content => content.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById(`city-${cityId}`).classList.add('active');
+    }
+
+    // --- AI 生成行程 ---
     async function generatePlan() {
       const dest = document.getElementById('dest-input').value;
       const start = document.getElementById('start-date').value;
