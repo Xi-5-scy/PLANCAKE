@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PlanCake - 智能旅行工作台</title>
+  
+  <!-- 引入 Leaflet 地图 CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
   <style>
     :root {
       --primary: #6c5ce7; --primary-light: #a29bfe;
@@ -37,14 +41,14 @@
 
     .workspace { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
     
-    .tabs { display: flex; background: #fff; padding: 0 20px; border-bottom: 1px solid #eee; }
-    .tab { padding: 15px 20px; cursor: pointer; font-weight: bold; color: var(--muted); border-bottom: 3px solid transparent; }
+    .tabs { display: flex; background: #fff; padding: 0 20px; border-bottom: 1px solid #eee; overflow-x: auto; }
+    .tab { padding: 15px 20px; cursor: pointer; font-weight: bold; color: var(--muted); border-bottom: 3px solid transparent; white-space: nowrap; }
     .tab.active { color: var(--primary); border-color: var(--primary); }
 
     .panel { display: none; flex: 1; overflow-y: auto; padding: 30px; }
     .panel.active { display: block; }
 
-    /* 行程卡片（新版，适配字符串数组） */
+    /* 行程卡片 */
     .day-card { background: #fff; border-radius: 12px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border-left: 5px solid var(--primary); }
     .day-header { font-size: 18px; font-weight: bold; color: var(--primary); margin-bottom: 15px; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
     .day-content { font-size: 15px; color: var(--text); line-height: 1.8; }
@@ -55,12 +59,41 @@
     .stat-card h4 { font-size: 14px; color: var(--muted); margin-bottom: 8px; }
     .stat-card .value { font-size: 24px; font-weight: bold; color: var(--primary); }
     .stat-card.warn .value { color: var(--danger); }
-
     .add-expense { background: #fff; padding: 20px; border-radius: 12px; margin-bottom: 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
     .expense-list { background: #fff; border-radius: 12px; padding: 20px; }
     .expense-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; }
     .expense-item:last-child { border: none; }
-    
+
+    /* 灵感探索页 */
+    .discover-header { display: flex; gap: 15px; margin-bottom: 30px; overflow-x: auto; padding-bottom: 10px; }
+    .city-btn { padding: 12px 25px; border-radius: 30px; background: #fff; border: 1px solid #ddd; cursor: pointer; font-weight: bold; font-size: 16px; white-space: nowrap; transition: all 0.3s; }
+    .city-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3); }
+    .city-content { display: none; animation: fadeIn 0.4s ease; }
+    .city-content.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .city-hero { position: relative; height: 200px; border-radius: 16px; overflow: hidden; margin-bottom: 30px; }
+    .city-hero img { width: 100%; height: 100%; object-fit: cover; }
+    .city-hero h1 { position: absolute; bottom: 20px; left: 30px; color: #fff; font-size: 36px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px; }
+    .info-card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+    .info-card img { width: 100%; height: 160px; object-fit: cover; }
+    .info-card-body { padding: 20px; }
+    .info-card-body h3 { font-size: 18px; margin-bottom: 8px; color: var(--primary); }
+    .info-card-body p { font-size: 14px; color: var(--muted); line-height: 1.5; }
+    .list-section { background: #fff; border-radius: 16px; padding: 25px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+    .list-section h3 { font-size: 18px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+    .list-section h3::before { content: ''; width: 4px; height: 18px; background: var(--secondary); border-radius: 2px; }
+    .food-tags-wrap, .hotel-tags-wrap { display: flex; flex-wrap: wrap; gap: 10px; }
+    .food-tag { background: #fff3d4; color: #d63031; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: bold; border: 1px solid #fdcb6e; }
+    .hotel-tag { background: #e8ebf5; color: var(--primary); padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: bold; border: 1px solid #a29bfe; }
+
+    /* 地图页 */
+    #panel-map { padding: 0; display: none; flex-direction: column; }
+    #panel-map.active { display: flex; }
+    .map-toolbar { background: #fff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; z-index: 10; }
+    .map-stat { font-size: 14px; font-weight: bold; color: var(--primary); }
+    #map-container { flex: 1; width: 100%; height: 100%; z-index: 1; }
+
     .loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 99; }
     .loading-overlay.active { display: flex; }
     @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-20px); } }
@@ -78,7 +111,6 @@
         <label>📍 目的地</label>
         <input type="text" id="dest-input" placeholder="例如：成都、日本关西" value="成都">
       </div>
-      
       <div class="form-group">
         <label>📅 出行日期</label>
         <div class="input-row">
@@ -86,28 +118,22 @@
           <input type="date" id="end-date">
         </div>
       </div>
-
       <div class="form-group">
         <label>👥 同行人数 (用于 AA 分账)</label>
         <input type="number" id="people-count" value="2" min="1">
       </div>
-
       <div class="form-group">
         <label>💰 总预算 (元)</label>
         <input type="number" id="total-budget" value="5000">
       </div>
-
       <div class="form-group">
         <label>✨ 偏好标签</label>
         <div class="tags" id="pref-tags">
           <div class="tag active" onclick="this.classList.toggle('active')">美食优先</div>
           <div class="tag active" onclick="this.classList.toggle('active')">自然风光</div>
           <div class="tag" onclick="this.classList.toggle('active')">人文历史</div>
-          <div class="tag" onclick="this.classList.toggle('active')">打卡拍照</div>
-          <div class="tag" onclick="this.classList.toggle('active')">节奏慢一点</div>
         </div>
       </div>
-
       <button class="btn-primary" onclick="generatePlan()">一键生成行程</button>
     </div>
 
@@ -119,9 +145,12 @@
 
       <div class="tabs">
         <div class="tab active" onclick="switchTab('itinerary', this)">🗺️ 每日行程</div>
+        <div class="tab" onclick="switchTab('map', this)">📍 智能地图</div> <!-- 新增地图页 -->
         <div class="tab" onclick="switchTab('budget', this)">💰 预算记账本</div>
+        <div class="tab" onclick="switchTab('discover', this)">🌍 灵感探索</div>
       </div>
 
+      <!-- 面板 1：行程规划 -->
       <div class="panel active" id="panel-itinerary">
         <div id="empty-tip" style="text-align: center; color: var(--muted); margin-top: 100px;">
           <h2>请在左侧填写信息并生成</h2>
@@ -132,44 +161,86 @@
         </div>
       </div>
 
+      <!-- 面板 2：智能地图 -->
+      <div class="panel" id="panel-map">
+        <div class="map-toolbar">
+          <div>
+            <span style="font-weight:bold; font-size:18px;">📍 路线规划预览 (成都示例)</span>
+            <p style="font-size:12px; color:var(--muted); margin-top:5px;">* 景点已按合理路线串联，直线距离总计：<span id="total-distance" style="color:var(--primary); font-weight:bold;">0</span> km</p>
+          </div>
+          <button onclick="initMap()" style="background:var(--secondary-light); border:1px solid var(--secondary); padding:8px 15px; border-radius:8px; cursor:pointer; font-weight:bold; color:#d63031;">重新规划路线</button>
+        </div>
+        <div id="map-container"></div>
+      </div>
+
+      <!-- 面板 3：预算记账本 -->
       <div class="panel" id="panel-budget">
         <div class="budget-header">
-          <div class="stat-card">
-            <h4>总预算</h4>
-            <div class="value" id="ui-total-budget">¥0</div>
-          </div>
-          <div class="stat-card">
-            <h4>已花费</h4>
-            <div class="value" id="ui-spent">¥0</div>
-          </div>
-          <div class="stat-card" id="card-remain">
-            <h4>剩余预算</h4>
-            <div class="value" id="ui-remain">¥0</div>
-          </div>
-          <div class="stat-card">
-            <h4>人均 AA (已花)</h4>
-            <div class="value" id="ui-aa">¥0</div>
-          </div>
+          <div class="stat-card"><h4>总预算</h4><div class="value" id="ui-total-budget">¥0</div></div>
+          <div class="stat-card"><h4>已花费</h4><div class="value" id="ui-spent">¥0</div></div>
+          <div class="stat-card" id="card-remain"><h4>剩余预算</h4><div class="value" id="ui-remain">¥0</div></div>
+          <div class="stat-card"><h4>人均 AA (已花)</h4><div class="value" id="ui-aa">¥0</div></div>
         </div>
-
         <div class="add-expense">
           <select id="exp-type" style="padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
-            <option value="交通">✈️ 交通</option>
-            <option value="住宿">🏨 住宿</option>
-            <option value="餐饮">🍜 餐饮</option>
-            <option value="门票">🎫 门票</option>
-            <option value="其他">🛍️ 其他</option>
+            <option value="交通">✈️ 交通</option><option value="住宿">🏨 住宿</option>
+            <option value="餐饮">🍜 餐饮</option><option value="门票">🎫 门票</option>
           </select>
           <input type="text" id="exp-desc" placeholder="花费说明 (如：打车去机场)" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
           <input type="number" id="exp-amount" placeholder="金额 (¥)" style="width: 120px; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
           <button class="btn-primary" style="margin: 0; padding: 10px 20px; width: auto;" onclick="addExpense()">记一笔</button>
         </div>
-
         <div class="expense-list" id="expense-list"></div>
       </div>
+
+      <!-- 面板 4：灵感探索 -->
+      <div class="panel" id="panel-discover">
+        <div class="discover-header">
+          <div class="city-btn active" onclick="switchCity('chengdu', this)">🐼 成都</div>
+          <div class="city-btn" onclick="switchCity('kansai', this)">⛩️ 日本关西</div>
+          <div class="city-btn" onclick="switchCity('dali', this)">🌊 大理</div>
+        </div>
+
+        <div id="city-chengdu" class="city-content active">
+          <div class="city-hero">
+            <img src="https://images.unsplash.com/photo-1565703341586-0b7bb6eb15ce?auto=format&fit=crop&w=1200&q=80" alt="成都">
+            <h1>成都 · 天府之国</h1>
+          </div>
+          <div class="info-grid">
+            <div class="info-card">
+              <img src="https://images.unsplash.com/photo-1563428637166-791fbc499910?auto=format&fit=crop&w=600&q=80">
+              <div class="info-card-body"><h3>🐼 大熊猫基地</h3><p>来成都必打卡！建议早上 7 点去，可以看到熊猫吃早饭。</p></div>
+            </div>
+            <div class="info-card">
+              <img src="https://images.unsplash.com/photo-1620734438075-960e56e7e151?auto=format&fit=crop&w=600&q=80">
+              <div class="info-card-body"><h3>🏮 宽窄巷子</h3><p>体验老成都的市井生活，适合喝茶掏耳朵。</p></div>
+            </div>
+          </div>
+          <div class="list-section">
+            <h3>🍜 当地特色美食</h3>
+            <div class="food-tags-wrap"><span class="food-tag">四川火锅</span><span class="food-tag">冷锅串串</span><span class="food-tag">钵钵鸡</span></div>
+          </div>
+        </div>
+
+        <div id="city-kansai" class="city-content">
+          <div class="city-hero">
+            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=80" alt="关西">
+            <h1>日本关西 · 千年古都</h1>
+          </div>
+          <div class="info-grid">
+            <div class="info-card">
+              <img src="https://images.unsplash.com/photo-1545569341-9eb8b30979d9?auto=format&fit=crop&w=600&q=80">
+              <div class="info-card-body"><h3>⛩️ 伏见稻荷大社</h3><p>京都最著名的景点，千本鸟居非常震撼。</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
+  <!-- 引入 Leaflet 地图 JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     const today = new Date();
     const nextWeek = new Date(today);
@@ -178,19 +249,118 @@
     document.getElementById('end-date').value = nextWeek.toISOString().split('T')[0];
 
     let appState = { expenses: [] };
+    let mapInstance = null;
 
+    // --- 切换标签 ---
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById(`panel-${tabId}`).classList.add('active');
+
+      // 如果切换到地图页，且地图还没初始化，则初始化地图
+      if (tabId === 'map' && !mapInstance) {
+        setTimeout(initMap, 100); // 稍微延迟确保容器可见
+      }
+    }
+
+    // --- 地图功能 ---
+    function initMap() {
+      // 如果已经有地图实例，先销毁
+      if (mapInstance) {
+        mapInstance.remove();
+      }
+
+      // 以成都市中心为初始点
+      mapInstance = L.map('map-container').setView([30.6598, 104.0633], 12);
+
+      // 加载免费开源地图底图 (CartoDB 亮色主题)
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CartoDB',
+        maxZoom: 19
+      }).addTo(mapInstance);
+
+      // 模拟路线数据（成都景点坐标）
+      const routePoints = [
+        { name: '宽窄巷子', lat: 30.6695, lng: 104.0590, type: 'spot' },
+        { name: '人民公园', lat: 30.6637, lng: 104.0633, type: 'spot' },
+        { name: '武侯祠', lat: 30.6461, lng: 104.0492, type: 'spot' },
+        { name: '锦里古街', lat: 30.6445, lng: 104.0495, type: 'spot' },
+        { name: '春熙路/太古里', lat: 30.6571, lng: 104.0810, type: 'spot' },
+        // 附近餐厅推荐
+        { name: '🍴 蜀大侠火锅 (春熙路店)', lat: 30.6580, lng: 104.0790, type: 'food' },
+        { name: '🍴 钟水饺 (武侯祠附近)', lat: 30.6470, lng: 104.0510, type: 'food' }
+      ];
+
+      // 创建一个红色自定义图标用于餐厅
+      const foodIcon = L.divIcon({
+        className: 'custom-div-icon',
+        html: "<div style='font-size:24px;'>🍴</div>",
+        iconSize: [30, 42],
+        iconAnchor: [15, 42]
+      });
+
+      let latlngs = [];
+      let totalDistance = 0;
+
+      routePoints.forEach((point, index) => {
+        const latlng = [point.lat, point.lng];
+        
+        // 只有景点计入路线串联
+        if (point.type === 'spot') {
+          latlngs.push(latlng);
+          // 画圆点标记
+          L.marker(latlng).addTo(mapInstance)
+            .bindPopup(`<b>${point.name}</b><br>第 ${latlngs.length} 站`);
+        } else {
+          // 画餐厅图标
+          L.marker(latlng, { icon: foodIcon }).addTo(mapInstance)
+            .bindPopup(`<b>${point.name}</b><br>附近美食推荐`);
+        }
+      });
+
+      // 画串联折线（路线）
+      if (latlngs.length > 1) {
+        L.polyline(latlngs, { color: '#6c5ce7', weight: 4, opacity: 0.7, dashArray: '10, 10' }).addTo(mapInstance);
+      }
+
+      // 计算相邻景点直线距离 (Haversine 公式)
+      for (let i = 0; i < latlngs.length - 1; i++) {
+        totalDistance += calcDistance(latlngs[i][0], latlngs[i][1], latlngs[i+1][0], latlngs[i+1][1]);
+      }
+
+      // 更新 UI 距离
+      document.getElementById('total-distance').textContent = totalDistance.toFixed(2);
+
+      // 让地图自动缩放以包含所有点
+      if (latlngs.length > 0) {
+        mapInstance.fitBounds(latlngs, { padding: [50, 50] });
+      }
+    }
+
+    // 计算两经纬度之间的距离 (km)
+    function calcDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // 地球半径 km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    // --- 其他逻辑 ---
     function updateBudgetUI() {
       const budget = parseFloat(document.getElementById('total-budget').value) || 0;
       const people = parseInt(document.getElementById('people-count').value) || 1;
       let spent = appState.expenses.reduce((sum, item) => sum + item.amount, 0);
       let remain = budget - spent;
       let aa = spent / people;
-
       document.getElementById('ui-total-budget').textContent = `¥${budget}`;
       document.getElementById('ui-spent').textContent = `¥${spent}`;
       document.getElementById('ui-remain').textContent = `¥${remain}`;
       document.getElementById('ui-aa').textContent = `¥${aa.toFixed(2)}`;
-
       const remainCard = document.getElementById('card-remain');
       if (remain < 0) {
         remainCard.classList.add('warn');
@@ -203,11 +373,11 @@
     document.getElementById('total-budget').addEventListener('input', updateBudgetUI);
     document.getElementById('people-count').addEventListener('input', updateBudgetUI);
 
-    function switchTab(tabId, el) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    function switchCity(cityId, el) {
+      document.querySelectorAll('.city-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.city-content').forEach(content => content.classList.remove('active'));
       el.classList.add('active');
-      document.getElementById(`panel-${tabId}`).classList.add('active');
+      document.getElementById(`city-${cityId}`).classList.add('active');
     }
 
     function addExpense() {
@@ -218,12 +388,6 @@
       appState.expenses.push({ id: Date.now(), type, desc, amount });
       document.getElementById('exp-desc').value = '';
       document.getElementById('exp-amount').value = '';
-      renderExpenses();
-      updateBudgetUI();
-    }
-
-    function deleteExpense(id) {
-      appState.expenses = appState.expenses.filter(e => e.id !== id);
       renderExpenses();
       updateBudgetUI();
     }
@@ -240,10 +404,8 @@
         div.className = 'expense-item';
         div.innerHTML = `
           <div><strong>[${exp.type}]</strong> ${exp.desc}</div>
-          <div>
-            <span style="font-weight:bold; margin-right: 15px;">¥${exp.amount}</span>
-            <span style="color: var(--danger); cursor: pointer; font-size:12px;" onclick="deleteExpense(${exp.id})">删除</span>
-          </div>
+          <div><span style="font-weight:bold; margin-right: 15px;">¥${exp.amount}</span>
+          <span style="color: var(--danger); cursor: pointer; font-size:12px;" onclick="deleteExpense(${exp.id})">删除</span></div>
         `;
         list.appendChild(div);
       });
@@ -255,7 +417,6 @@
       const end = document.getElementById('end-date').value;
       const d1 = new Date(start); const d2 = new Date(end);
       const days = Math.max(1, Math.round((d2 - d1) / (1000 * 60 * 60 * 24)) + 1);
-
       if(!dest || !start || !end) return alert('请填写完整的目的地和日期');
 
       let prefs = [];
@@ -275,7 +436,6 @@
         if (data.ok) {
           renderItinerary(data.seed);
         } else {
-          // 显示真实错误
           alert('生成失败：\n' + (data.error || '未知错误') + '\n' + (data.detail ? '详情：' + data.detail : ''));
         }
       } catch (e) {
@@ -285,24 +445,17 @@
       }
     }
 
-    // 适配新的简化版 AI 数据结构
     function renderItinerary(seed) {
       document.getElementById('empty-tip').style.display = 'none';
       document.getElementById('itinerary-content').style.display = 'block';
+      document.getElementById('res-title').textContent = `🎉 ${seed.destination} ${seed.days}日游定制方案`;
       
-      const titleEl = document.getElementById('res-title');
       const listEl = document.getElementById('itinerary-list');
-      
-      titleEl.textContent = `🎉 ${seed.destination} ${seed.days}日游定制方案`;
       listEl.innerHTML = '';
-
       seed.dailyPlan.forEach((planText, index) => {
         const card = document.createElement('div');
         card.className = 'day-card';
-        card.innerHTML = `
-          <div class="day-header">Day ${index + 1}</div>
-          <div class="day-content">${planText}</div>
-        `;
+        card.innerHTML = `<div class="day-header">Day ${index + 1}</div><div class="day-content">${planText}</div>`;
         listEl.appendChild(card);
       });
     }
