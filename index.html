@@ -18,7 +18,7 @@
     body { background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
     
     /* ⭐️ 顶部导航栏 ⭐️ */
-    .top-navbar { height: 70px; background: var(--card); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.03); z-index: 100; }
+    .top-navbar { height: 70px; background: var(--card); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.03); z-index: 100; flex-shrink: 0; }
     .logo { font-size: 24px; font-weight: 800; color: var(--primary); }
     .top-tabs { display: flex; gap: 15px; }
     .top-tab { padding: 10px 20px; border-radius: 12px; font-size: 15px; font-weight: 600; color: var(--muted); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
@@ -28,40 +28,45 @@
     /* 主体布局 */
     .app-layout { display: flex; flex: 1; overflow: hidden; }
     
-    /* 左侧控制台 */
-    .sidebar { width: 340px; background: var(--card); padding: 25px; display: flex; flex-direction: column; border-right: 1px solid #eee; z-index: 10; overflow-y: auto; }
-    .sidebar-form { background: var(--bg); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #ebeef5; flex-shrink: 0; }
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
-    .form-group input { width: 100%; padding: 12px; border: 1px solid #dcdde1; border-radius: 10px; font-size: 14px; outline: none; background: #fff; }
+    /* ⭐️ 左侧控制台 (高度固定，内部拆分) ⭐️ */
+    .sidebar { width: 340px; background: var(--card); display: flex; flex-direction: column; border-right: 1px solid #eee; z-index: 10; overflow: hidden; }
+    
+    /* 表单区 (允许内部滚动) */
+    .sidebar-form-wrapper { flex: 1; overflow-y: auto; padding: 20px 25px 0 25px; }
+    .sidebar-form { background: var(--bg); padding: 15px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #ebeef5; }
+    
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 5px; color: var(--text); }
+    .form-group input { width: 100%; padding: 10px; border: 1px solid #dcdde1; border-radius: 8px; font-size: 13px; outline: none; background: #fff; }
     .form-group input:focus { border-color: var(--primary); }
     
-    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
-    .tag { padding: 8px 12px; border-radius: 20px; background: #fff; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid #dcdde1; transition: all 0.2s; user-select: none; display: flex; align-items: center; gap: 4px; }
-    .tag.active { background: var(--secondary-light); color: #d63031; border-color: var(--secondary); box-shadow: 0 2px 8px rgba(253, 203, 110, 0.3); }
+    /* ⭐️ 偏好标签：一行 3 个网格布局 ⭐️ */
+    .tags { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 5px; }
+    .tag { padding: 8px 4px; border-radius: 8px; background: #fff; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #dcdde1; transition: all 0.2s; user-select: none; display: flex; align-items: center; justify-content: center; gap: 2px; }
+    .tag.active { background: var(--secondary-light); color: #d63031; border-color: var(--secondary); box-shadow: 0 2px 5px rgba(253, 203, 110, 0.2); }
 
-    .btn-generate { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: #fff; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; box-shadow: 0 6px 20px rgba(108, 92, 231, 0.3); transition: transform 0.2s; }
+    .btn-generate { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3); transition: transform 0.2s; }
     .btn-generate:hover { transform: translateY(-2px); }
     
-    .btn-export { width: 100%; padding: 12px; background: #fff; color: var(--primary); border: 2px solid var(--primary); border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: all 0.2s; }
+    .btn-export { width: 100%; padding: 10px; background: #fff; color: var(--primary); border: 2px solid var(--primary); border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
     .btn-export:hover { background: var(--primary); color: #fff; }
 
-    /* ⭐️ 天气卡片沉底 ⭐️ */
-    .weather-card { background: linear-gradient(135deg, #e0c3fc, #8ec5fc); border-radius: 20px; padding: 16px 20px; margin-top: auto; display: none; flex-shrink: 0; }
-    .weather-top { display: flex; justify-content: space-between; margin-bottom: 10px; }
-    .weather-mid { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
-    .weather-mid .temp { font-size: 36px; font-weight: 800; }
+    /* ⭐️ 天气卡片 (沉底，不滚动) ⭐️ */
+    .weather-card { background: linear-gradient(135deg, #e0c3fc, #8ec5fc); border-radius: 16px; padding: 15px 20px; margin: 0 25px 25px 25px; display: none; flex-shrink: 0; }
+    .weather-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    .weather-mid { display: flex; align-items: baseline; gap: 10px; margin-bottom: 5px; }
+    .weather-mid .temp { font-size: 32px; font-weight: 800; }
     .weather-bottom { display: flex; gap: 15px; font-size: 12px; font-weight: 600; opacity: 0.8; }
 
     /* 右侧主内容区 */
-    .main-content { flex: 1; padding: 30px 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
-    .top-row { display: flex; gap: 20px; height: 200px; }
-    .banner-card { flex: 2; background: linear-gradient(135deg, var(--primary-light), #dfe6e9); border-radius: 24px; padding: 30px; position: relative; color: #fff; display: flex; flex-direction: column; justify-content: space-between; }
-    .banner-card h1 { font-size: 40px; font-weight: 800; }
-    .banner-emoji { position: absolute; right: 20px; bottom: -20px; font-size: 160px; opacity: 0.8; }
+    .main-content { flex: 1; padding: 25px 35px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+    .top-row { display: flex; gap: 20px; height: 180px; }
+    .banner-card { flex: 2; background: linear-gradient(135deg, var(--primary-light), #dfe6e9); border-radius: 24px; padding: 25px; position: relative; color: #fff; display: flex; flex-direction: column; justify-content: space-between; }
+    .banner-card h1 { font-size: 36px; font-weight: 800; }
+    .banner-emoji { position: absolute; right: 20px; bottom: -20px; font-size: 140px; opacity: 0.8; }
     .expense-card { flex: 1; background: var(--card); border-radius: 24px; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .donut-chart { width: 110px; height: 110px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; }
-    .donut-inner { width: 80px; height: 80px; background: var(--card); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .donut-chart { width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+    .donut-inner { width: 75px; height: 75px; background: var(--card); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     
     .info-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
     .info-box { background: var(--card); border-radius: 20px; padding: 20px; display: flex; gap: 15px; }
@@ -70,7 +75,7 @@
     .info-text strong { font-size: 16px; }
 
     /* 地图与路线定制区 */
-    .bottom-row { display: flex; gap: 20px; flex: 1; min-height: 400px; }
+    .bottom-row { display: flex; gap: 20px; flex: 1; min-height: 380px; }
     .map-widget { flex: 1.2; background: var(--card); border-radius: 24px; padding: 20px; display: flex; flex-direction: column; position: relative; }
     .map-tools { display: flex; gap: 8px; margin-bottom: 15px; }
     .map-tools input { flex: 1; padding: 10px 15px; border-radius: 10px; border: 1px solid #dcdde1; outline: none; font-size: 14px; }
@@ -78,11 +83,11 @@
     .map-tools button:hover { background: #5b4bc4; }
     #map-container { flex: 1; border-radius: 16px; z-index: 1; min-height: 250px; border: 1px solid #eee; }
     
-    .route-config { margin-top: 15px; max-height: 150px; overflow-y: auto; border-top: 1px dashed #eee; padding-top: 10px; }
+    .route-config { margin-top: 15px; max-height: 120px; overflow-y: auto; border-top: 1px dashed #eee; padding-top: 10px; }
     .config-item { display: flex; align-items: center; justify-content: space-between; font-size: 13px; padding: 8px 0; background: var(--bg); margin-bottom: 8px; padding: 10px 15px; border-radius: 10px; }
     .config-item select { padding: 6px; border-radius: 6px; border: 1px solid #dcdde1; outline: none; background: #fff; color: var(--primary); font-weight: bold; cursor: pointer; }
 
-    .timeline-widget { flex: 1; background: var(--card); border-radius: 24px; padding: 25px; display: flex; flex-direction: column; }
+    .timeline-widget { flex: 1; background: var(--card); border-radius: 24px; padding: 20px; display: flex; flex-direction: column; }
     .timeline-list { flex: 1; overflow-y: auto; padding-left: 10px; border-left: 2px dashed #e1e4e8; }
     .timeline-item { position: relative; padding-left: 25px; margin-bottom: 20px; }
     .timeline-item::before { content: ''; position: absolute; left: -6px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--secondary); }
@@ -94,7 +99,7 @@
     .view-panel.active { display: block; }
     #view-diary.view-panel.active { display: flex; flex-direction: column; height: 100%; }
 
-    /* 日记与记账样式 */
+    /* 日记与记账 */
     .diary-container { display: flex; gap: 20px; height: 100%; }
     .diary-form { width: 320px; background: var(--card); padding: 25px; border-radius: 24px; height: fit-content; }
     .diary-form textarea { width: 100%; height: 120px; padding: 12px; border: 1px solid #dcdde1; border-radius: 10px; resize: none; margin-bottom: 15px; font-size: 14px; }
@@ -103,7 +108,7 @@
     .diary-card img { width: 150px; height: 150px; object-fit: cover; border-radius: 12px; }
     .diary-card-info .del-btn { color: var(--danger); font-size: 12px; cursor: pointer; text-align: right; margin-top: 10px; }
 
-    /* PDF 隐藏模板 */
+    /* PDF 模板 */
     #pdf-template { display: none; padding: 40px; background: #fff; color: #333; }
     #pdf-template h1 { color: #6c5ce7; text-align: center; border-bottom: 2px solid #fdcb6e; padding-bottom: 10px; margin-bottom: 20px;}
     #pdf-template .pdf-info { display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 14px; color: #666; }
@@ -120,7 +125,6 @@
 </head>
 <body>
 
-  <!-- ⭐️ 顶部导航栏 ⭐️ -->
   <header class="top-navbar">
     <div class="logo">PlanCake 🍰</div>
     <div class="top-tabs">
@@ -128,45 +132,48 @@
       <div class="top-tab" onclick="switchNav('diary', this)">📔 旅行日记</div>
       <div class="top-tab" onclick="switchNav('budget', this)">💰 预算记账本</div>
     </div>
-    <div style="width: 100px;"></div> <!-- 占位保持居中 -->
+    <div style="width: 100px;"></div>
   </header>
 
   <div class="app-layout">
-    <!-- 左侧控制台 -->
     <aside class="sidebar">
-      <div class="sidebar-form">
-        <div class="form-group">
-          <label>📍 目的地</label>
-          <input type="text" id="input-dest" value="成都" onchange="fetchWeatherForCity(this.value)">
-        </div>
-        <div class="form-group" style="display:flex; gap:8px;">
-          <div style="flex:1;"><label>📅 出发</label><input type="date" id="input-start"></div>
-          <div style="flex:1;"><label>📅 返回</label><input type="date" id="input-end"></div>
-        </div>
-        <div class="form-group" style="display:flex; gap:8px;">
-          <div style="flex:1;"><label>👥 人数</label><input type="number" id="input-people" value="2"></div>
-          <div style="flex:1;"><label>💰 预算(¥)</label><input type="number" id="input-budget" value="5000"></div>
-        </div>
-        
-        <div class="form-group">
-          <label>✨ 旅行偏好（可多选）</label>
-          <div class="tags" id="input-prefs">
-            <div class="tag active" onclick="this.classList.toggle('active')">🍜 美食优先</div>
-            <div class="tag active" onclick="this.classList.toggle('active')">🌲 自然风光</div>
-            <div class="tag" onclick="this.classList.toggle('active')">🏛️ 人文历史</div>
-            <div class="tag" onclick="this.classList.toggle('active')">📸 拍照打卡</div>
-            <div class="tag" onclick="this.classList.toggle('active')">🛍️ 购物血拼</div>
-            <div class="tag" onclick="this.classList.toggle('active')">👶 亲子带娃</div>
-            <div class="tag" onclick="this.classList.toggle('active')">☕ 悠闲度假</div>
-            <div class="tag" onclick="this.classList.toggle('active')">🚶 特种兵游</div>
+      <!-- 表单滚动区 -->
+      <div class="sidebar-form-wrapper">
+        <div class="sidebar-form">
+          <div class="form-group">
+            <label>📍 目的地</label>
+            <input type="text" id="input-dest" value="成都" onchange="fetchWeatherForCity(this.value)">
           </div>
+          <div class="form-group" style="display:flex; gap:6px;">
+            <div style="flex:1;"><label>📅 出发</label><input type="date" id="input-start"></div>
+            <div style="flex:1;"><label>📅 返回</label><input type="date" id="input-end"></div>
+          </div>
+          <div class="form-group" style="display:flex; gap:6px;">
+            <div style="flex:1;"><label>👥 人数</label><input type="number" id="input-people" value="2"></div>
+            <div style="flex:1;"><label>💰 预算(¥)</label><input type="number" id="input-budget" value="5000"></div>
+          </div>
+          
+          <div class="form-group">
+            <label>✨ 旅行偏好</label>
+            <div class="tags" id="input-prefs">
+              <div class="tag active" onclick="this.classList.toggle('active')">🍜 美食</div>
+              <div class="tag active" onclick="this.classList.toggle('active')">🌲 自然</div>
+              <div class="tag" onclick="this.classList.toggle('active')">🏛️ 人文</div>
+              <div class="tag" onclick="this.classList.toggle('active')">📸 拍照</div>
+              <div class="tag" onclick="this.classList.toggle('active')">🛍️ 购物</div>
+              <div class="tag" onclick="this.classList.toggle('active')">👶 亲子</div>
+              <div class="tag" onclick="this.classList.toggle('active')">☕ 悠闲</div>
+              <div class="tag" onclick="this.classList.toggle('active')">🚶 特种兵</div>
+              <div class="tag" onclick="this.classList.toggle('active')">🌙 夜游</div>
+            </div>
+          </div>
+          
+          <button class="btn-generate" onclick="generatePlan()">✨ 开始烘焙行程</button>
+          <button class="btn-export" onclick="exportPDF()">📥 导出 PDF 计划</button>
         </div>
-        
-        <button class="btn-generate" onclick="generatePlan()">✨ 开始烘焙行程</button>
-        <button class="btn-export" onclick="exportPDF()">📥 导出完整 PDF 计划</button>
       </div>
       
-      <!-- 天气卡片在左下角 -->
+      <!-- 天气卡片固定左下角 -->
       <div class="weather-card" id="weather-widget">
         <div class="weather-top"><span id="weather-city">成都</span><span id="weather-icon">⛅</span></div>
         <div class="weather-mid"><div class="temp" id="weather-temp">--°C</div><div id="weather-desc">获取中...</div></div>
@@ -174,9 +181,7 @@
       </div>
     </aside>
 
-    <!-- 右侧主内容区 -->
     <main class="main-content">
-      <!-- 视图：概览看板 -->
       <div id="view-dashboard" class="view-panel active">
         <div class="top-row">
           <div class="banner-card">
@@ -186,27 +191,27 @@
           <div class="expense-card">
             <h3>预算消耗</h3>
             <div class="donut-chart" id="donut-chart"><div class="donut-inner"><span>已用</span><strong id="dash-budget-percent">0%</strong></div></div>
-            <div style="font-size: 13px;">已花 <span id="dash-spent">¥0</span> / 总预算 <span id="dash-total-budget">¥5000</span></div>
+            <div style="font-size: 13px;">已花 <span id="dash-spent">¥0</span> / 预算 <span id="dash-total-budget">¥5000</span></div>
           </div>
         </div>
         <div class="info-row">
           <div class="info-box"><div class="info-icon">📅</div><div class="info-text"><span>出行天数</span><strong id="info-days">--</strong></div></div>
           <div class="info-box"><div class="info-icon">👥</div><div class="info-text"><span>同行人数</span><strong id="info-people">--</strong></div></div>
-          <div class="info-box"><div class="info-icon">✨</div><div class="info-text"><span>偏好节奏</span><strong id="info-prefs" style="font-size: 13px; line-height:1.4;">待定</strong></div></div>
+          <div class="info-box"><div class="info-icon">✨</div><div class="info-text"><span>偏好节奏</span><strong id="info-prefs" style="font-size: 12px; line-height:1.4;">待定</strong></div></div>
         </div>
 
         <div class="bottom-row">
           <div class="map-widget">
             <div class="map-tools">
-              <input type="text" id="spot-input" placeholder="输入想去的景点名称，如：宽窄巷子" onkeypress="handleSpotEnter(event)">
-              <button onclick="addCustomSpot()">+ 添加景点</button>
+              <input type="text" id="spot-input" placeholder="输入景点，如：宽窄巷子" onkeypress="handleSpotEnter(event)">
+              <button onclick="addCustomSpot()">+ 添加</button>
             </div>
             <div id="map-container"></div>
             <div class="route-config" id="route-config"></div>
           </div>
           
           <div class="timeline-widget">
-            <h3 style="margin-bottom: 20px;">🗓️ 每日行程时间线</h3>
+            <h3 style="margin-bottom: 15px;">🗓️ 每日行程时间线</h3>
             <div class="timeline-list" id="timeline-list">
               <div style="text-align:center; margin-top:50px; color:var(--muted);">填写左侧，点击生成 🍰</div>
             </div>
@@ -214,7 +219,6 @@
         </div>
       </div>
 
-      <!-- 视图：旅行日记 -->
       <div id="view-diary" class="view-panel">
         <h2 style="margin-bottom:20px; color:var(--primary);">📔 我的旅行日记</h2>
         <div class="diary-container">
@@ -229,7 +233,6 @@
         </div>
       </div>
 
-      <!-- 视图：预算记账本 -->
       <div id="view-budget" class="view-panel">
         <h2 style="margin-bottom:20px; color:var(--primary);">💰 预算记账本</h2>
         <div style="background: #fff; padding: 30px; border-radius: 24px;">
@@ -244,7 +247,6 @@
     </main>
   </div>
 
-  <!-- 隐藏的 PDF 模板 -->
   <div id="pdf-template">
     <h1>🍰 PlanCake 旅行计划书</h1>
     <div class="pdf-info">
@@ -269,7 +271,6 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    // ...(此处省略内部逻辑，与上一版完全一致)...
     const today = new Date(); const nextWeek = new Date(today); nextWeek.setDate(today.getDate() + 3);
     document.getElementById('input-start').value = today.toISOString().split('T')[0];
     document.getElementById('input-end').value = nextWeek.toISOString().split('T')[0];
