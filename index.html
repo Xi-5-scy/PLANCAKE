@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PlanCake - 智能旅行工作台</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- 引入 html2pdf 库 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  
   <style>
     :root {
       --primary: #6c5ce7; --primary-light: #a29bfe;
@@ -65,7 +68,7 @@
     .timeline-item .day { font-size: 14px; font-weight: bold; color: var(--primary); margin-bottom: 5px; }
     .timeline-item .desc { font-size: 14px; color: var(--text); background: var(--bg); padding: 12px; border-radius: 12px; }
 
-    /* ⭐️ 旅行日记专属样式 ⭐️ */
+    /* 旅行日记 */
     .diary-container { display: flex; gap: 20px; height: 100%; }
     .diary-form { width: 320px; background: var(--card); padding: 25px; border-radius: 24px; height: fit-content; }
     .diary-form textarea { width: 100%; height: 120px; padding: 12px; border: 1px solid #dcdde1; border-radius: 10px; resize: none; margin-bottom: 15px; font-size: 14px; outline: none; }
@@ -81,6 +84,23 @@
     .view-panel { display: none; }
     .view-panel.active { display: block; }
     #view-diary.view-panel.active { display: flex; flex-direction: column; height: 100%; }
+
+    /* PDF 导出按钮样式 */
+    .btn-export { width: 100%; padding: 12px; background: #fff; color: var(--primary); border: 2px solid var(--primary); border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px;}
+    .btn-export:hover { background: var(--primary); color: #fff; }
+
+    /* 专门用于PDF导出的隐藏排版区域 (平时看不见，导出时才会用到) */
+    #pdf-template { display: none; padding: 40px; background: #fff; color: #333; font-family: sans-serif; }
+    #pdf-template h1 { color: #6c5ce7; text-align: center; margin-bottom: 20px; border-bottom: 2px solid #fdcb6e; padding-bottom: 10px; }
+    #pdf-template .pdf-info { display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 14px; color: #666; }
+    #pdf-template .pdf-section { margin-bottom: 30px; }
+    #pdf-template h2 { font-size: 18px; color: #6c5ce7; margin-bottom: 15px; border-left: 4px solid #a29bfe; padding-left: 10px; }
+    #pdf-template .pdf-day { margin-bottom: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 3px solid #fdcb6e; }
+    #pdf-template .pdf-day-title { font-weight: bold; color: #6c5ce7; margin-bottom: 5px; }
+    #pdf-template .pdf-expense-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #ddd; padding: 8px 0; font-size: 14px; }
+    #pdf-template .pdf-diary-card { margin-bottom: 20px; border: 1px solid #eee; padding: 15px; border-radius: 8px; page-break-inside: avoid; }
+    #pdf-template .pdf-diary-card img { max-width: 100%; max-height: 300px; object-fit: cover; border-radius: 8px; margin-top: 10px; }
+
     @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
   </style>
 </head>
@@ -110,18 +130,21 @@
           </div>
         </div>
         <button class="btn-generate" onclick="generatePlan()">✨ 开始烘焙行程</button>
+        
+        <!-- ⭐️ PDF 导出按钮 ⭐️ -->
+        <button class="btn-export" onclick="exportPDF()">📥 导出完整 PDF 计划</button>
       </div>
+      
       <div class="weather-card" id="weather-widget">
         <div class="weather-top"><span id="weather-city">成都</span><span id="weather-icon">⛅</span></div>
         <div class="weather-mid"><div class="temp" id="weather-temp">--°C</div><div id="weather-desc">获取中...</div></div>
         <div class="weather-bottom"><span>💨 风速 <span id="weather-wind">--</span></span><span>💧 湿度 <span id="weather-humidity">--</span>%</span></div>
       </div>
+      
       <div class="nav-menu">
         <div class="nav-item active" onclick="switchNav('dashboard', this)"><span>🏠</span> 行程概览</div>
-        <!-- ⭐️ 新增旅行日记菜单 ⭐️ -->
         <div class="nav-item" onclick="switchNav('diary', this)"><span>📔</span> 旅行日记</div>
         <div class="nav-item" onclick="switchNav('budget', this)"><span>💰</span> 预算记账本</div>
-        <div class="nav-item" onclick="switchNav('discover', this)"><span>🌍</span> 灵感发现</div>
       </div>
     </aside>
 
@@ -150,24 +173,19 @@
         </div>
       </div>
 
-      <!-- ⭐️ 视图：旅行日记 ⭐️ -->
+      <!-- 视图：旅行日记 -->
       <div id="view-diary" class="view-panel">
         <h2 style="margin-bottom:20px; color:var(--primary);">📔 我的旅行日记</h2>
         <div class="diary-container">
-          <!-- 左侧写日记表单 -->
           <div class="diary-form">
             <h3 style="margin-bottom:15px; font-size:16px;">写下此刻的记忆</h3>
-            <textarea id="diary-text" placeholder="今天发生了什么有趣的事？风景有多美？"></textarea>
+            <textarea id="diary-text" placeholder="今天发生了什么有趣的事？"></textarea>
             <label style="font-size:13px; font-weight:bold; display:block; margin-bottom:8px;">上传照片</label>
             <input type="file" id="diary-photo" accept="image/*" onchange="previewPhoto(this)">
             <img id="photo-preview" style="display:none; width:100%; border-radius:10px; margin-bottom:15px;">
             <button class="btn-generate" style="margin-top:0; padding:12px; font-size:16px;" onclick="saveDiary()">保存日记</button>
-            <p style="font-size:11px; color:var(--muted); margin-top:10px; text-align:center;">* 日记保存在本地浏览器中，不会上传到云端</p>
           </div>
-          <!-- 右侧日记列表 -->
-          <div class="diary-list-wrapper" id="diary-list">
-            <!-- 动态生成日记卡片 -->
-          </div>
+          <div class="diary-list-wrapper" id="diary-list"></div>
         </div>
       </div>
 
@@ -183,13 +201,33 @@
           <div id="expense-list" style="margin-top: 20px;"></div>
         </div>
       </div>
-      
-      <!-- 视图：灵感 -->
-      <div id="view-discover" class="view-panel">
-        <h2 style="margin-bottom:20px; color:var(--primary);">🌍 灵感发现</h2>
-        <div style="background: #fff; padding: 30px; border-radius: 24px;"><p>更多全球精选旅行灵感正在准备中...</p></div>
-      </div>
     </main>
+  </div>
+
+  <!-- ⭐️ 隐藏的 PDF 模板 ⭐️ -->
+  <div id="pdf-template">
+    <h1>🍰 PlanCake 旅行计划书</h1>
+    <div class="pdf-info">
+      <span id="pdf-dest-info">📍 目的地：成都</span>
+      <span id="pdf-date-info">📅 日期：待定</span>
+      <span id="pdf-people-info">👥 人数：2 人</span>
+    </div>
+    
+    <div class="pdf-section">
+      <h2>🗓️ 每日行程</h2>
+      <div id="pdf-timeline-list"></div>
+    </div>
+
+    <div class="pdf-section">
+      <h2>💰 预算账本</h2>
+      <div id="pdf-expense-list"></div>
+      <div style="margin-top:15px; font-weight:bold; text-align:right;" id="pdf-total"></div>
+    </div>
+
+    <div class="pdf-section">
+      <h2>📔 旅行日记</h2>
+      <div id="pdf-diary-list"></div>
+    </div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -198,16 +236,15 @@
     document.getElementById('input-start').value = today.toISOString().split('T')[0];
     document.getElementById('input-end').value = nextWeek.toISOString().split('T')[0];
 
-    // ⭐️ 读取本地保存的日记和记账数据
     let appState = { 
       expenses: JSON.parse(localStorage.getItem('pc_expenses')) || [], 
       diaries: JSON.parse(localStorage.getItem('pc_diaries')) || [],
-      totalBudget: 5000 
+      totalBudget: 5000,
+      dailyPlan: [] // 保存最近一次生成的行程用于导出
     };
     let mapInstance = null;
-    let tempPhotoBase64 = null; // 临时存照片
+    let tempPhotoBase64 = null;
 
-    // ⭐️ 天气逻辑
     function getWeatherInfo(code) {
       const map = {0:{icon:'☀️',desc:'晴朗'},1:{icon:'🌤️',desc:'大部晴朗'},2:{icon:'⛅',desc:'多云'},3:{icon:'☁️',desc:'阴天'},45:{icon:'🌫️',desc:'有雾'},51:{icon:'🌦️',desc:'小雨'},61:{icon:'🌧️',desc:'中雨'},71:{icon:'🌨️',desc:'小雪'},95:{icon:'⛈️',desc:'雷暴'}};
       return map[code] || {icon:'🌡️',desc:'未知'};
@@ -228,7 +265,6 @@
       } catch (err) { console.error(err); }
     }
 
-    // 导航切换
     function switchNav(viewId, el) {
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
@@ -236,7 +272,7 @@
       if (viewId === 'dashboard' && mapInstance) setTimeout(() => mapInstance.invalidateSize(), 100);
     }
 
-    // ⭐️ 记账本逻辑 (带本地存储)
+    // 记账本
     function updateBudgetUI() {
       let spent = appState.expenses.reduce((sum, item) => sum + item.amount, 0);
       let percent = Math.min(100, Math.round((spent / appState.totalBudget) * 100)) || 0;
@@ -264,15 +300,14 @@
     }
     function deleteExpense(id) { appState.expenses = appState.expenses.filter(e => e.id !== id); updateBudgetUI(); }
 
-    // ⭐️ 旅行日记逻辑 (带图片读取和本地存储)
+    // 日记本
     function previewPhoto(input) {
       if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
           tempPhotoBase64 = e.target.result;
           const img = document.getElementById('photo-preview');
-          img.src = e.target.result;
-          img.style.display = 'block';
+          img.src = e.target.result; img.style.display = 'block';
         };
         reader.readAsDataURL(input.files[0]);
       }
@@ -280,49 +315,32 @@
     function saveDiary() {
       const text = document.getElementById('diary-text').value;
       if (!text && !tempPhotoBase64) return alert("写点什么或者传张照片吧！");
-
-      appState.diaries.push({
-        id: Date.now(),
-        date: new Date().toLocaleString(),
-        text: text,
-        photo: tempPhotoBase64
-      });
-
-      // 清空表单
-      document.getElementById('diary-text').value = '';
-      document.getElementById('diary-photo').value = '';
-      document.getElementById('photo-preview').style.display = 'none';
-      tempPhotoBase64 = null;
-
+      appState.diaries.push({ id: Date.now(), date: new Date().toLocaleDateString(), text: text, photo: tempPhotoBase64 });
+      document.getElementById('diary-text').value = ''; document.getElementById('diary-photo').value = '';
+      document.getElementById('photo-preview').style.display = 'none'; tempPhotoBase64 = null;
       renderDiaries();
     }
     function renderDiaries() {
       localStorage.setItem('pc_diaries', JSON.stringify(appState.diaries));
       const list = document.getElementById('diary-list');
       list.innerHTML = appState.diaries.length === 0 ? '<div style="color:var(--muted); text-align:center; margin-top:50px;">还没有日记，快记录下美好的瞬间吧 📸</div>' : '';
-
       appState.diaries.slice().reverse().forEach(d => {
-        const card = document.createElement('div');
-        card.className = 'diary-card';
-        card.innerHTML = `
-          ${d.photo ? `<img src="${d.photo}">` : ''}
-          <div class="diary-card-info">
-            <div class="date">📅 ${d.date}</div>
-            <div class="text">${d.text.replace(/\n/g, '<br>')}</div>
-            <div class="del-btn" onclick="deleteDiary(${d.id})">删除</div>
-          </div>
-        `;
-        list.appendChild(card);
+        list.innerHTML += `
+          <div class="diary-card">
+            ${d.photo ? `<img src="${d.photo}">` : ''}
+            <div class="diary-card-info">
+              <div class="date">📅 ${d.date}</div>
+              <div class="text">${d.text.replace(/\n/g, '<br>')}</div>
+              <div class="del-btn" onclick="deleteDiary(${d.id})">删除</div>
+            </div>
+          </div>`;
       });
     }
     function deleteDiary(id) {
-      if(confirm('确定要删除这条日记吗？')) {
-        appState.diaries = appState.diaries.filter(d => d.id !== id);
-        renderDiaries();
-      }
+      if(confirm('确定要删除这条日记吗？')) { appState.diaries = appState.diaries.filter(d => d.id !== id); renderDiaries(); }
     }
 
-    // 生成行程 (AI + 兜底)
+    // 生成行程
     async function generatePlan() {
       const dest = document.getElementById('input-dest').value;
       const start = document.getElementById('input-start').value;
@@ -330,8 +348,7 @@
       const people = document.getElementById('input-people').value;
       const budget = parseFloat(document.getElementById('input-budget').value) || 5000;
       const days = Math.max(1, Math.round((new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24)) + 1);
-      if(!dest) return alert('请填写目的地');
-
+      
       fetchWeatherForCity(dest);
       appState.totalBudget = budget; updateBudgetUI();
       document.getElementById('dash-dest').textContent = dest;
@@ -350,19 +367,23 @@
           body: JSON.stringify({ text: `目的地:${dest}, 天数:${days}天` })
         });
         const data = await response.json();
-        if (data.ok && data.seed && data.seed.dailyPlan) { renderTimeline(data.seed.dailyPlan); }
-        else { renderMockTimeline(dest, days); }
-      } catch (e) { renderMockTimeline(dest, days); }
+        if (data.ok && data.seed && data.seed.dailyPlan) { 
+          appState.dailyPlan = data.seed.dailyPlan;
+          renderTimeline(data.seed.dailyPlan); 
+        } else { 
+          appState.dailyPlan = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`);
+          renderTimeline(appState.dailyPlan); 
+        }
+      } catch (e) { 
+        appState.dailyPlan = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`);
+        renderTimeline(appState.dailyPlan); 
+      }
     }
     function renderTimeline(dailyPlan) {
       const timeline = document.getElementById('timeline-list'); timeline.innerHTML = '';
       dailyPlan.forEach((text, i) => {
         timeline.innerHTML += `<div class="timeline-item"><div class="day">Day ${i + 1}</div><div class="desc">${text}</div></div>`;
       });
-    }
-    function renderMockTimeline(dest, days) {
-      const mock = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`);
-      renderTimeline(mock);
     }
     async function initMap(dest) {
       if (mapInstance) mapInstance.remove();
@@ -380,7 +401,80 @@
       } catch (err) {}
     }
 
-    // 页面加载时初始化数据
+    // ⭐️ PDF 导出核心逻辑 ⭐️
+    function exportPDF() {
+      // 1. 获取界面上的基础信息
+      const dest = document.getElementById('input-dest').value || '未填写';
+      const start = document.getElementById('input-start').value || '待定';
+      const end = document.getElementById('input-end').value || '待定';
+      const people = document.getElementById('input-people').value || '2';
+      
+      if (appState.dailyPlan.length === 0) {
+        return alert("请先在左侧点击“开始烘焙行程”，生成行程后再导出哦！");
+      }
+
+      // 2. 填充 PDF 模板
+      document.getElementById('pdf-dest-info').textContent = `📍 目的地：${dest}`;
+      document.getElementById('pdf-date-info').textContent = `📅 日期：${start} 至 ${end}`;
+      document.getElementById('pdf-people-info').textContent = `👥 人数：${people} 人`;
+
+      // 填充行程
+      let timelineHtml = '';
+      appState.dailyPlan.forEach((text, i) => {
+        timelineHtml += `
+          <div class="pdf-day">
+            <div class="pdf-day-title">Day ${i + 1}</div>
+            <div>${text}</div>
+          </div>`;
+      });
+      document.getElementById('pdf-timeline-list').innerHTML = timelineHtml;
+
+      // 填充账单
+      let expenseHtml = '';
+      let totalSpent = 0;
+      appState.expenses.forEach(exp => {
+        totalSpent += exp.amount;
+        expenseHtml += `<div class="pdf-expense-row"><span>${exp.desc}</span><span>¥${exp.amount}</span></div>`;
+      });
+      if(appState.expenses.length === 0) expenseHtml = '<div style="color:#999;">暂无记账记录</div>';
+      document.getElementById('pdf-expense-list').innerHTML = expenseHtml;
+      document.getElementById('pdf-total').innerHTML = `总花费：¥${totalSpent} / 预算：¥${appState.totalBudget}`;
+
+      // 填充日记 (如果有)
+      let diaryHtml = '';
+      appState.diaries.forEach(d => {
+        diaryHtml += `
+          <div class="pdf-diary-card">
+            <div style="font-size:12px; color:#999; margin-bottom:5px;">📅 ${d.date}</div>
+            <div>${d.text.replace(/\n/g, '<br>')}</div>
+            ${d.photo ? `<img src="${d.photo}">` : ''}
+          </div>`;
+      });
+      if(appState.diaries.length === 0) diaryHtml = '<div style="color:#999;">暂无日记记录</div>';
+      document.getElementById('pdf-diary-list').innerHTML = diaryHtml;
+
+      // 3. 调用 html2pdf 将模板转为 PDF 并下载
+      const element = document.getElementById('pdf-template');
+      
+      // 临时显示模板以便 html2pdf 渲染
+      element.style.display = 'block';
+
+      const opt = {
+        margin:       10,
+        filename:     `PlanCake_${dest}_旅行计划.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      // 生成并下载
+      html2pdf().set(opt).from(element).save().then(() => {
+        // 下载完成后隐藏模板
+        element.style.display = 'none';
+      });
+    }
+
+    // 初始化
     updateBudgetUI();
     renderDiaries();
     fetchWeatherForCity(document.getElementById('input-dest').value);
