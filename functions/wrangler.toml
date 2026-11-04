@@ -1,0 +1,10 @@
+name = "plancake"
+pages_build_output_dir = "."
+
+[[d1_databases]]
+binding = "DB"
+database_name = "plancake-db"
+database_id = "824bae9f-9b31-4911-bdff-9cfaec8331e0ID"
+
+[ai]
+binding = "AI"
