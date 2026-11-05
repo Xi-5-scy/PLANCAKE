@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PlanCake - 智能旅行工作台</title>
+  <title>PlanCake-AI 1.1 - 智能旅行工作台</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   
@@ -240,6 +240,65 @@
     #pdf-template .pdf-expense-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #ddd; padding: 8px 0; font-size: 14px; }
     #pdf-template .pdf-diary-card { margin-bottom: 20px; border: 1px solid #eee; padding: 15px; border-radius: 8px; page-break-inside: avoid; }
     #pdf-template .pdf-diary-card img { max-width: 100%; max-height: 300px; object-fit: cover; border-radius: 8px; margin-top: 10px; }
+  
+    /* PlanCake 1.1：平板与手机适配 */
+    @media (max-width: 1100px) {
+      .top-navbar { padding: 0 18px; }
+      .top-tab { padding: 9px 13px; }
+      .app-layout { gap: 14px; padding: 14px; }
+      .sidebar { width: 290px; }
+      .info-row { gap: 12px; }
+      .bottom-row { gap: 12px; }
+    }
+    @media (max-width: 820px) {
+      body { height: auto; min-height: 100vh; overflow: auto; }
+      .top-navbar { height: auto; min-height: 64px; padding: 10px 14px; gap: 10px; flex-wrap: wrap; }
+      .logo { font-size: 21px; }
+      .top-tabs { order: 3; width: 100%; overflow-x: auto; gap: 6px; padding-bottom: 2px; }
+      .top-tab { flex: 0 0 auto; white-space: nowrap; font-size: 13px; padding: 9px 12px; }
+      .app-layout { display: flex; flex-direction: column; overflow: visible; padding: 12px; gap: 12px; }
+      .sidebar { width: 100%; max-height: none; overflow: visible; }
+      .sidebar-form-wrapper { overflow: visible; padding: 14px 14px 0; }
+      .sidebar-bottom { padding: 12px 14px 14px; }
+      .main-content { width: 100%; overflow: visible; padding-right: 0; }
+      .top-row, .bottom-row, .diary-container, .checklist-layout, .budget-layout { flex-direction: column; }
+      .top-row { min-height: 0; }
+      .banner-card { min-height: 170px; }
+      .banner-card h1 { font-size: 28px; }
+      .expense-card { min-height: 150px; }
+      .info-row { grid-template-columns: 1fr; }
+      .bottom-row { min-height: 0; }
+      .map-widget, .timeline-widget { min-height: 360px; }
+      #map-container { min-height: 280px; }
+      .view-panel { height: auto; min-height: 0; }
+      #view-diary.view-panel.active, #view-discover.view-panel.active,
+      #view-budget.view-panel.active, #view-checklist.view-panel.active,
+      #view-profile.view-panel.active { height: auto; min-height: 0; }
+      .checklist-layout, .budget-layout { height: auto; overflow: visible; }
+      .checklist-left { min-height: 360px; }
+      .checklist-right, .budget-left, .budget-right { overflow: visible; padding-right: 0; }
+      .diary-form { width: 100%; }
+      .diary-list { min-height: 180px; }
+      .discover-grid { grid-template-columns: 1fr; }
+      .profile-layout { flex-direction: column; }
+      .profile-card { width: 100%; }
+      .config-item { align-items: flex-start; gap: 8px; flex-wrap: wrap; }
+    }
+    @media (max-width: 480px) {
+      .app-layout { padding: 8px; }
+      .sidebar-form { padding: 14px; }
+      .banner-card { padding: 20px; }
+      .banner-card h1 { font-size: 24px; }
+      .banner-emoji { font-size: 88px; }
+      .map-tools { flex-wrap: wrap; }
+      .map-tools input { min-width: 0; width: 100%; flex-basis: 100%; }
+      .map-tools button { min-height: 42px; }
+      .discover-header { align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+      .checklist-left, .budget-right, .add-expense-card { padding: 16px; }
+      .diary-card { flex-direction: column; }
+      .diary-card img { width: 100%; max-width: none; }
+    }
+
   </style>
 </head>
 <body>
@@ -559,7 +618,7 @@
       document.documentElement.style.setProperty('--primary', t.primary);
       document.documentElement.style.setProperty('--primary-light', t.light);
       document.documentElement.style.setProperty('--btn-shadow', t.shadow);
-      localStorage.setItem('pc_theme_idx', index);
+      try { localStorage.setItem('pc_theme_idx', String(index)); } catch (error) { console.warn(error); }
       document.querySelectorAll('.color-dot').forEach((dot, i) => {
         if (i === index) dot.classList.add('active'); else dot.classList.remove('active');
       });
@@ -567,28 +626,54 @@
     function changeTheme(index) { applyTheme(index); }
     
     window.addEventListener('DOMContentLoaded', () => {
-      const savedIdx = parseInt(localStorage.getItem('pc_theme_idx')) || 0;
+      const savedIdx = Math.min(themes.length - 1, Math.max(0, parseInt(localStorage.getItem('pc_theme_idx'), 10) || 0));
       applyTheme(savedIdx);
     });
 
     const today = new Date(); const nextWeek = new Date(today); nextWeek.setDate(today.getDate() + 3);
-    document.getElementById('input-start').value = today.toISOString().split('T')[0];
-    document.getElementById('input-end').value = nextWeek.toISOString().split('T')[0];
+    document.getElementById('input-start').value = localDateString(today);
+    document.getElementById('input-end').value = localDateString(nextWeek);
+
+
+    function readStored(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw === null ? fallback : JSON.parse(raw);
+      } catch (error) {
+        console.warn(`PlanCake：读取本地数据失败（${key}），已使用默认值。`, error);
+        return fallback;
+      }
+    }
+    function writeStored(key, value) {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+        return true;
+      } catch (error) {
+        console.warn(`PlanCake：保存本地数据失败（${key}）。`, error);
+        return false;
+      }
+    }
+    function localDateString(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
 
     // ⭐️ 全局状态：增加 userProfile ⭐️
     let appState = { 
-      expenses: JSON.parse(localStorage.getItem('pc_expenses')) || [], 
-      diaries: JSON.parse(localStorage.getItem('pc_diaries')) || [],
-      members: JSON.parse(localStorage.getItem('pc_members')) || ['我', '朋友A'],
-      checklist: JSON.parse(localStorage.getItem('pc_checklist')) || [
+      expenses: readStored('pc_expenses', []), 
+      diaries: readStored('pc_diaries', []),
+      members: readStored('pc_members', ['我', '朋友A']),
+      checklist: readStored('pc_checklist', [
         { id: 1, text: '身份证/护照', done: false },
         { id: 2, text: '手机充电器', done: false },
         { id: 3, text: '换洗衣物', done: false }
-      ],
-      userProfile: JSON.parse(localStorage.getItem('pc_user_profile')) || {
+      ]),
+      userProfile: readStored('pc_user_profile', {
         name: '旅行者',
         avatar: ''
-      },
+      }),
       totalBudget: 5000, 
       dailyPlan: [], 
       customSpots: [],
@@ -640,7 +725,7 @@
       const newName = document.getElementById('profile-name-input').value.trim();
       if (newName) appState.userProfile.name = newName;
       
-      localStorage.setItem('pc_user_profile', JSON.stringify(appState.userProfile));
+      writeStored('pc_user_profile', appState.userProfile);
       renderProfile(); // 刷新一下
       
       if (showAlert) alert('🎉 资料已保存！');
@@ -660,7 +745,7 @@
 
     function clearAllData() {
       if (confirm('⚠️ 确定要清空所有数据吗？\n这将删除你的行程、账单、日记、清单和头像，且无法恢复！')) {
-        localStorage.clear();
+        ['pc_theme_idx','pc_expenses','pc_diaries','pc_members','pc_checklist','pc_user_profile'].forEach(key => localStorage.removeItem(key));
         location.reload();
       }
     }
@@ -681,7 +766,7 @@
       const percent = total === 0 ? 0 : Math.round((doneCount / total) * 100);
       document.getElementById('progress-text').textContent = `${doneCount} / ${total} (${percent}%)`;
       document.getElementById('progress-bar').style.width = `${percent}%`;
-      localStorage.setItem('pc_checklist', JSON.stringify(appState.checklist));
+      writeStored('pc_checklist', appState.checklist);
       renderProfile(); // 联动更新统计
     }
     function addChecklistItem() {
@@ -788,7 +873,7 @@
       }
     }
     function renderMembers() {
-      localStorage.setItem('pc_members', JSON.stringify(appState.members));
+      writeStored('pc_members', appState.members);
       document.getElementById('member-list').innerHTML = appState.members.map(m => `<span class="member-tag">👤 ${m} <span onclick="removeMember('${m}')">×</span></span>`).join('');
       document.getElementById('exp-payer').innerHTML = appState.members.map(m => `<option value="${m}">${m} 付钱</option>`).join('');
       calculateSettlement();
@@ -849,7 +934,7 @@
           </div>
         `}).join(''); 
       }
-      localStorage.setItem('pc_expenses', JSON.stringify(appState.expenses));
+      writeStored('pc_expenses', appState.expenses);
     }
 
     function handleSpotEnter(e) { if (e.key === 'Enter') addCustomSpot(); }
@@ -858,12 +943,26 @@
     function removeSpot(index) { appState.customSpots.splice(index, 1); renderCustomMap(); }
     function calcDistance(lat1, lon1, lat2, lon2) { const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2); return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))).toFixed(1); }
     function renderCustomMap() { if (!mapInstance) { mapInstance = L.map('map-container').setView([20, 0], 2); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(mapInstance); } mapInstance.eachLayer(layer => { if (layer instanceof L.Marker || layer instanceof L.Polyline) { mapInstance.removeLayer(layer); } }); const spots = appState.customSpots; const latlngs = []; const configList = document.getElementById('route-config'); configList.innerHTML = spots.length > 0 ? '' : '<div style="color:var(--muted); text-align:center; font-size:12px; font-weight:700;">请在上方搜索框添加景点来规划路线</div>'; const transportOptions = ['🚗 驾车', '🚶 步行', '🚌 公交', '🚲 骑行']; spots.forEach((spot, i) => { const latlng = [spot.lat, spot.lng]; latlngs.push(latlng); L.marker(latlng).addTo(mapInstance).bindPopup(`<b>${i+1}. ${spot.name}</b>`); if (i > 0) { const prevSpot = spots[i-1]; const prevLatLng = [prevSpot.lat, prevSpot.lng]; L.polyline([prevLatLng, latlng], { color: 'var(--primary)', weight: 4, dashArray: '6, 6' }).addTo(mapInstance); const dist = calcDistance(prevSpot.lat, prevSpot.lng, spot.lat, spot.lng); const midLat = (prevSpot.lat + spot.lat) / 2; const midLng = (prevSpot.lng + spot.lng) / 2; const transportIcon = L.divIcon({ className: 'custom-div-icon', html: `<div class="transport-icon">${prevSpot.transport} ${dist}km</div>`, iconSize: [80, 24], iconAnchor: [40, 12] }); L.marker([midLat, midLng], { icon: transportIcon }).addTo(mapInstance); configList.innerHTML += `<div class="config-item"><div><b>${i}. ${prevSpot.name}</b> ➔ <b>${i+1}. ${spot.name}</b> <span style="color:var(--muted); font-size:12px;">(${dist}km)</span></div><div><select onchange="changeTransport(${i-1}, this.value)">${transportOptions.map(opt => `<option value="${opt}" ${prevSpot.transport === opt ? 'selected' : ''}>${opt}</option>`).join('')}</select><span style="color:var(--danger); cursor:pointer; margin-left:8px; font-size:13px; font-weight:800;" onclick="removeSpot(${i})">删除</span></div></div>`; } }); if (latlngs.length > 0) { mapInstance.fitBounds(latlngs, { padding: [30, 30] }); } }
-    async function generatePlan() { const dest = document.getElementById('input-dest').value; const start = document.getElementById('input-start').value; const end = document.getElementById('input-end').value; const people = document.getElementById('input-people').value; const budget = parseFloat(document.getElementById('input-budget').value) || 5000; const days = Math.max(1, Math.round((new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24)) + 1); let prefs = []; document.querySelectorAll('#input-prefs .tag.active').forEach(t => prefs.push(t.textContent.trim())); fetchWeatherForCity(dest); fetchChecklistRecommendations(dest); appState.totalBudget = budget; updateBudgetUI(); document.getElementById('dash-dest').textContent = dest; document.getElementById('dash-date').textContent = `${start} 出发 · ${days}天`; document.getElementById('info-days').textContent = `${days} 天`; document.getElementById('info-people').textContent = `${people} 人`; document.getElementById('info-prefs').textContent = prefs.length > 0 ? prefs.join(' / ') : '无特殊偏好'; appState.customSpots = []; if (mapInstance) { mapInstance.remove(); mapInstance = null; } mapInstance = L.map('map-container').setView([20, 0], 2); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(mapInstance); try { const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(dest)}&limit=1`); const data = await res.json(); if (data.features?.length > 0) { const lat = data.features[0].geometry.coordinates[1]; const lng = data.features[0].geometry.coordinates[0]; mapInstance.flyTo([lat, lng], 12, { duration: 2 }); appState.customSpots.push({ name: dest + '市中心', lat, lng, transport: '🚗 驾车' }); renderCustomMap(); } } catch (err) {} const timeline = document.getElementById('timeline-list'); timeline.innerHTML = `<div style="text-align:center; margin-top:50px; color:var(--primary);"><div style="font-size:50px; animation:float 2s infinite alternate; margin-bottom:10px;">🎂</div><span style="font-weight:800;">AI 正在为你烘焙...</span></div>`; const prompt = `目的地:${dest}, 天数:${days}天, 旅行偏好:${prefs.join('、')}`; try { const response = await fetch('/api/parse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: prompt }) }); const data = await response.json(); if (data.ok && data.seed && data.seed.dailyPlan) { appState.dailyPlan = data.seed.dailyPlan; renderTimeline(data.seed.dailyPlan); } else { const mock = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`); appState.dailyPlan = mock; renderTimeline(mock); } } catch (e) { const mock = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`); appState.dailyPlan = mock; renderTimeline(mock); } renderProfile(); }
+    async function generatePlan() {
+      const dest = document.getElementById('input-dest').value.trim();
+      const start = document.getElementById('input-start').value;
+      const end = document.getElementById('input-end').value;
+      const people = document.getElementById('input-people').value;
+      const budgetInput = parseFloat(document.getElementById('input-budget').value);
+      const budget = Number.isFinite(budgetInput) && budgetInput > 0 ? budgetInput : 5000;
+      if (!dest) { alert('请先填写旅行目的地哦！'); document.getElementById('input-dest').focus(); return; }
+      if (!start || !end) { alert('请填写完整的出发和返程日期哦！'); return; }
+      const startDate = new Date(`${start}T00:00:00`);
+      const endDate = new Date(`${end}T00:00:00`);
+      if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime()) || endDate < startDate) {
+        alert('返程日期不能早于出发日期，请检查日期设置。'); return;
+      }
+      const days = Math.round((endDate - startDate) / 86400000) + 1; let prefs = []; document.querySelectorAll('#input-prefs .tag.active').forEach(t => prefs.push(t.textContent.trim())); fetchWeatherForCity(dest); fetchChecklistRecommendations(dest); appState.totalBudget = budget; updateBudgetUI(); document.getElementById('dash-dest').textContent = dest; document.getElementById('dash-date').textContent = `${start} 出发 · ${days}天`; document.getElementById('info-days').textContent = `${days} 天`; document.getElementById('info-people').textContent = `${people} 人`; document.getElementById('info-prefs').textContent = prefs.length > 0 ? prefs.join(' / ') : '无特殊偏好'; appState.customSpots = []; if (mapInstance) { mapInstance.remove(); mapInstance = null; } mapInstance = L.map('map-container').setView([20, 0], 2); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(mapInstance); try { const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(dest)}&limit=1`); const data = await res.json(); if (data.features?.length > 0) { const lat = data.features[0].geometry.coordinates[1]; const lng = data.features[0].geometry.coordinates[0]; mapInstance.flyTo([lat, lng], 12, { duration: 2 }); appState.customSpots.push({ name: dest + '市中心', lat, lng, transport: '🚗 驾车' }); renderCustomMap(); } } catch (err) {} const timeline = document.getElementById('timeline-list'); timeline.innerHTML = `<div style="text-align:center; margin-top:50px; color:var(--primary);"><div style="font-size:50px; animation:float 2s infinite alternate; margin-bottom:10px;">🎂</div><span style="font-weight:800;">AI 正在为你烘焙...</span></div>`; const prompt = `目的地:${dest}, 天数:${days}天, 旅行偏好:${prefs.join('、')}`; try { const response = await fetch('/api/parse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: prompt }) }); const data = await response.json(); if (data.ok && data.seed && data.seed.dailyPlan) { appState.dailyPlan = data.seed.dailyPlan; renderTimeline(data.seed.dailyPlan); } else { const mock = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`); appState.dailyPlan = mock; renderTimeline(mock); } } catch (e) { const mock = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`); appState.dailyPlan = mock; renderTimeline(mock); } renderProfile(); }
     function renderTimeline(dailyPlan) { const timeline = document.getElementById('timeline-list'); timeline.innerHTML = ''; dailyPlan.forEach((text, i) => { timeline.innerHTML += `<div class="timeline-item"><div class="day">Day ${i + 1}</div><div class="desc">${text}</div></div>`; }); }
     
     function previewPhoto(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function(e) { tempPhotoBase64 = e.target.result; document.getElementById('photo-preview').src = e.target.result; document.getElementById('photo-preview').style.display = 'block'; }; reader.readAsDataURL(input.files[0]); } }
-    function saveDiary() { const text = document.getElementById('diary-text').value; if (!text && !tempPhotoBase64) return alert("写点什么或者传张照片吧！"); appState.diaries.push({ id: Date.now(), date: new Date().toLocaleDateString(), text: text, photo: tempPhotoBase64 }); document.getElementById('diary-text').value = ''; document.getElementById('diary-photo').value = ''; document.getElementById('photo-preview').style.display = 'none'; tempPhotoBase64 = null; renderDiaries(); renderProfile(); }
-    function renderDiaries() { localStorage.setItem('pc_diaries', JSON.stringify(appState.diaries)); const list = document.getElementById('diary-list'); list.innerHTML = appState.diaries.length === 0 ? '<div style="color:var(--muted); text-align:center; margin-top:50px; font-weight:700;">还没有日记，快记录下美好的瞬间吧 📸</div>' : ''; appState.diaries.slice().reverse().forEach(d => { list.innerHTML += `<div class="diary-card">${d.photo ? `<img src="${d.photo}">` : ''}<div class="diary-card-info"><div class="date" style="font-size:12px; color:var(--muted); margin-bottom:5px; font-weight:700;">📅 ${d.date}</div><div class="text" style="font-size:15px; line-height:1.6; font-weight:600;">${d.text.replace(/\n/g, '<br>')}</div><div class="del-btn" onclick="deleteDiary(${d.id})">删除</div></div></div>`; }); }
+    function saveDiary() { const text = document.getElementById('diary-text').value; if (!text && !tempPhotoBase64) return alert("写点什么或者传张照片吧！"); appState.diaries.push({ id: Date.now(), date: localDateString(new Date()), text: text, photo: tempPhotoBase64 }); document.getElementById('diary-text').value = ''; document.getElementById('diary-photo').value = ''; document.getElementById('photo-preview').style.display = 'none'; tempPhotoBase64 = null; renderDiaries(); renderProfile(); }
+    function renderDiaries() { writeStored('pc_diaries', appState.diaries); const list = document.getElementById('diary-list'); list.innerHTML = appState.diaries.length === 0 ? '<div style="color:var(--muted); text-align:center; margin-top:50px; font-weight:700;">还没有日记，快记录下美好的瞬间吧 📸</div>' : ''; appState.diaries.slice().reverse().forEach(d => { list.innerHTML += `<div class="diary-card">${d.photo ? `<img src="${d.photo}">` : ''}<div class="diary-card-info"><div class="date" style="font-size:12px; color:var(--muted); margin-bottom:5px; font-weight:700;">📅 ${d.date}</div><div class="text" style="font-size:15px; line-height:1.6; font-weight:600;">${d.text.replace(/\n/g, '<br>')}</div><div class="del-btn" onclick="deleteDiary(${d.id})">删除</div></div></div>`; }); }
     function deleteDiary(id) { if(confirm('确定要删除这条日记吗？')) { appState.diaries = appState.diaries.filter(d => d.id !== id); renderDiaries(); renderProfile(); } }
     
     function exportPDF() { const dest = document.getElementById('input-dest').value || '未填写'; const start = document.getElementById('input-start').value || '待定'; const end = document.getElementById('input-end').value || '待定'; const people = document.getElementById('input-people').value || '2'; if (appState.dailyPlan.length === 0) return alert("请先点击“开始烘焙行程”，生成行程后再导出哦！"); document.getElementById('pdf-dest-info').textContent = `📍 目的地：${dest}`; document.getElementById('pdf-date-info').textContent = `📅 日期：${start} 至 ${end}`; document.getElementById('pdf-people-info').textContent = `👥 人数：${people} 人`; let timelineHtml = ''; appState.dailyPlan.forEach((text, i) => { timelineHtml += `<div class="pdf-day"><div class="pdf-day-title">Day ${i + 1}</div><div>${text}</div></div>`; }); document.getElementById('pdf-timeline-list').innerHTML = timelineHtml; let expenseHtml = ''; let totalSpent = 0; appState.expenses.forEach(exp => { totalSpent += exp.amount; expenseHtml += `<div class="pdf-expense-row"><span>[${exp.isAA ? 'AA' : '自费'}] [${exp.payer}] ${exp.desc}</span><span>¥${exp.amount}</span></div>`; }); if(appState.expenses.length === 0) expenseHtml = '<div style="color:#999;">暂无记账记录</div>'; document.getElementById('pdf-expense-list').innerHTML = expenseHtml; document.getElementById('pdf-total').innerHTML = `总花费：¥${totalSpent} / 预算：¥${appState.totalBudget}`; let diaryHtml = ''; appState.diaries.forEach(d => { diaryHtml += `<div class="pdf-diary-card"><div style="font-size:12px; color:#999; margin-bottom:5px;">📅 ${d.date}</div><div>${d.text.replace(/\n/g, '<br>')}</div>${d.photo ? `<img src="${d.photo}">` : ''}</div>`; }); if(appState.diaries.length === 0) diaryHtml = '<div style="color:#999;">暂无日记记录</div>'; document.getElementById('pdf-diary-list').innerHTML = diaryHtml; const element = document.getElementById('pdf-template'); element.style.display = 'block'; const opt = { margin: 10, filename: `PlanCake_${dest}_旅行计划.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }; html2pdf().set(opt).from(element).save().then(() => { element.style.display = 'none'; }); }
