@@ -4,7 +4,7 @@
 
 ## 重要说明
 - 当前版本使用 Cloudflare Pages Functions + D1；不要只上传 index.html，必须把本文件夹内的全部文件放进 GitHub 仓库根目录。
-- 账号密码使用 PBKDF2-SHA256（210,000 次迭代）派生保存，登录使用 HttpOnly/Secure/SameSite=Lax Cookie。
+- 账号密码使用 PBKDF2-SHA256（100,000 次迭代；适配 Cloudflare Workers WebCrypto 的迭代次数上限）派生保存，登录使用 HttpOnly/Secure/SameSite=Lax Cookie。
 - 本版本没有邮件验证、邮件找回密码功能；邮箱用于账号登录。以后可接入邮件服务商补上验证和找回流程。
 - 多人同步采用 D1 版本号 + 4 秒轮询，不是毫秒级 WebSocket 实时协作；并发修改出现版本冲突时不会静默覆盖，需刷新后重试。
 - 原有 /api/parse、/api/inspire AI 接口并未包含在此后端中；原页面会继续使用自身已有的降级文案逻辑。若需要真正 AI 行程生成，还需配置 AI API。

@@ -8,7 +8,7 @@ const cookie = (name,value,maxAge) => `${name}=${value}; Path=/; HttpOnly; Secur
 function getCookie(req,name){ return (req.headers.get('Cookie')||'').split(';').map(x=>x.trim()).find(x=>x.startsWith(name+'='))?.slice(name.length+1)||''; }
 async function body(req){ try{return await req.json()}catch{return null} }
 async function passwordHash(password,salt){ const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(password),'PBKDF2',false,['deriveBits']); const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:new TextEncoder().encode(salt),iterations:100000,hash:'SHA-256'},key,256); return bytesToHex(bits); }
-async function auth(req,env){ const token=getCookie(req,'pc_session'); if(!token)return null; const hash=await sha(token); const row=await env.DB.prepare('SELECT users.id,users.email,users.username FROM sessions JOIN users ON users.id=sessions.user_id WHERE sessions.token_hash=? AND sessions.expires_at>?').bind(hash,Math.floor(Date.now()/1000)).first(); return row||null; }
+async function auth(req,env){ const token=getCookie(req,'pc_session'); if(!token)return null; const hash=await sha(token); const row=await env.DB.prepare('SELECT users.id,users.email,users.username,users.profile_avatar,users.profile_bio,users.created_at FROM sessions JOIN users ON users.id=sessions.user_id WHERE sessions.token_hash=? AND sessions.expires_at>?').bind(hash,Math.floor(Date.now()/1000)).first(); return row||null; }
 async function requireUser(req,env){ const user=await auth(req,env); return user; }
 async function getPlan(env,userId){ return env.DB.prepare('SELECT p.* FROM plans p JOIN plan_members m ON m.plan_id=p.id JOIN users u ON u.id=m.user_id WHERE m.user_id=? AND (u.active_plan_id=p.id OR u.active_plan_id IS NULL) ORDER BY p.updated_at DESC LIMIT 1').bind(userId).first(); }
 async function canAccess(env,planId,userId){ return env.DB.prepare('SELECT role FROM plan_members WHERE plan_id=? AND user_id=?').bind(planId,userId).first(); }
@@ -33,7 +33,16 @@ export default { async fetch(req,env){
   }
   if(path==='/api/auth/logout'&&method==='POST'){ const token=getCookie(req,'pc_session'); if(token)await env.DB.prepare('DELETE FROM sessions WHERE token_hash=?').bind(await sha(token)).run(); return json({ok:true},200,{'set-cookie':cookie('pc_session','',0),...corsHeaders(req,env)}); }
   if(path==='/api/auth/me'&&method==='GET'){ const u=await auth(req,env); if(!u)return json({user:null}); return json({user:u}); }
+  if(path==='/api/profile'&&(method==='GET'||method==='PUT')){
+   const user=await requireUser(req,env); if(!user)return json({error:'请先登录。'},401);
+   if(method==='PUT'){const b=await body(req);const username=String(b?.username||'').trim(),bio=String(b?.bio||'').trim(),avatar=String(b?.avatar||'');if(username.length<2||username.length>40||bio.length>300||avatar.length>700000|| (avatar&&!/^data:image\/(png|jpeg|webp|gif);base64,/.test(avatar)))return json({error:'资料格式不正确：昵称 2-40 字，简介不超过 300 字，头像需为 500KB 内图片。'},400);await env.DB.prepare('UPDATE users SET username=?,profile_bio=?,profile_avatar=? WHERE id=?').bind(username,bio,avatar,user.id).run();}
+   const profile=await env.DB.prepare('SELECT id,email,username,profile_avatar,profile_bio,created_at FROM users WHERE id=?').bind(user.id).first();return json({profile});
+  }
   const user=await requireUser(req,env); if(!user)return json({error:'请先登录。'},401);
+  if(path==='/api/plans'&&method==='GET'){const r=await env.DB.prepare('SELECT p.id,p.owner_id,p.title,p.data,p.version,p.updated_at,pm.role FROM plans p JOIN plan_members pm ON pm.plan_id=p.id WHERE pm.user_id=? ORDER BY p.updated_at DESC').bind(user.id).all();return json({plans:r.results||[]});}
+  if(path==='/api/plans'&&method==='POST'){const b=await body(req),title=String(b?.title||'').trim();if(!title||title.length>80)return json({error:'规划标题需为 1-80 个字符。'},400);const id=uid();await env.DB.prepare('INSERT INTO plans(id,owner_id,title,data) VALUES(?,?,?,?)').bind(id,user.id,title,JSON.stringify(b.data||{})).run();await env.DB.prepare('INSERT INTO plan_members(plan_id,user_id,role) VALUES(?,?,?)').bind(id,user.id,'owner').run();await env.DB.prepare('UPDATE users SET active_plan_id=? WHERE id=?').bind(id,user.id).run();return json({ok:true,id},201);}
+  if(path.startsWith('/api/plans/')&&path.endsWith('/select')&&method==='POST'){const id=path.split('/')[3],m=await canAccess(env,id,user.id);if(!m)return json({error:'无权访问该规划。'},403);await env.DB.prepare('UPDATE users SET active_plan_id=? WHERE id=?').bind(id,user.id).run();return json({ok:true});}
+  if(path.startsWith('/api/plans/')&&method==='DELETE'&&!path.endsWith('/current')){const id=path.split('/')[3],p=await env.DB.prepare('SELECT owner_id FROM plans WHERE id=?').bind(id).first();if(!p||p.owner_id!==user.id)return json({error:'只有创建者可以删除规划。'},403);await env.DB.prepare('DELETE FROM plans WHERE id=?').bind(id).run();const next=await env.DB.prepare('SELECT plan_id FROM plan_members WHERE user_id=? LIMIT 1').bind(user.id).first();await env.DB.prepare('UPDATE users SET active_plan_id=? WHERE id=?').bind(next?.plan_id||null,user.id).run();return json({ok:true});}
   if(path==='/api/plans/current'&&method==='GET'){
    let p=await getPlan(env,user.id); if(!p){const id=uid(); await env.DB.prepare('INSERT INTO plans(id,owner_id,title,data) VALUES(?,?,?,?)').bind(id,user.id,'我的旅行规划','{}').run(); await env.DB.prepare('INSERT INTO plan_members(plan_id,user_id,role) VALUES(?,?,?)').bind(id,user.id,'owner').run(); await env.DB.prepare('UPDATE users SET active_plan_id=? WHERE id=?').bind(id,user.id).run(); p=await getPlan(env,user.id)}
    const members=await env.DB.prepare('SELECT u.id,u.username,u.email,m.role,m.joined_at FROM plan_members m JOIN users u ON u.id=m.user_id WHERE m.plan_id=?').bind(p.id).all(); return json({plan:{id:p.id,title:p.title,data:JSON.parse(p.data||'{}'),version:p.version,updatedAt:p.updated_at},members:members.results||[]});
@@ -60,8 +69,5 @@ export default { async fetch(req,env){
    const memberId=path.split('/').pop(), p=await getPlan(env,user.id); if(!p||p.owner_id!==user.id)return json({error:'只有规划创建者可以移除成员。'},403); if(memberId===user.id)return json({error:'不能移除创建者本人。'},400); await env.DB.prepare('DELETE FROM plan_members WHERE plan_id=? AND user_id=?').bind(p.id,memberId).run(); return json({ok:true});
   }
   return json({error:'Not found'},404);
- }catch(e){
- console.error('PlanCake API error:',e);
- return json({error:'服务器暂时无法处理请求：'+String(e)},500);
-}
+ }catch(e){ return json({error:'服务器暂时无法处理请求。',detail:env.ENVIRONMENT==='development'?String(e):undefined},500); }
 }}

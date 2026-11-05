@@ -2,6 +2,7 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS users (
  id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE COLLATE NOCASE,
  username TEXT NOT NULL, password_hash TEXT NOT NULL, password_salt TEXT NOT NULL, active_plan_id TEXT,
+ profile_avatar TEXT NOT NULL DEFAULT '', profile_bio TEXT NOT NULL DEFAULT '',
  created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE TABLE IF NOT EXISTS sessions (

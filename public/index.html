@@ -327,7 +327,7 @@
     <button id="pc-account-button" class="pc-account-button" onclick="openAccount()">登录 / 注册</button>
     <div class="nav-avatar" onclick="switchNav('profile', document.querySelectorAll('.top-tab')[0])" title="个人中心">
       <img id="nav-avatar-img" src="" alt="👤" style="display:none;">
-      <span id="nav-avatar-default" style="font-size:20px;">👤</span>
+      <span id="nav-avatar-default" style="font-size:22px;">🧁</span>
     </div>
   </header>
 
@@ -533,14 +533,16 @@
             <div class="avatar-upload-wrapper" onclick="document.getElementById('avatar-upload').click()">
               <!-- 默认头像和上传后的预览 -->
               <img id="profile-avatar-img" class="profile-avatar" src="" style="display:none;">
-              <div id="profile-avatar-default" class="profile-avatar">👤</div>
+              <div id="profile-avatar-default" class="profile-avatar">🧁</div>
               <div class="avatar-edit-badge">📷</div>
               <input type="file" id="avatar-upload" accept="image/*" onchange="uploadAvatar(this)">
             </div>
             
             <div class="profile-info">
               <input type="text" id="profile-name-input" class="profile-name-input" value="旅行者" placeholder="输入你的昵称..." onchange="saveProfileData()">
-              <div class="profile-bio">🌍 用脚步丈量世界，用 PlanCake 记录美好。</div>
+              <input type="email" id="profile-email" class="profile-name-input" readonly placeholder="登录后显示邮箱" style="font-size:14px;margin:0 0 8px;border:0;">
+              <textarea id="profile-bio-input" class="profile-bio" maxlength="300" placeholder="写一句旅行简介…" style="width:100%;min-height:68px;border:1px solid var(--primary-light);border-radius:10px;padding:8px;resize:vertical;"></textarea>
+              <div id="profile-created-at" class="profile-bio">注册时间：登录后显示</div>
               <button class="btn-save-profile" onclick="saveProfileData(true)">保存资料</button>
             </div>
           </div>
@@ -618,7 +620,7 @@
       <h2>🍰 PlanCake-AI 账号</h2><p>注册或登录后，旅行规划将保存到云端，并可邀请朋友共同编辑。</p>
       <div id="pc-auth-fields"><label>用户名（注册时填写）</label><input id="pc-auth-name" placeholder="例如：旅行小蛋糕"><label>邮箱</label><input id="pc-auth-email" type="email" placeholder="name@example.com"><label>密码（至少 10 位）</label><input id="pc-auth-password" type="password" placeholder="请输入密码"><div class="pc-status" id="pc-auth-status"></div>
       <button onclick="submitAuth('register')">注册账号</button><button class="secondary" onclick="submitAuth('login')">登录</button></div>
-      <div id="pc-account-info" style="display:none"><p id="pc-account-label"></p><div class="pc-share-card"><b>好友协作</b><p>生成一个只能成功使用一次、24 小时内有效的邀请码。朋友登录后输入邀请码即可共同编辑这份规划。</p><button onclick="createPcInvite()">生成一次性邀请码</button><div id="pc-generated-code"></div><div id="pc-member-list" class="pc-share-card"><b>协作成员</b><div class="pc-status">登录后加载成员列表</div></div><label>输入朋友发给你的邀请码</label><input id="pc-join-code" placeholder="PC-XXXX-XXXXXX"><button onclick="joinPcInvite()">加入朋友的规划</button><div class="pc-status" id="pc-share-status"></div></div><button class="secondary" onclick="logoutPc()">退出登录</button></div>
+      <div id="pc-account-info" style="display:none"><p id="pc-account-label"></p><div class="pc-share-card"><b>我的独立规划</b><div id="pc-plan-list"></div><input id="pc-new-plan-title" placeholder="新规划标题"><button onclick="pcCreatePlan()">＋ 创建新规划</button></div><div class="pc-share-card"><b>好友协作</b><p>生成一个只能成功使用一次、24 小时内有效的邀请码。朋友登录后输入邀请码即可共同编辑这份规划。</p><button onclick="createPcInvite()">生成一次性邀请码</button><div id="pc-generated-code"></div><div id="pc-member-list" class="pc-share-card"><b>协作成员</b><div class="pc-status">登录后加载成员列表</div></div><label>输入朋友发给你的邀请码</label><input id="pc-join-code" placeholder="PC-XXXX-XXXXXX"><button onclick="joinPcInvite()">加入朋友的规划</button><div class="pc-status" id="pc-share-status"></div></div><button class="secondary" onclick="logoutPc()">退出登录</button></div>
     </div>
   </div>
 
@@ -695,8 +697,7 @@
         { id: 3, text: '换洗衣物', done: false }
       ]),
       userProfile: readStored('pc_user_profile', {
-        name: '旅行者',
-        avatar: ''
+        name: '旅行者', avatar: '', bio: ''
       }),
       totalBudget: 5000, 
       dailyPlan: [], 
@@ -712,6 +713,9 @@
       
       // 昵称
       document.getElementById('profile-name-input').value = p.name;
+      document.getElementById('profile-bio-input').value = p.bio || '';
+      document.getElementById('profile-email').value = pcUser?.email || '';
+      document.getElementById('profile-created-at').textContent = pcUser?.created_at ? `注册时间：${pcUser.created_at}` : '注册时间：登录后显示';
       
       // 头像
       const defaultAvatar = document.getElementById('profile-avatar-default');
@@ -738,8 +742,9 @@
       if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
+          if (e.target.result.length > 700000) { alert('头像请控制在约 500 KB 以内。'); input.value=''; return; }
           appState.userProfile.avatar = e.target.result;
-          renderProfile();
+          renderProfile(); saveProfileData();
         };
         reader.readAsDataURL(input.files[0]);
       }
@@ -747,9 +752,12 @@
 
     function saveProfileData(showAlert = false) {
       const newName = document.getElementById('profile-name-input').value.trim();
-      if (newName) appState.userProfile.name = newName;
+      if (newName.length < 2 || newName.length > 40) return alert('昵称需为 2 到 40 个字符。');
+      appState.userProfile.name = newName;
+      appState.userProfile.bio = document.getElementById('profile-bio-input').value.trim();
       
       writeStored('pc_user_profile', appState.userProfile);
+      if (window.pcSaveProfile) window.pcSaveProfile(showAlert);
       renderProfile(); // 刷新一下
       
       if (showAlert) alert('🎉 资料已保存！');
@@ -1009,8 +1017,13 @@ function pcApi(path, options={}){return fetch(path,{credentials:'same-origin',..
 function openAccount(){document.getElementById('pc-account-modal').style.display='flex';pcRenderAccount();}
 function closePcModal(id){document.getElementById(id).style.display='none';}
 function pcRenderAccount(){const logged=!!pcUser;document.getElementById('pc-auth-fields').style.display=logged?'none':'block';document.getElementById('pc-account-info').style.display=logged?'block':'none';document.getElementById('pc-account-button').textContent=logged?(pcUser.username||pcUser.email):'登录 / 注册';if(logged)document.getElementById('pc-account-label').textContent=`已登录：${pcUser.username}（${pcUser.email}）`}
-async function submitAuth(mode){const status=document.getElementById('pc-auth-status');status.textContent='正在处理…';try{const payload={email:document.getElementById('pc-auth-email').value.trim(),password:document.getElementById('pc-auth-password').value};if(mode==='register')payload.username=document.getElementById('pc-auth-name').value.trim();const d=await pcApi('/api/auth/'+mode,{method:'POST',body:JSON.stringify(payload)});pcUser=d.user;status.textContent='成功！正在加载你的云端规划…';await pcLoadPlan();pcRenderAccount();status.textContent='';}catch(e){status.textContent=e.message}}
-async function pcLoadPlan(){const d=await pcApi('/api/plans/current');pcPlanId=d.plan.id;pcCloudVersion=d.plan.version||1;pcMembers=d.members||[];pcApplyData(d.plan.data||{});pcLastSaved=JSON.stringify(d.plan.data||{});pcRenderMembers();if(!d.plan.data?.appState){pcLastSaved='';window.queuePlanCakeCloudSave?.();}}
+async function pcLoadProfile(){const d=await pcApi('/api/profile');const p=d.profile;pcUser={...pcUser,...p};appState.userProfile={name:p.username,avatar:p.profile_avatar||'',bio:p.profile_bio||''};writeStored('pc_user_profile',appState.userProfile);renderProfile();pcRenderAccount();}
+window.pcSaveProfile=async function(showAlert=false){if(!pcUser)return;try{const d=await pcApi('/api/profile',{method:'PUT',body:JSON.stringify({username:appState.userProfile.name,bio:appState.userProfile.bio||'',avatar:appState.userProfile.avatar||''})});pcUser={...pcUser,...d.profile};renderProfile();pcRenderAccount();if(showAlert)alert('🎉 资料已保存到云端！');}catch(e){alert('资料保存失败：'+e.message)}};
+async function submitAuth(mode){const status=document.getElementById('pc-auth-status');status.textContent='正在处理…';try{const payload={email:document.getElementById('pc-auth-email').value.trim(),password:document.getElementById('pc-auth-password').value};if(mode==='register')payload.username=document.getElementById('pc-auth-name').value.trim();const d=await pcApi('/api/auth/'+mode,{method:'POST',body:JSON.stringify(payload)});pcUser=d.user;status.textContent='成功！正在加载你的云端规划…';await pcLoadProfile();await pcLoadPlan();pcRenderAccount();status.textContent='';}catch(e){status.textContent=e.message}}
+async function pcRefreshPlans(){const d=await pcApi('/api/plans');const box=document.getElementById('pc-plan-list');if(!box)return;box.innerHTML=d.plans.map(p=>`<div style="display:flex;gap:8px;align-items:center;padding:7px 0"><button onclick="pcSelectPlan('${p.id}')">${p.id===pcPlanId?'✓ ':''}${p.title} · ${p.role==='owner'?'创建者':'协作者'}</button>${p.role==='owner'?`<button class="secondary" onclick="pcDeletePlan('${p.id}')">删除</button>`:''}</div>`).join('')||'暂无规划';}
+async function pcCreatePlan(){const title=document.getElementById('pc-new-plan-title').value.trim();if(!title)return alert('请填写规划标题');try{await pcSaveCloud();await pcApi('/api/plans',{method:'POST',body:JSON.stringify({title,data:{appState:{expenses:[],diaries:[],members:['我','朋友A'],checklist:[],dailyPlan:[],customSpots:[]},form:{dest:'',start:'',end:'',people:'2',budget:'5000'}}})});document.getElementById('pc-new-plan-title').value='';await pcLoadPlan();await pcRefreshPlans();}catch(e){alert(e.message)}}
+async function pcSelectPlan(id){try{await pcSaveCloud();await pcApi(`/api/plans/${id}/select`,{method:'POST',body:'{}'});await pcLoadPlan();await pcRefreshPlans();}catch(e){alert(e.message)}}
+async function pcDeletePlan(id){if(!confirm('删除后该规划及其成员关系不可恢复，确定删除？'))return;try{await pcApi(`/api/plans/${id}`,{method:'DELETE'});pcPlanId=null;await pcRefreshPlans();const d=await pcApi('/api/plans');if(d.plans.length)await pcSelectPlan(d.plans[0].id);else await pcCreatePlan();}catch(e){alert(e.message)}}async function pcLoadPlan(){const d=await pcApi('/api/plans/current');pcPlanId=d.plan.id;pcCloudVersion=d.plan.version||1;pcMembers=d.members||[];pcApplyData(d.plan.data||{});pcLastSaved=JSON.stringify(d.plan.data||{});pcRenderMembers();}
 function pcSnapshot(){return {appState:{expenses:appState.expenses,diaries:appState.diaries,members:appState.members,checklist:appState.checklist,userProfile:appState.userProfile,totalBudget:appState.totalBudget,dailyPlan:appState.dailyPlan,customSpots:appState.customSpots,currentWeather:appState.currentWeather},form:{dest:document.getElementById('input-dest')?.value||'',start:document.getElementById('input-start')?.value||'',end:document.getElementById('input-end')?.value||'',people:document.getElementById('input-people')?.value||'2',budget:document.getElementById('input-budget')?.value||'5000'},theme:localStorage.getItem('pc_theme_idx')||'0'};}
 function pcApplyData(data){if(!data||!data.appState)return;pcApplyingCloud=true;try{Object.assign(appState,data.appState);if(data.form){document.getElementById('input-dest').value=data.form.dest||'';document.getElementById('input-start').value=data.form.start||document.getElementById('input-start').value;document.getElementById('input-end').value=data.form.end||document.getElementById('input-end').value;document.getElementById('input-people').value=data.form.people||'2';document.getElementById('input-budget').value=data.form.budget||'5000';}if(data.theme!==undefined)applyTheme(Math.max(0,Math.min(5,Number(data.theme)||0)));renderMembers();renderDiaries();renderChecklist();renderProfile();updateBudgetUI();if(appState.dailyPlan?.length)renderTimeline(appState.dailyPlan);if(appState.customSpots?.length)renderCustomMap();}finally{pcApplyingCloud=false;}}
 window.queuePlanCakeCloudSave=function(){if(!pcUser||pcApplyingCloud)return;clearTimeout(pcSaveTimer);pcSaveTimer=setTimeout(pcSaveCloud,900)};
@@ -1021,10 +1034,13 @@ async function pcRemoveMember(id){if(!confirm('确定要移除这位协作者吗
 async function createPcInvite(){const el=document.getElementById('pc-generated-code'),status=document.getElementById('pc-share-status');status.textContent='正在生成…';try{const d=await pcApi('/api/invites',{method:'POST',body:'{}'});el.innerHTML=`<div class="pc-code">${d.code}</div><button onclick="navigator.clipboard.writeText('${d.code}').then(()=>document.getElementById('pc-share-status').textContent='邀请码已复制')">复制邀请码</button><small>24 小时内有效，只能被一位朋友使用一次。</small>`;status.textContent='邀请码已生成。请只发给你想邀请的朋友。'}catch(e){status.textContent=e.message}}
 async function joinPcInvite(){const status=document.getElementById('pc-share-status');status.textContent='正在加入…';try{await pcApi('/api/invites/join',{method:'POST',body:JSON.stringify({code:document.getElementById('pc-join-code').value.trim()})});await pcLoadPlan();status.textContent='加入成功！现在你们共享同一份旅行规划。';}catch(e){status.textContent=e.message}}
 async function logoutPc(){try{await pcApi('/api/auth/logout',{method:'POST',body:'{}'})}catch(e){}pcUser=null;pcPlanId=null;pcRenderAccount();closePcModal('pc-account-modal')}
-async function pcCheckSession(){try{const d=await pcApi('/api/auth/me');pcUser=d.user;if(pcUser){await pcLoadPlan();pcRenderAccount();}}catch(e){console.warn('账号状态检查失败',e)}}
+async function pcCheckSession(){try{const d=await pcApi('/api/auth/me');pcUser=d.user;if(pcUser){await pcLoadProfile();await pcLoadPlan();pcRenderAccount();}}catch(e){console.warn('账号状态检查失败',e)}}
 async function pcPoll(){if(!pcUser||!pcPlanId||pcSaveTimer)return;try{const d=await pcApi('/api/plans/current');if(d.plan.version>pcCloudVersion){pcCloudVersion=d.plan.version;pcLastSaved=JSON.stringify(d.plan.data||{});pcApplyData(d.plan.data||{});}}catch(e){}}
 window.addEventListener('DOMContentLoaded',()=>{pcCheckSession();setInterval(pcPoll,4000);});
 </script>
 
 </body>
 </html>
+
+
+
