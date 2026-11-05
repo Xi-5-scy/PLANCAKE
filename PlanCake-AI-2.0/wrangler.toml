@@ -1,0 +1,11 @@
+name = "plancake-ai-2"
+pages_build_output_dir = "public"
+compatibility_date = "2026-11-05"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "plancake-db"
+database_id = "824bae9f-9b31-4911-bdff-9cfaec8331e0"
+
+[vars]
+ENVIRONMENT = "production"
