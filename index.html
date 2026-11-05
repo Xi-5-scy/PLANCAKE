@@ -27,7 +27,6 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 10px; }
 
-    /* 顶部导航栏 */
     .top-navbar { height: 72px; background: #ffffff; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.02); z-index: 100; flex-shrink: 0; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; }
     .logo { font-size: 24px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 6px; cursor: pointer; }
     .top-tabs { display: flex; gap: 8px; }
@@ -45,7 +44,6 @@
 
     .app-layout { display: flex; flex: 1; overflow: hidden; padding: 20px; gap: 20px; }
     
-    /* 左侧边栏：行程列表 */
     .sidebar { width: 300px; background: #ffffff; display: flex; flex-direction: column; border-radius: 28px; box-shadow: var(--shadow-cute); z-index: 10; overflow: hidden; }
     .sidebar-header { padding: 20px; border-bottom: 1px dashed rgba(0,0,0,0.05); }
     .btn-new-trip { width: 100%; padding: 12px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 0 var(--btn-shadow); transition: transform 0.1s; display: flex; justify-content: center; gap: 6px; }
@@ -68,10 +66,8 @@
 
     .main-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; padding-right: 10px; }
     
-    /* 无行程空状态 */
     #no-trip-msg { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--muted); }
     
-    /* 工作台通用 */
     .view-panel { display: none; height: 100%; }
     .view-panel.active { display: flex; flex-direction: column; }
 
@@ -261,14 +257,12 @@
 
     <main class="main-content">
       
-      <!-- ⭐️ 无行程提示 ⭐️ -->
       <div id="no-trip-msg">
         <div style="font-size: 80px;">🗺️</div>
         <h2 style="font-size: 24px; margin: 20px 0 10px; color: var(--primary);">还没有选中任何行程</h2>
         <p style="font-weight: 700;">请在左侧新建一个旅行计划，或者点击已有的计划进入。</p>
       </div>
 
-      <!-- 行程概览 -->
       <div id="view-dashboard" class="view-panel">
         <div class="top-row">
           <div class="banner-card">
@@ -301,7 +295,6 @@
         </div>
       </div>
 
-      <!-- 预算与分账 -->
       <div id="view-budget" class="view-panel">
         <div class="budget-layout">
           <div class="budget-left">
@@ -338,7 +331,6 @@
         </div>
       </div>
 
-      <!-- 旅行日记 -->
       <div id="view-diary" class="view-panel">
         <div class="diary-container">
           <div class="diary-form">
@@ -352,7 +344,6 @@
         </div>
       </div>
 
-      <!-- 行李清单 -->
       <div id="view-checklist" class="view-panel">
         <div class="checklist-layout">
           <div class="checklist-left">
@@ -382,7 +373,6 @@
         </div>
       </div>
 
-      <!-- 旅行成就 -->
       <div id="view-achievements" class="view-panel">
         <div class="achievement-container">
           <div class="level-card">
@@ -400,7 +390,6 @@
         </div>
       </div>
 
-      <!-- 灵感发现 -->
       <div id="view-discover" class="view-panel">
         <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
           <h2>🌍 目的地灵感探索</h2>
@@ -409,7 +398,6 @@
         <div class="discover-grid" id="inspire-content"></div>
       </div>
 
-      <!-- 个人资料 -->
       <div id="view-profile" class="view-panel">
         <div class="profile-container">
           <div class="profile-header-card">
@@ -447,12 +435,10 @@
     </main>
   </div>
 
-  <!-- 弹窗：协作 -->
   <div class="modal-overlay" id="room-modal">
     <div class="modal-card" id="room-modal-content"></div>
   </div>
 
-  <!-- 弹窗：新建行程 -->
   <div class="modal-overlay" id="new-trip-modal">
     <div class="modal-card" style="width: 420px;">
       <h2>✨ 新建旅行计划</h2>
@@ -514,7 +500,16 @@
       userProfile: JSON.parse(localStorage.getItem('pc_user_profile')) || { name: '旅行者', avatar: '' }
     };
     
+    // ⭐️ 修复旧数据结构冲突 ⭐️
     let appState = JSON.parse(localStorage.getItem('pc_app_data')) || defaultState;
+    
+    // 如果用户存了旧数据导致 trips 不是数组，强制重置
+    if (!Array.isArray(appState.trips)) {
+      appState.trips = [];
+      appState.currentTripId = null;
+      appState.achievements = { exp: 0, unlockedBadges: [] };
+      saveLocalData();
+    }
     if(!appState.achievements) appState.achievements = { exp: 0, unlockedBadges: [] };
     if(!appState.userProfile) appState.userProfile = defaultState.userProfile;
 
@@ -537,12 +532,11 @@
       renderProfile();
       renderAchievements();
       
-      // 初始化默认打开第一个行程或显示提示
       if(appState.trips.length > 0) {
         if(!appState.currentTripId) appState.currentTripId = appState.trips[0].id;
         selectTrip(appState.currentTripId);
       } else {
-        switchNav('none'); // ⭐️ 修复了这里导致崩溃的 Bug
+        switchNav('none');
       }
 
       const savedRoomId = localStorage.getItem('pc_room_id');
@@ -555,7 +549,6 @@
       window.addEventListener('beforeunload', saveLocalData);
     });
 
-    // ⭐️ 导航与切换 ⭐️
     function switchNav(viewId) {
       const requireTrip = ['dashboard', 'budget', 'diary', 'checklist'];
       if (requireTrip.includes(viewId) && !appState.currentTripId) {
@@ -573,7 +566,6 @@
       if(targetView) {
         targetView.classList.add('active');
       } else {
-        // 处理空状态
         document.getElementById('no-trip-msg').style.display = 'flex';
         return;
       }
@@ -589,7 +581,6 @@
       if (viewId === 'profile') renderProfile();
     }
 
-    // ⭐️ 左侧行程列表渲染 ⭐️
     function renderTripList() {
       const container = document.getElementById('trip-list-container');
       if(appState.trips.length === 0) {
@@ -634,173 +625,121 @@
       }
     }
 
-    // 新建行程弹窗
     function openNewTripModal() { document.getElementById('new-trip-modal').classList.add('active'); }
     function closeNewTripModal() { document.getElementById('new-trip-modal').classList.remove('active'); }
 
+    // ⭐️ 修复了可能崩溃的生成逻辑，并加上了报错提示 ⭐️
     async function createNewTrip() {
-      const dest = document.getElementById('input-dest').value;
-      const start = document.getElementById('input-start').value;
-      const end = document.getElementById('input-end').value;
-      const people = parseInt(document.getElementById('input-people').value) || 2;
-      const budget = parseFloat(document.getElementById('input-budget').value) || 5000;
-      
-      if(!dest) return alert('请先填写目的地哦！');
-      const days = Math.max(1, Math.round((new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24)) + 1);
-      
-      const newTrip = {
-        id: 'trip_' + Date.now(),
-        destination: dest,
-        startDate: start,
-        endDate: end,
-        totalBudget: budget,
-        members: Array.from({length: people}).map((_, i) => i === 0 ? '我' : `朋友${i}`),
-        expenses: [],
-        diaries: [],
-        checklist: [{ id: 1, text: '身份证/护照', done: false }, { id: 2, text: '充电器', done: false }],
-        dailyPlan: [],
-        customSpots: []
-      };
-      
-      appState.trips.push(newTrip);
-      addExp(15); // 增加经验
-      saveLocalData();
-      closeNewTripModal();
-      
-      // 清空表单
-      document.getElementById('input-dest').value = '';
-      
-      selectTrip(newTrip.id);
-      
-      // 发起 AI 请求
-      const timeline = document.getElementById('timeline-list');
-      timeline.innerHTML = `<div style="text-align:center; margin-top:50px;"><div style="font-size:50px; animation:float 2s infinite alternate; margin-bottom:10px;">🎂</div><span style="font-weight:800;">AI 正在为你烘焙...</span></div>`;
-      
       try {
+        const dest = document.getElementById('input-dest').value.trim();
+        const start = document.getElementById('input-start').value;
+        const end = document.getElementById('input-end').value;
+        const people = parseInt(document.getElementById('input-people').value) || 2;
+        const budget = parseFloat(document.getElementById('input-budget').value) || 5000;
+        
+        if(!dest) return alert('请先填写目的地哦！');
+        const days = Math.max(1, Math.round((new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24)) + 1);
+        
+        const newTrip = {
+          id: 'trip_' + Date.now(),
+          destination: dest,
+          startDate: start,
+          endDate: end,
+          totalBudget: budget,
+          members: Array.from({length: people}).map((_, i) => i === 0 ? '我' : `朋友${i}`),
+          expenses: [],
+          diaries: [],
+          checklist: [{ id: 1, text: '身份证/护照', done: false }, { id: 2, text: '充电器', done: false }],
+          dailyPlan: [],
+          customSpots: []
+        };
+        
+        appState.trips.push(newTrip);
+        addExp(15); 
+        saveLocalData();
+        closeNewTripModal();
+        renderTripList(); 
+        
+        document.getElementById('input-dest').value = '';
+        
+        selectTrip(newTrip.id);
+        
+        const timeline = document.getElementById('timeline-list');
+        timeline.innerHTML = `<div style="text-align:center; margin-top:50px;"><div style="font-size:50px; animation:float 2s infinite alternate; margin-bottom:10px;">🎂</div><span style="font-weight:800;">AI 正在为你烘焙...</span></div>`;
+        
         const response = await fetch('/api/parse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: `目的地:${dest}, 天数:${days}天` }) });
         const data = await response.json();
+        
         if (data.ok && data.seed && data.seed.dailyPlan) { newTrip.dailyPlan = data.seed.dailyPlan; } 
         else { newTrip.dailyPlan = Array.from({length: days}).map(() => `前往${dest}核心景点打卡。`); }
-      } catch (e) { newTrip.dailyPlan = Array.from({length: days}).map(() => `前往${dest}游玩。`); }
-      
-      document.getElementById('info-days').textContent = `${newTrip.dailyPlan.length} 天`;
-      renderTimeline(newTrip.dailyPlan); 
-      triggerSync();
+        
+        document.getElementById('info-days').textContent = `${newTrip.dailyPlan.length} 天`;
+        renderTimeline(newTrip.dailyPlan); 
+        triggerSync();
+      } catch (err) {
+        alert("生成计划时出错：" + err.message);
+      }
     }
 
-    // ⭐️ 渲染当前选中行程的详细数据 ⭐️
+    // 渲染详情、成就、记账等其他函数不变
     function renderTripDetails() {
-      const trip = getCurrentTrip();
-      if(!trip) return;
-      
+      const trip = getCurrentTrip(); if(!trip) return;
       document.getElementById('dash-dest').textContent = trip.destination;
       document.getElementById('dash-date').textContent = `${trip.startDate || '待定'} 出发`;
       document.getElementById('info-days').textContent = trip.dailyPlan.length > 0 ? `${trip.dailyPlan.length} 天` : '--';
       document.getElementById('info-people').textContent = `${trip.members.length} 人`;
-      
-      updateBudgetUI(); 
-      renderMembers(); 
-      renderChecklist(); 
-      renderDiaries(); 
-      renderTimeline(trip.dailyPlan);
-      
-      if(trip.weather) {
-        updateClothingRecommendation(trip.weather.temp, trip.weather.desc);
-      } else {
-        document.getElementById('clothing-recommendation').textContent = '等待获取天气...';
-      }
+      updateBudgetUI(); renderMembers(); renderChecklist(); renderDiaries(); renderTimeline(trip.dailyPlan);
+      if(trip.weather) updateClothingRecommendation(trip.weather.temp, trip.weather.desc);
+      else document.getElementById('clothing-recommendation').textContent = '等待获取天气...';
     }
-
-    // ⭐️ 成就系统逻辑 ⭐️
-    function addExp(amount) {
-      appState.achievements.exp += amount;
-      checkBadges();
-      renderAchievements();
-      saveLocalData(); triggerSync();
-    }
+    function addExp(amount) { appState.achievements.exp += amount; checkBadges(); renderAchievements(); saveLocalData(); triggerSync(); }
     function checkBadges() {
       const badges = appState.achievements.unlockedBadges;
       let totalExpenses = 0, totalDiaries = 0;
       appState.trips.forEach(t => { totalExpenses += t.expenses.length; totalDiaries += t.diaries.length; });
-
       if (appState.trips.length >= 1 && !badges.includes('first_trip')) unlockBadge('first_trip');
       if (appState.trips.length >= 3 && !badges.includes('trip_master')) unlockBadge('trip_master');
       if (totalExpenses >= 10 && !badges.includes('money_saver')) unlockBadge('money_saver');
       if (totalDiaries >= 3 && !badges.includes('writer')) unlockBadge('writer');
       if (appState.roomId && !badges.includes('collaborator')) unlockBadge('collaborator');
-      appState.trips.forEach(t => {
-        if(t.checklist.length > 0 && t.checklist.every(item => item.done)) {
-          if (!badges.includes('pack_master')) unlockBadge('pack_master');
-        }
-      });
+      appState.trips.forEach(t => { if(t.checklist.length > 0 && t.checklist.every(item => item.done)) { if (!badges.includes('pack_master')) unlockBadge('pack_master'); } });
     }
-    function unlockBadge(id) {
-      if (!appState.achievements.unlockedBadges.includes(id)) {
-        appState.achievements.unlockedBadges.push(id);
-        const badge = BADGES.find(b => b.id === id);
-        setTimeout(() => { alert(`🎉 成就解锁！\n获得徽章：【${badge.name}】`); }, 500);
-      }
-    }
+    function unlockBadge(id) { if (!appState.achievements.unlockedBadges.includes(id)) { appState.achievements.unlockedBadges.push(id); const badge = BADGES.find(b => b.id === id); setTimeout(() => { alert(`🎉 成就解锁！\n获得徽章：【${badge.name}】`); }, 500); } }
     function renderAchievements() {
       const data = appState.achievements;
       const level = Math.floor(data.exp / 100) + 1;
       const currentExp = data.exp % 100;
       const titleIndex = Math.min(level - 1, LEVEL_TITLES.length - 1);
-      
       document.getElementById('level-title').textContent = `Lv.${level} ${LEVEL_TITLES[titleIndex]}`;
       document.getElementById('level-exp').textContent = `${currentExp} / 100 EXP`;
       document.getElementById('exp-bar-fill').style.width = `${currentExp}%`;
       document.getElementById('level-icon').textContent = level >= 3 ? '👑' : '🌱';
-
       const container = document.getElementById('badges-container');
       container.innerHTML = BADGES.map(badge => {
         const isUnlocked = data.unlockedBadges.includes(badge.id);
         return `<div class="badge-item ${isUnlocked ? 'unlocked' : ''}"><div class="badge-icon">${badge.icon}</div><div class="badge-name">${badge.name}</div><div class="badge-desc">${badge.desc}</div></div>`;
       }).join('');
     }
-
-    // ⭐️ 记账逻辑 ⭐️
     function updateBudgetUI() {
       const trip = getCurrentTrip(); if(!trip) return;
       let spent = trip.expenses.reduce((sum, item) => sum + item.amount, 0); 
       let percent = Math.min(100, Math.round((spent / trip.totalBudget) * 100)) || 0;
-      
-      document.getElementById('dash-spent').textContent = `¥${spent}`; 
-      document.getElementById('dash-total-budget').textContent = `¥${trip.totalBudget}`; 
-      document.getElementById('dash-budget-percent').textContent = `${percent}%`;
-      
-      const chart = document.getElementById('donut-chart'); 
-      const card = document.getElementById('dash-expense-card'); 
-      const warning = document.getElementById('budget-warning');
+      document.getElementById('dash-spent').textContent = `¥${spent}`; document.getElementById('dash-total-budget').textContent = `¥${trip.totalBudget}`; document.getElementById('dash-budget-percent').textContent = `${percent}%`;
+      const chart = document.getElementById('donut-chart'); const card = document.getElementById('dash-expense-card'); const warning = document.getElementById('budget-warning');
       chart.style.background = `conic-gradient(var(--primary) ${percent}%, var(--secondary) ${percent}% 100%)`;
-      
-      if (spent > trip.totalBudget) { card.classList.add('over-budget'); warning.classList.add('active'); } 
-      else { card.classList.remove('over-budget'); warning.classList.remove('active'); }
-      
+      if (spent > trip.totalBudget) { card.classList.add('over-budget'); warning.classList.add('active'); } else { card.classList.remove('over-budget'); warning.classList.remove('active'); }
       const list = document.getElementById('expense-list');
-      if(list) { 
-        list.innerHTML = trip.expenses.slice().reverse().map(exp => `
-          <div style="display:flex; justify-content:space-between; padding:15px 0; border-bottom:2px dashed rgba(0,0,0,0.05); font-weight:700;">
-            <div><span style="background:${exp.isAA?'var(--primary-light)':'var(--muted)'}; color:#fff; padding:2px 8px; border-radius:10px; font-size:12px; margin-right:6px;">${exp.isAA?'AA':'自费'}</span><span style="background:var(--bg-color); padding:2px 8px; border-radius:10px; font-size:12px;">${exp.payer}付</span> ${exp.desc}</div>
-            <div><span style="color:var(--danger);">¥${exp.amount}</span> <span style="cursor:pointer;color:var(--muted);font-size:12px;" onclick="deleteExpense(${exp.id})">删除</span></div>
-          </div>
-        `).join(''); 
-      }
+      if(list) { list.innerHTML = trip.expenses.slice().reverse().map(exp => `<div style="display:flex; justify-content:space-between; padding:15px 0; border-bottom:2px dashed rgba(0,0,0,0.05); font-weight:700;"><div><span style="background:${exp.isAA?'var(--primary-light)':'var(--muted)'}; color:#fff; padding:2px 8px; border-radius:10px; font-size:12px; margin-right:6px;">${exp.isAA?'AA':'自费'}</span><span style="background:var(--bg-color); padding:2px 8px; border-radius:10px; font-size:12px;">${exp.payer}付</span> ${exp.desc}</div><div><span style="color:var(--danger);">¥${exp.amount}</span> <span style="cursor:pointer;color:var(--muted);font-size:12px;" onclick="deleteExpense(${exp.id})">删除</span></div></div>`).join(''); }
     }
     function addExpense() {
       const trip = getCurrentTrip(); if(!trip) return;
       const desc = document.getElementById('exp-desc').value; const amount = parseFloat(document.getElementById('exp-amount').value); const payer = document.getElementById('exp-payer').value; const splitType = document.getElementById('exp-split-type').value;
       if (!desc || !amount) return alert("请填写说明和金额");
-      
       trip.expenses.push({ id: Date.now(), desc, amount, payer, isAA: splitType === 'AA' });
       document.getElementById('exp-desc').value = ''; document.getElementById('exp-amount').value = '';
-      addExp(5); // 增加经验
-      updateBudgetUI(); renderMembers(); triggerSync();
+      addExp(5); updateBudgetUI(); renderMembers(); triggerSync();
     }
-    function deleteExpense(id) { 
-      const trip = getCurrentTrip(); if(!trip) return;
-      trip.expenses = trip.expenses.filter(e => e.id !== id); updateBudgetUI(); renderMembers(); triggerSync(); 
-    }
+    function deleteExpense(id) { const trip = getCurrentTrip(); if(!trip) return; trip.expenses = trip.expenses.filter(e => e.id !== id); updateBudgetUI(); renderMembers(); triggerSync(); }
     function renderMembers() {
       const trip = getCurrentTrip(); if(!trip) return;
       document.getElementById('member-list').innerHTML = trip.members.map(m => `<span class="member-tag">👤 ${m} <span onclick="removeMember('${m}')">×</span></span>`).join('');
@@ -816,192 +755,47 @@
       const avg = totalSpent / trip.members.length;
       let balances = trip.members.map(m => ({ name: m, amount: paidAmounts[m] - avg }));
       let html = ''; let debtors = balances.filter(b => b.amount < -0.01).sort((a,b) => a.amount - b.amount); let creditors = balances.filter(b => b.amount > 0.01).sort((a,b) => b.amount - a.amount);
-      debtors.forEach(d => {
-        let owe = Math.abs(d.amount);
-        while (owe > 0.01 && creditors.length > 0) {
-          let c = creditors[0]; let canPay = Math.min(owe, c.amount);
-          html += `<div class="settlement-card"><span style="color:var(--danger);">${d.name}</span> 需转账给 <span style="color:var(--primary);">${c.name}</span> <b style="font-size:18px;">¥${canPay.toFixed(2)}</b></div>`;
-          owe -= canPay; c.amount -= canPay; if (c.amount <= 0.01) creditors.shift();
-        }
-      });
+      debtors.forEach(d => { let owe = Math.abs(d.amount); while (owe > 0.01 && creditors.length > 0) { let c = creditors[0]; let canPay = Math.min(owe, c.amount); html += `<div class="settlement-card"><span style="color:var(--danger);">${d.name}</span> 需转账给 <span style="color:var(--primary);">${c.name}</span> <b style="font-size:18px;">¥${canPay.toFixed(2)}</b></div>`; owe -= canPay; c.amount -= canPay; if (c.amount <= 0.01) creditors.shift(); } });
       list.innerHTML = html;
     }
-    function addMember() {
-      const trip = getCurrentTrip(); if(!trip) return;
-      const name = document.getElementById('new-member-name').value.trim();
-      if (!name || trip.members.includes(name)) return;
-      trip.members.push(name); document.getElementById('new-member-name').value = '';
-      renderMembers(); triggerSync();
-    }
-    function removeMember(name) {
-      const trip = getCurrentTrip(); if(!trip) return;
-      if (trip.members.length <= 1) return;
-      trip.members = trip.members.filter(m => m !== name); renderMembers(); triggerSync();
-    }
-
-    // ⭐️ 日记与清单逻辑 ⭐️
+    function addMember() { const trip = getCurrentTrip(); if(!trip) return; const name = document.getElementById('new-member-name').value.trim(); if (!name || trip.members.includes(name)) return; trip.members.push(name); document.getElementById('new-member-name').value = ''; renderMembers(); triggerSync(); }
+    function removeMember(name) { const trip = getCurrentTrip(); if(!trip) return; if (trip.members.length <= 1) return; trip.members = trip.members.filter(m => m !== name); renderMembers(); triggerSync(); }
     function renderDiaries() {
       const trip = getCurrentTrip(); if(!trip) return;
       const list = document.getElementById('diary-list');
       list.innerHTML = trip.diaries.length === 0 ? '<div style="text-align:center; color:var(--muted); margin-top:20px; font-weight:700;">还没有日记，快记录下美好的瞬间吧 📸</div>' : '';
-      trip.diaries.slice().reverse().forEach(d => { 
-        list.innerHTML += `
-          <div class="diary-card">
-            ${d.photo ? `<img src="${d.photo}">` : ''}
-            <div class="diary-card-info">
-              <div class="date">📅 ${d.date}</div>
-              <div class="text">${d.text.replace(/\n/g, '<br>')}</div>
-              <div class="del-btn" onclick="deleteDiary(${d.id})">删除</div>
-            </div>
-          </div>
-        `; 
-      });
+      trip.diaries.slice().reverse().forEach(d => { list.innerHTML += `<div class="diary-card">${d.photo ? `<img src="${d.photo}">` : ''}<div class="diary-card-info"><div class="date">📅 ${d.date}</div><div class="text">${d.text.replace(/\n/g, '<br>')}</div><div class="del-btn" onclick="deleteDiary(${d.id})">删除</div></div></div>`; });
     }
-    function saveDiary() { 
-      const trip = getCurrentTrip(); if(!trip) return;
-      const text = document.getElementById('diary-text').value; 
-      if (!text && !tempPhotoBase64) return; 
-      trip.diaries.push({ id: Date.now(), date: new Date().toLocaleDateString(), text, photo: tempPhotoBase64 }); 
-      document.getElementById('diary-text').value = ''; document.getElementById('photo-preview').style.display = 'none'; tempPhotoBase64 = null; 
-      addExp(20); // 增加经验
-      renderDiaries(); triggerSync(); 
-    }
-    function deleteDiary(id) { 
-      const trip = getCurrentTrip(); if(!trip) return;
-      trip.diaries = trip.diaries.filter(d => d.id !== id); renderDiaries(); triggerSync(); 
-    }
+    function saveDiary() { const trip = getCurrentTrip(); if(!trip) return; const text = document.getElementById('diary-text').value; if (!text && !tempPhotoBase64) return; trip.diaries.push({ id: Date.now(), date: new Date().toLocaleDateString(), text, photo: tempPhotoBase64 }); document.getElementById('diary-text').value = ''; document.getElementById('photo-preview').style.display = 'none'; tempPhotoBase64 = null; addExp(20); renderDiaries(); triggerSync(); }
+    function deleteDiary(id) { const trip = getCurrentTrip(); if(!trip) return; trip.diaries = trip.diaries.filter(d => d.id !== id); renderDiaries(); triggerSync(); }
     function renderChecklist() {
       const trip = getCurrentTrip(); if(!trip) return;
-      const list = document.getElementById('checklist-list');
-      list.innerHTML = '';
-      let doneCount = 0;
-      trip.checklist.forEach(item => {
-        if (item.done) doneCount++;
-        list.innerHTML += `
-          <div class="check-item ${item.done ? 'done' : ''}" onclick="toggleCheckItem(${item.id})">
-            <div class="custom-checkbox"></div><span>${item.text}</span>
-            <div class="del-item" onclick="event.stopPropagation(); deleteCheckItem(${item.id})">删除</div>
-          </div>
-        `;
-      });
-      const total = trip.checklist.length;
-      const percent = total === 0 ? 0 : Math.round((doneCount / total) * 100);
-      document.getElementById('progress-text').textContent = `${doneCount} / ${total} (${percent}%)`;
-      document.getElementById('progress-bar').style.width = `${percent}%`;
+      const list = document.getElementById('checklist-list'); list.innerHTML = ''; let doneCount = 0;
+      trip.checklist.forEach(item => { if (item.done) doneCount++; list.innerHTML += `<div class="check-item ${item.done ? 'done' : ''}" onclick="toggleCheckItem(${item.id})"><div class="custom-checkbox"></div><span>${item.text}</span><div class="del-item" onclick="event.stopPropagation(); deleteCheckItem(${item.id})">删除</div></div>`; });
+      const total = trip.checklist.length; const percent = total === 0 ? 0 : Math.round((doneCount / total) * 100);
+      document.getElementById('progress-text').textContent = `${doneCount} / ${total} (${percent}%)`; document.getElementById('progress-bar').style.width = `${percent}%`;
     }
-    function toggleCheckItem(id) { 
-      const trip = getCurrentTrip(); 
-      const item = trip.checklist.find(i => i.id === id); 
-      if (item) { item.done = !item.done; renderChecklist(); triggerSync(); checkBadges(); } 
-    }
-    function addChecklistItem() { 
-      const trip = getCurrentTrip(); 
-      const input = document.getElementById('new-item-input'); 
-      if(!input.value.trim()) return; 
-      trip.checklist.push({ id: Date.now(), text: input.value.trim(), done: false }); 
-      input.value = ''; 
-      addExp(2); // 增加经验
-      renderChecklist(); triggerSync(); 
-    }
-    function deleteCheckItem(id) { 
-      const trip = getCurrentTrip(); 
-      trip.checklist = trip.checklist.filter(i => i.id !== id); 
-      renderChecklist(); triggerSync(); 
-    }
-    function renderTimeline(dailyPlan) {
-      const timeline = document.getElementById('timeline-list'); 
-      if(dailyPlan.length === 0) { timeline.innerHTML = '<div style="text-align:center; margin-top:50px; color:var(--muted); font-weight:700;">生成行程中...</div>'; return; }
-      timeline.innerHTML = dailyPlan.map((text, i) => `<div class="timeline-item"><div class="day">Day ${i + 1}</div><div class="desc">${text}</div></div>`).join('');
-    }
-
-    // ⭐️ 个人中心逻辑 ⭐️
+    function toggleCheckItem(id) { const trip = getCurrentTrip(); const item = trip.checklist.find(i => i.id === id); if (item) { item.done = !item.done; renderChecklist(); triggerSync(); checkBadges(); } }
+    function addChecklistItem() { const trip = getCurrentTrip(); const input = document.getElementById('new-item-input'); if(!input.value.trim()) return; trip.checklist.push({ id: Date.now(), text: input.value.trim(), done: false }); input.value = ''; addExp(2); renderChecklist(); triggerSync(); }
+    function deleteCheckItem(id) { const trip = getCurrentTrip(); trip.checklist = trip.checklist.filter(i => i.id !== id); renderChecklist(); triggerSync(); }
+    function renderTimeline(dailyPlan) { const timeline = document.getElementById('timeline-list'); if(dailyPlan.length === 0) { timeline.innerHTML = '<div style="text-align:center; margin-top:50px; color:var(--muted); font-weight:700;">生成行程中...</div>'; return; } timeline.innerHTML = dailyPlan.map((text, i) => `<div class="timeline-item"><div class="day">Day ${i + 1}</div><div class="desc">${text}</div></div>`).join(''); }
     function renderProfile() {
-      const p = appState.userProfile;
-      document.getElementById('profile-name-input').value = p.name;
-      
-      const defaultAvatar = document.getElementById('profile-avatar-default');
-      const imgAvatar = document.getElementById('profile-avatar-img');
-      const navDefault = document.getElementById('nav-avatar-default');
-      const navImg = document.getElementById('nav-avatar-img');
-
-      if (p.avatar) {
-        imgAvatar.src = p.avatar; imgAvatar.style.display = 'block'; defaultAvatar.style.display = 'none';
-        navImg.src = p.avatar; navImg.style.display = 'block'; navDefault.style.display = 'none';
-      } else {
-        imgAvatar.style.display = 'none'; defaultAvatar.style.display = 'flex';
-        navImg.style.display = 'none'; navDefault.style.display = 'block';
-      }
+      const p = appState.userProfile; document.getElementById('profile-name-input').value = p.name;
+      const defaultAvatar = document.getElementById('profile-avatar-default'); const imgAvatar = document.getElementById('profile-avatar-img'); const navDefault = document.getElementById('nav-avatar-default'); const navImg = document.getElementById('nav-avatar-img');
+      if (p.avatar) { imgAvatar.src = p.avatar; imgAvatar.style.display = 'block'; defaultAvatar.style.display = 'none'; navImg.src = p.avatar; navImg.style.display = 'block'; navDefault.style.display = 'none'; } 
+      else { imgAvatar.style.display = 'none'; defaultAvatar.style.display = 'flex'; navImg.style.display = 'none'; navDefault.style.display = 'block'; }
       let totalExp = 0, totalDiary = 0, totalItems = 0;
       appState.trips.forEach(t => { totalExp += t.expenses.length; totalDiary += t.diaries.length; totalItems += t.checklist.length; });
-      document.getElementById('stat-trips').textContent = appState.trips.length;
-      document.getElementById('stat-expenses').textContent = totalExp;
-      document.getElementById('stat-diaries').textContent = totalDiary;
-      document.getElementById('stat-items').textContent = totalItems;
+      document.getElementById('stat-trips').textContent = appState.trips.length; document.getElementById('stat-expenses').textContent = totalExp; document.getElementById('stat-diaries').textContent = totalDiary; document.getElementById('stat-items').textContent = totalItems;
     }
-    function uploadAvatar(input) {
-      if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          appState.userProfile.avatar = e.target.result;
-          localStorage.setItem('pc_user_profile', JSON.stringify(appState.userProfile));
-          renderProfile();
-        };
-        reader.readAsDataURL(input.files[0]);
-      }
-    }
-    function saveProfileData(showAlert = false) {
-      const newName = document.getElementById('profile-name-input').value.trim();
-      if (newName) appState.userProfile.name = newName;
-      localStorage.setItem('pc_user_profile', JSON.stringify(appState.userProfile));
-      renderProfile();
-      if (showAlert) alert('🎉 资料已保存！');
-    }
-    function exportData() {
-      const dataStr = JSON.stringify(appState, null, 2);
-      const blob = new Blob([dataStr], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = `PlanCake_AllTrips_${new Date().toLocaleDateString()}.json`; a.click();
-      URL.revokeObjectURL(url);
-    }
-    function clearAllData() {
-      if (confirm('⚠️ 确定要清空所有数据吗？\n这将删除你所有的行程和记录，且无法恢复！')) {
-        localStorage.clear(); location.reload();
-      }
-    }
+    function uploadAvatar(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function(e) { appState.userProfile.avatar = e.target.result; localStorage.setItem('pc_user_profile', JSON.stringify(appState.userProfile)); renderProfile(); }; reader.readAsDataURL(input.files[0]); } }
+    function saveProfileData(showAlert = false) { const newName = document.getElementById('profile-name-input').value.trim(); if (newName) appState.userProfile.name = newName; localStorage.setItem('pc_user_profile', JSON.stringify(appState.userProfile)); renderProfile(); if (showAlert) alert('🎉 资料已保存！'); }
+    function exportData() { const dataStr = JSON.stringify(appState, null, 2); const blob = new Blob([dataStr], { type: "application/json" }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `PlanCake_AllTrips_${new Date().toLocaleDateString()}.json`; a.click(); URL.revokeObjectURL(url); }
+    function clearAllData() { if (confirm('⚠️ 确定要清空所有数据吗？\n这将删除你所有的行程和记录，且无法恢复！')) { localStorage.clear(); location.reload(); } }
     function previewPhoto(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function(e) { tempPhotoBase64 = e.target.result; document.getElementById('photo-preview').src = e.target.result; document.getElementById('photo-preview').style.display = 'block'; }; reader.readAsDataURL(input.files[0]); } }
-    
-    // 协作/同步
-    function triggerSync() { 
-      saveLocalData(); 
-      if (!appState.roomId || isSyncing) return; 
-      isSyncing = true;
-      const dataToSync = { ...appState, roomId: null };
-      fetch('/api/room', {
-        method: 'PUT', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ roomId: appState.roomId, data: dataToSync })
-      }).catch(e => console.log(e)).finally(() => { isSyncing = false; });
-    }
-    function startSync() {
-      if (syncTimer) clearInterval(syncTimer);
-      syncTimer = setInterval(async () => {
-        if (!appState.roomId || isSyncing) return;
-        try {
-          const res = await fetch(`/api/room?id=${appState.roomId}`);
-          const result = await res.json();
-          if (result.ok) {
-            const cloudDataStr = JSON.stringify(result.data);
-            const localDataStr = JSON.stringify({ ...appState, roomId: null }); 
-            if (cloudDataStr !== localDataStr) {
-              const currentRoom = appState.roomId;
-              appState = { ...result.data, roomId: currentRoom };
-              saveLocalData(); renderTripList(); renderProfile(); renderAchievements();
-              if(appState.currentTripId) renderTripDetails();
-            }
-          }
-        } catch(e) { console.log(e); }
-      }, 3000);
-    }
+    function updateClothingRecommendation(temp, desc) { let tip = ""; if (temp < 10) tip = `当前气温 ${temp}°C（${desc}），天气寒冷。建议带上：羽绒服、保暖内衣、毛衣、围巾和手套。`; else if (temp >= 10 && temp < 20) tip = `当前气温 ${temp}°C（${desc}），天气微凉。建议带上：风衣/夹克、卫衣、长裤，怕冷可以带一件薄毛衣。`; else if (temp >= 20 && temp < 30) tip = `当前气温 ${temp}°C（${desc}），天气舒适。建议带上：短袖、薄外套、长裤/长裙，适合舒适的步行鞋。`; else tip = `当前气温 ${temp}°C（${desc}），天气炎热。建议带上：短袖、短裤/短裙、遮阳帽、墨镜、防晒霜，以及清凉的凉鞋。`; if (desc.includes('雨')) tip += ` 另外有雨，别忘了带雨伞或雨衣哦！`; document.getElementById('clothing-recommendation').textContent = tip; }
+    function triggerSync() { saveLocalData(); if (!appState.roomId || isSyncing) return; isSyncing = true; const dataToSync = { ...appState, roomId: null }; fetch('/api/room', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ roomId: appState.roomId, data: dataToSync }) }).catch(e => console.log(e)).finally(() => { isSyncing = false; }); }
+    function startSync() { if (syncTimer) clearInterval(syncTimer); syncTimer = setInterval(async () => { if (!appState.roomId || isSyncing) return; try { const res = await fetch(`/api/room?id=${appState.roomId}`); const result = await res.json(); if (result.ok) { const cloudDataStr = JSON.stringify(result.data); const localDataStr = JSON.stringify({ ...appState, roomId: null }); if (cloudDataStr !== localDataStr) { const currentRoom = appState.roomId; appState = { ...result.data, roomId: currentRoom }; saveLocalData(); renderTripList(); if(appState.currentTripId) { selectTrip(appState.currentTripId); } renderProfile(); renderAchievements(); } } } catch(e) { console.log(e); } }, 3000); }
     function updateRoomBtn() { const btn = document.getElementById('room-btn'); if (appState.roomId) { btn.innerHTML = `👥 协作中: ${appState.roomId}`; btn.style.background = 'var(--primary)'; btn.style.color = '#fff'; } else { btn.innerHTML = `👥 开启协作`; btn.style.background = 'var(--secondary-light)'; btn.style.color = '#C28B79'; } }
     function openRoomModal() { const modal = document.getElementById('room-modal'); const content = document.getElementById('room-modal-content'); if (appState.roomId) { content.innerHTML = `<h2>👥 正在协作中</h2><div class="room-code-display">${appState.roomId}</div><p style="font-size:13px; color:var(--muted); margin-bottom:20px;">把这个码发给朋友，他们输入后即可加入。</p><button class="btn-new-trip" onclick="copyRoomLink()">🔗 复制邀请链接</button><button style="width:100%; padding:12px; margin-top:10px; background:none; border:none; color:var(--danger); cursor:pointer;" onclick="leaveRoom()">退出当前协作</button><button style="width:100%; padding:12px; margin-top:5px; background:none; border:none; color:var(--muted); cursor:pointer;" onclick="closeModal()">关闭</button>`; } else { content.innerHTML = `<h2>👥 开启多人协作</h2><button class="btn-new-trip" onclick="createRoom()">✨ 创建新旅行房间</button><div style="margin: 20px 0; border-top: 1px dashed #eee;"></div><input type="text" id="join-code-input" placeholder="输入 6 位邀请码" maxlength="6"><button class="btn-new-trip" style="background:#E5CD91; box-shadow:0 4px 0 #C0A86C;" onclick="joinRoomByCode()">加入朋友房间</button><button style="width:100%; padding:12px; margin-top:10px; background:none; border:none; color:var(--muted); cursor:pointer;" onclick="closeModal()">取消</button>`; } modal.classList.add('active'); }
     function closeModal() { document.getElementById('room-modal').classList.remove('active'); }
@@ -1009,7 +803,6 @@
     async function joinRoomByCode() { const code = document.getElementById('join-code-input').value.trim().toUpperCase(); if (!code || code.length !== 6) return alert('请输入 6 位邀请码'); try { const res = await fetch(`/api/room?id=${code}`); const result = await res.json(); if (result.ok) { appState = { ...result.data, roomId: code }; localStorage.setItem('pc_room_id', code); saveLocalData(); updateRoomBtn(); renderTripList(); renderProfile(); renderAchievements(); closeModal(); startSync(); addExp(30); if(appState.currentTripId) { selectTrip(appState.currentTripId); } } else { alert('加入失败：' + result.error); } } catch (e) { alert('网络错误'); } }
     function copyRoomLink() { const url = `${window.location.origin}${window.location.pathname}?room=${appState.roomId}`; navigator.clipboard.writeText(url); alert(`邀请链接已复制！\n${url}`); }
     function leaveRoom() { if(confirm('退出后将回到你个人的本地状态，确定退出吗？')) { localStorage.removeItem('pc_room_id'); appState.roomId = null; saveLocalData(); location.reload(); } }
-    
     function applyTheme(index) { const t = themes[index]; document.documentElement.style.setProperty('--bg-color', t.bg); document.documentElement.style.setProperty('--primary', t.primary); document.documentElement.style.setProperty('--primary-light', t.light); document.documentElement.style.setProperty('--btn-shadow', t.shadow); document.querySelectorAll('.color-dot').forEach((dot, i) => { if (i === index) dot.classList.add('active'); else dot.classList.remove('active'); }); }
   </script>
 </body>
