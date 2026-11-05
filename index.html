@@ -6,30 +6,30 @@
   <title>PlanCake-AI 1.1 - 智能旅行工作台</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@500;700&display=swap');
 
     :root {
-      --bg-color: #E8F2F7; 
-      --primary: #9AB6C9; 
+      --bg-color: #E8F2F7;
+      --primary: #9AB6C9;
       --primary-light: #C2D6E1;
-      --btn-shadow: #7692A5; 
+      --btn-shadow: #7692A5;
       --secondary: #E8B4A2; --secondary-light: #FDF2EE;
       --text: #5A5A5A; --muted: #999999;
-      --danger: #E5989B; 
+      --danger: #E5989B;
       --shadow-cute: 0 8px 24px rgba(0, 0, 0, 0.04);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', 'Quicksand', -apple-system, sans-serif; }
-    
-    body { 
-      background-color: var(--bg-color); 
+
+    body {
+      background-color: var(--bg-color);
       background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.5'%3E%3Cpath d='M30 10 L32 16 L38 18 L32 20 L30 26 L28 20 L22 18 L28 16 Z'/%3E%3Ccircle cx='10' cy='40' r='3'/%3E%3Ccircle cx='50' cy='20' r='3'/%3E%3Cpath d='M15 15 L17 19 L21 21 L17 23 L15 27 L13 23 L9 21 L13 19 Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-      color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; 
+      color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden;
       transition: background-color 0.6s ease;
     }
-    
+
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 10px; }
@@ -37,7 +37,7 @@
     .top-navbar { height: 72px; background: #ffffff; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.02); z-index: 100; flex-shrink: 0; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; }
     .logo { font-size: 24px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 6px; transition: color 0.6s; cursor: pointer; }
     .logo span { font-size: 26px; animation: float 3s ease-in-out infinite; }
-    
+
     .top-tabs { display: flex; gap: 10px; }
     .top-tab { padding: 10px 22px; border-radius: 16px; font-size: 15px; font-weight: 700; color: var(--muted); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; user-select: none; }
     .top-tab:hover { background: var(--bg-color); color: var(--primary); }
@@ -49,17 +49,17 @@
     .nav-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
     .app-layout { display: flex; flex: 1; overflow: hidden; padding: 20px; gap: 20px; }
-    
+
     /* 侧边栏 */
     .sidebar { width: 340px; background: #ffffff; display: flex; flex-direction: column; border-radius: 28px; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); z-index: 10; overflow: hidden; }
     .sidebar-form-wrapper { flex: 1; overflow-y: auto; padding: 20px 20px 0 20px; }
     .sidebar-form { background: var(--bg-color); padding: 20px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.03); transition: background-color 0.6s ease; }
-    
+
     .form-group { margin-bottom: 14px; }
     .form-group label { display: block; font-size: 13px; font-weight: 800; margin-bottom: 6px; color: var(--primary); transition: color 0.6s; }
     .form-group input { width: 100%; padding: 12px; border: 2px solid rgba(0,0,0,0.04); border-radius: 14px; font-size: 13px; outline: none; background: #fff; transition: all 0.2s; font-weight: 600; color: var(--text); }
     .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--bg-color); }
-    
+
     .tags { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 5px; }
     .tag { padding: 8px 4px; border-radius: 12px; background: #fff; font-size: 12px; font-weight: 700; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; user-select: none; display: flex; align-items: center; justify-content: center; gap: 2px; color: var(--muted); box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
     .tag:hover { transform: translateY(-1px); }
@@ -85,19 +85,19 @@
     .weather-bottom { display: flex; gap: 15px; font-size: 12px; font-weight: 700; color: var(--muted); }
 
     .main-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; padding-right: 10px; }
-    
+
     /* 首页概览 */
     .top-row { display: flex; gap: 20px; min-height: 170px; flex-shrink: 0; }
     .banner-card { flex: 2; background: linear-gradient(135deg, var(--primary), var(--primary-light)); border-radius: 28px; padding: 25px 30px; position: relative; color: #fff; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow-cute); overflow: hidden; border: 2px solid #fff; transition: background 0.6s; }
     .banner-card h1 { font-size: 36px; font-weight: 800; text-shadow: 0 2px 8px rgba(0,0,0,0.05); z-index: 2; position: relative;}
     .banner-emoji { position: absolute; right: 20px; bottom: -10px; font-size: 120px; opacity: 0.9; animation: float 4s ease-in-out infinite; z-index: 1;}
-    
+
     .expense-card { flex: 1; background: #ffffff; border-radius: 28px; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); transition: all 0.3s; }
     .expense-card.over-budget { background: #FFF0F0; border-color: #FFB8B8; animation: shake 0.5s ease-in-out; }
     .donut-chart { width: 95px; height: 95px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.05); transition: background 0.6s;}
     .donut-inner { width: 72px; height: 72px; background: #ffffff; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .donut-inner strong { font-size: 16px; font-weight: 800; color: var(--primary); transition: color 0.6s; }
-    
+
     .info-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; flex-shrink: 0; }
     .info-box { background: #ffffff; border-radius: 22px; padding: 20px; display: flex; gap: 15px; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); transition: transform 0.2s; }
     .info-box:hover { transform: translateY(-2px); }
@@ -113,11 +113,11 @@
     .map-tools button { background: var(--primary); color: #fff; border: none; padding: 0 20px; border-radius: 16px; cursor: pointer; font-weight: 800; box-shadow: 0 4px 0 var(--btn-shadow); transition: all 0.1s, background-color 0.6s; }
     .map-tools button:active { box-shadow: 0 0 0 var(--btn-shadow); transform: translateY(4px); }
     #map-container { flex: 1; border-radius: 20px; z-index: 1; min-height: 250px; border: 1px solid rgba(0,0,0,0.05); }
-    
+
     .route-config { margin-top: 15px; max-height: 120px; overflow-y: auto; padding-top: 10px; }
     .config-item { display: flex; align-items: center; justify-content: space-between; font-size: 13px; background: var(--bg-color); margin-bottom: 8px; padding: 10px 15px; border-radius: 14px; border: 1px solid rgba(0,0,0,0.03); font-weight: 700; transition: background-color 0.6s ease;}
     .config-item select { padding: 6px 10px; border-radius: 10px; border: 2px solid rgba(0,0,0,0.05); outline: none; background: #fff; color: var(--primary); font-weight: 800; cursor: pointer; }
-    
+
     .timeline-widget { flex: 1; background: #ffffff; border-radius: 28px; padding: 25px; display: flex; flex-direction: column; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); }
     .timeline-list { flex: 1; overflow-y: auto; padding-left: 15px; border-left: 3px dotted rgba(0,0,0,0.05); }
     .timeline-item { position: relative; padding-left: 25px; margin-bottom: 20px; }
@@ -197,7 +197,7 @@
     .profile-container { max-width: 800px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
     .profile-header-card { background: #ffffff; border-radius: 28px; padding: 40px; box-shadow: var(--shadow-cute); border: 1px solid rgba(255,255,255,0.8); display: flex; align-items: center; gap: 30px; position: relative; overflow: hidden; }
     .profile-header-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 80px; background: linear-gradient(135deg, var(--primary-light), var(--bg-color)); z-index: 0; }
-    
+
     .avatar-upload-wrapper { position: relative; z-index: 1; cursor: pointer; }
     .profile-avatar { width: 120px; height: 120px; border-radius: 50%; background: #fff; border: 4px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); object-fit: cover; display: flex; align-items: center; justify-content: center; font-size: 40px; color: var(--primary-light); transition: transform 0.2s; }
     .avatar-upload-wrapper:hover .profile-avatar { transform: scale(1.05); }
@@ -226,7 +226,7 @@
     .btn-danger-outline:hover { background: var(--danger); color: #fff; }
 
     .transport-icon { background: #fff; border: 2px solid var(--primary); border-radius: 20px; padding: 3px 10px; font-size: 12px; font-weight: 800; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); white-space: nowrap; display: flex; align-items: center; gap: 4px; transition: border-color 0.6s, color 0.6s;}
-    
+
     @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
     @keyframes float { 0% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-6px) rotate(2deg); } 100% { transform: translateY(0px) rotate(0deg); } }
     @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-5px); } }
@@ -240,7 +240,7 @@
     #pdf-template .pdf-expense-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #ddd; padding: 8px 0; font-size: 14px; }
     #pdf-template .pdf-diary-card { margin-bottom: 20px; border: 1px solid #eee; padding: 15px; border-radius: 8px; page-break-inside: avoid; }
     #pdf-template .pdf-diary-card img { max-width: 100%; max-height: 300px; object-fit: cover; border-radius: 8px; margin-top: 10px; }
-  
+
     /* PlanCake 1.1：平板与手机适配 */
     @media (max-width: 1100px) {
       .top-navbar { padding: 0 18px; }
@@ -310,6 +310,24 @@
     .pc-status{font-size:12px;color:#71808a;min-height:18px}.pc-share-card{border:1px solid #e1e8ed;border-radius:14px;padding:14px;margin-top:14px}
     .pc-code{font-size:24px;letter-spacing:2px;font-weight:900;color:#648da7;text-align:center;padding:12px;background:#f2f7fa;border-radius:12px;margin:10px 0}
     @media(max-width:760px){.pc-account-button{padding:8px 10px;font-size:12px}.top-navbar{gap:8px}.pc-modal{padding:18px}}
+
+    /* ⭐️ 个人资料新增样式 ⭐️ */
+    .profile-meta { display: flex; flex-wrap: wrap; gap: 8px 12px; margin: 2px 0 12px; font-size: 13px; font-weight: 700; color: var(--muted); }
+    .profile-meta-item { background: var(--bg-color); padding: 5px 12px; border-radius: 12px; transition: background-color 0.6s ease; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .profile-bio-input { width: 100%; min-height: 62px; max-height: 140px; padding: 12px 14px; border: 2px solid rgba(0,0,0,0.05); border-radius: 14px; font-size: 13px; font-weight: 600; color: var(--text); outline: none; resize: vertical; background: #fff; line-height: 1.6; transition: border-color 0.2s; font-family: inherit; }
+    .profile-bio-input:focus { border-color: var(--primary); }
+    .profile-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 15px; }
+    .profile-actions .btn-save-profile { margin-top: 0; }
+    .profile-sync-hint { font-size: 12px; font-weight: 700; color: var(--muted); }
+    .profile-sync-hint.ok { color: #3AA981; }
+    .profile-sync-hint.err { color: var(--danger); }
+    @media (max-width: 480px) {
+      .profile-header-card { padding: 26px 20px; flex-direction: column; text-align: center; }
+      .profile-info { margin-top: 10px; width: 100%; }
+      .profile-meta { justify-content: center; }
+      .profile-actions { justify-content: center; }
+      .profile-stats { grid-template-columns: repeat(2, 1fr); }
+    }
   </style>
 </head>
 <body>
@@ -347,7 +365,7 @@
             <div style="flex:1;"><label>👥 人数</label><input type="number" id="input-people" value="2" onchange="updateMembersCount(this.value)"></div>
             <div style="flex:1;"><label>💰 总预算(¥)</label><input type="number" id="input-budget" value="5000" onchange="updateBudgetUI()"></div>
           </div>
-          
+
           <div class="form-group">
             <label>✨ 旅行偏好</label>
             <div class="tags" id="input-prefs">
@@ -362,12 +380,12 @@
               <div class="tag" onclick="this.classList.toggle('active')">🌙 夜游</div>
             </div>
           </div>
-          
+
           <button class="btn-generate" onclick="generatePlan()">✨ 开始烘焙行程</button>
           <button class="btn-export" onclick="exportPDF()">📥 导出 PDF 计划</button>
         </div>
       </div>
-      
+
       <div class="sidebar-bottom">
         <div class="theme-picker">
           <span>🎨 主题色</span>
@@ -527,7 +545,7 @@
       <!-- ⭐️ 个人资料页面 ⭐️ -->
       <div id="view-profile" class="view-panel">
         <div class="profile-container">
-          
+
           <!-- 个人卡片 -->
           <div class="profile-header-card">
             <div class="avatar-upload-wrapper" onclick="document.getElementById('avatar-upload').click()">
@@ -537,11 +555,18 @@
               <div class="avatar-edit-badge">📷</div>
               <input type="file" id="avatar-upload" accept="image/*" onchange="uploadAvatar(this)">
             </div>
-            
+
             <div class="profile-info">
-              <input type="text" id="profile-name-input" class="profile-name-input" value="旅行者" placeholder="输入你的昵称..." onchange="saveProfileData()">
-              <div class="profile-bio">🌍 用脚步丈量世界，用 PlanCake 记录美好。</div>
-              <button class="btn-save-profile" onclick="saveProfileData(true)">保存资料</button>
+              <input type="text" id="profile-name-input" class="profile-name-input" value="旅行者" placeholder="输入你的昵称..." maxlength="24" onchange="saveProfileData()">
+              <div class="profile-meta">
+                <span class="profile-meta-item" id="profile-email-text">📮 未绑定账号</span>
+                <span class="profile-meta-item" id="profile-joined-text">🗓️ 本地访客</span>
+              </div>
+              <textarea id="profile-bio-input" class="profile-bio-input" maxlength="120" placeholder="写一句属于你的旅行签名..."></textarea>
+              <div class="profile-actions">
+                <button class="btn-save-profile" onclick="saveProfileData(true)">保存资料</button>
+                <span class="profile-sync-hint" id="profile-sync-hint"></span>
+              </div>
             </div>
           </div>
 
@@ -684,6 +709,20 @@
       return `${y}-${m}-${d}`;
     }
 
+    // ⭐️ 个人资料默认值 & 本地迁移 ⭐️
+    const DEFAULT_PROFILE = {
+      name: '旅行者',
+      email: '',
+      avatar: '',
+      bio: '🌍 用脚步丈量世界，用 PlanCake 记录美好。',
+      createdAt: null,
+      updatedAt: null
+    };
+    function loadUserProfile() {
+      const saved = readStored('pc_user_profile', null);
+      return Object.assign({}, DEFAULT_PROFILE, (saved && typeof saved === 'object') ? saved : {});
+    }
+
     // ⭐️ 全局状态：增加 userProfile ⭐️
     let appState = { 
       expenses: readStored('pc_expenses', []), 
@@ -694,10 +733,7 @@
         { id: 2, text: '手机充电器', done: false },
         { id: 3, text: '换洗衣物', done: false }
       ]),
-      userProfile: readStored('pc_user_profile', {
-        name: '旅行者',
-        avatar: ''
-      }),
+      userProfile: loadUserProfile(),
       totalBudget: 5000, 
       dailyPlan: [], 
       customSpots: [],
@@ -707,12 +743,51 @@
     let tempPhotoBase64 = null;
 
     // ⭐️ 个人资料逻辑 ⭐️
+    function formatProfileDate(value) {
+      if (!value) return '';
+      const raw = String(value).trim();
+      // 兼容 SQLite 的 "2024-05-01 12:00:00"（UTC）与 ISO 字符串
+      const normalized = raw.includes('T') ? raw : raw.replace(' ', 'T') + 'Z';
+      const d = new Date(normalized);
+      if (Number.isNaN(d.getTime())) return raw;
+      return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+    }
+
+    function setSyncHint(text, cls) {
+      const el = document.getElementById('profile-sync-hint');
+      if (!el) return;
+      el.textContent = text || '';
+      el.className = 'profile-sync-hint' + (cls ? ' ' + cls : '');
+    }
+
+    // 判断是否已登录云端账号（云端模块在下方脚本初始化，这里做安全取值）
+    function getCloudUser() {
+      try { return window.pcUser || null; } catch (e) { return null; }
+    }
+
     function renderProfile() {
-      const p = appState.userProfile;
-      
-      // 昵称
-      document.getElementById('profile-name-input').value = p.name;
-      
+      const p = appState.userProfile || {};
+
+      // 昵称 / 简介（正在输入时不打断）
+      const nameInput = document.getElementById('profile-name-input');
+      if (nameInput && document.activeElement !== nameInput) nameInput.value = p.name || '';
+      const bioInput = document.getElementById('profile-bio-input');
+      if (bioInput && document.activeElement !== bioInput) bioInput.value = p.bio || '';
+
+      // 邮箱 & 注册时间
+      const emailEl = document.getElementById('profile-email-text');
+      if (emailEl) {
+        const email = p.email || '';
+        emailEl.textContent = email ? `📮 ${email}` : '📮 未绑定账号';
+        emailEl.title = email || '';
+      }
+      const joinedEl = document.getElementById('profile-joined-text');
+      if (joinedEl) {
+        joinedEl.textContent = p.createdAt
+          ? `🗓️ 加入于 ${formatProfileDate(p.createdAt)}`
+          : '🗓️ 本地访客（登录后云端同步）';
+      }
+
       // 头像
       const defaultAvatar = document.getElementById('profile-avatar-default');
       const imgAvatar = document.getElementById('profile-avatar-img');
@@ -734,25 +809,86 @@
       document.getElementById('stat-items').textContent = appState.checklist.length;
     }
 
+    // 头像：等比居中裁切 + 压缩到 256×256 JPEG，避免体积过大
     function uploadAvatar(input) {
-      if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          appState.userProfile.avatar = e.target.result;
-          renderProfile();
-        };
-        reader.readAsDataURL(input.files[0]);
+      const file = input.files && input.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        alert('请选择图片文件哦～');
+        input.value = '';
+        return;
       }
+      if (file.size > 8 * 1024 * 1024) {
+        alert('图片太大了，请选择 8MB 以内的图片。');
+        input.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = new Image();
+        img.onload = function () {
+          const size = 256;
+          const canvas = document.createElement('canvas');
+          canvas.width = size; canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, size, size);
+          const scale = Math.max(size / img.width, size / img.height);
+          const w = img.width * scale;
+          const h = img.height * scale;
+          ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+          appState.userProfile.avatar = canvas.toDataURL('image/jpeg', 0.82);
+          renderProfile();
+          // 头像改动后自动同步云端
+          if (getCloudUser() && typeof pcSaveProfile === 'function') {
+            setSyncHint('正在同步头像…', '');
+            pcSaveProfile()
+              .then(() => setSyncHint('头像已同步到云端 ☁️', 'ok'))
+              .catch(err => setSyncHint('头像同步失败：' + err.message, 'err'));
+          } else {
+            setSyncHint('已保存到本地', 'ok');
+          }
+        };
+        img.onerror = function () { alert('图片读取失败，请换一张试试。'); };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+      input.value = '';
     }
 
-    function saveProfileData(showAlert = false) {
-      const newName = document.getElementById('profile-name-input').value.trim();
-      if (newName) appState.userProfile.name = newName;
-      
+    async function saveProfileData(showAlert = false) {
+      const nameInput = document.getElementById('profile-name-input');
+      const bioInput = document.getElementById('profile-bio-input');
+      const name = (nameInput ? nameInput.value : '').trim();
+      const bio = (bioInput ? bioInput.value : '').trim();
+
+      if (!name) {
+        alert('昵称不能为空哦～');
+        if (nameInput) nameInput.focus();
+        return;
+      }
+
+      appState.userProfile.name = name.slice(0, 24);
+      appState.userProfile.bio = bio.slice(0, 120);
+      appState.userProfile.updatedAt = new Date().toISOString();
       writeStored('pc_user_profile', appState.userProfile);
-      renderProfile(); // 刷新一下
-      
-      if (showAlert) alert('🎉 资料已保存！');
+      renderProfile();
+
+      if (!getCloudUser()) {
+        setSyncHint('已保存到本地（登录后可云端同步）', 'ok');
+        if (showAlert) alert('🎉 资料已保存到本地！\n登录账号后会自动同步到云端，换设备也能看到。');
+        return;
+      }
+
+      setSyncHint('正在同步到云端…', '');
+      try {
+        await pcSaveProfile();
+        setSyncHint('已同步到云端 ☁️', 'ok');
+        if (showAlert) alert('🎉 资料已保存，并同步到云端！');
+      } catch (err) {
+        setSyncHint('云端同步失败：' + err.message, 'err');
+        if (showAlert) alert('资料已保存在本地，但同步到云端失败：' + err.message);
+      }
     }
 
     // ⭐️ 数据管理 ⭐️
@@ -868,163 +1004,4 @@
         const data = await res.json(); 
         if (data.ok && data.data) { renderInspiration(data.data, dest); } 
         else { renderInspiration({ attractions: [{name: dest+"地标景点", desc: "这是当地最著名的打卡地，风景优美。"}, {name: dest+"历史博物馆", desc: "了解当地文化底蕴的必去之地。"}], foods: [{name: dest+"特色小吃", desc: "不可错过的地道风味。"}, {name: dest+"传统名菜", desc: "当地老字号，一定要尝尝。"}] }, dest, true); } 
-      } catch (err) { container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--danger); font-weight: 800;">网络错误，获取灵感失败。</div>`; } 
-    }
-    function renderInspiration(data, dest, isMock = false) { 
-      const container = document.getElementById('inspire-content'); 
-      let attrHtml = data.attractions.map(a => `<div class="inspire-item"><strong>🏛️ ${a.name}</strong><p>${a.desc}</p></div>`).join(''); 
-      let foodHtml = data.foods.map(f => `<div class="inspire-item" style="border-left-color: var(--secondary);"><strong>🍜 ${f.name}</strong><p>${f.desc}</p></div>`).join(''); 
-      container.innerHTML = `<div class="inspire-card"><h3>📍 ${dest} 著名景点</h3>${attrHtml}</div><div class="inspire-card"><h3>🍽️ ${dest} 特色美食</h3>${foodHtml}</div>`; 
-      if(isMock) alert("AI 服务器繁忙，已展示基础灵感草案。"); 
-    }
-
-    function updateMembersCount(count) {
-      let currentCount = appState.members.length; let targetCount = parseInt(count);
-      if (targetCount > currentCount) { for (let i = currentCount; i < targetCount; i++) { appState.members.push(`朋友${i}`); } } 
-      else if (targetCount < currentCount) { appState.members = appState.members.slice(0, targetCount); }
-      renderMembers();
-    }
-    function addMember() {
-      const name = document.getElementById('new-member-name').value.trim();
-      if (!name) return; if (appState.members.includes(name)) return alert("成员名字重复啦！");
-      appState.members.push(name); document.getElementById('new-member-name').value = '';
-      document.getElementById('input-people').value = appState.members.length; renderMembers();
-    }
-    function removeMember(name) {
-      if (appState.members.length <= 1) return alert("至少需要保留一名成员哦！");
-      if (confirm(`确定要移除成员【${name}】吗？相关的账单也会受影响。`)) {
-        appState.members = appState.members.filter(m => m !== name); document.getElementById('input-people').value = appState.members.length; renderMembers();
-      }
-    }
-    function renderMembers() {
-      writeStored('pc_members', appState.members);
-      document.getElementById('member-list').innerHTML = appState.members.map(m => `<span class="member-tag">👤 ${m} <span onclick="removeMember('${m}')">×</span></span>`).join('');
-      document.getElementById('exp-payer').innerHTML = appState.members.map(m => `<option value="${m}">${m} 付钱</option>`).join('');
-      calculateSettlement();
-    }
-    function calculateSettlement() {
-      const list = document.getElementById('settlement-list'); if (appState.members.length === 0) return;
-      let totalSpent = 0; let paidAmounts = {}; appState.members.forEach(m => paidAmounts[m] = 0);
-      appState.expenses.forEach(exp => { if (exp.isAA) { totalSpent += exp.amount; if (paidAmounts[exp.payer] !== undefined) { paidAmounts[exp.payer] += exp.amount; } } });
-      if (totalSpent === 0) { list.innerHTML = '<div style="color:var(--muted); font-size:14px; font-weight:600;">暂无 AA 账单记录，无需结算~</div>'; return; }
-      const avg = totalSpent / appState.members.length;
-      let balances = appState.members.map(m => ({ name: m, amount: paidAmounts[m] - avg }));
-      let html = ''; let debtors = balances.filter(b => b.amount < -0.01).sort((a,b) => a.amount - b.amount); let creditors = balances.filter(b => b.amount > 0.01).sort((a,b) => b.amount - a.amount);
-      if (debtors.length === 0 && creditors.length === 0) {
-        html = '<div style="color:#00B894; font-weight:800; font-size:15px; background:#E8F8F5; padding:15px; border-radius:16px;">🎉 完美！大家都平摊啦，不需要互相转账！</div>';
-      } else {
-        debtors.forEach(d => {
-          let owe = Math.abs(d.amount);
-          while (owe > 0.01 && creditors.length > 0) {
-            let c = creditors[0]; let canPay = Math.min(owe, c.amount);
-            html += `<div class="settlement-card"><strong>💸 转账指令</strong><p><span style="color:var(--danger);">${d.name}</span> 需转账给 <span style="color:var(--primary);">${c.name}</span> <span style="font-size:18px;">¥${canPay.toFixed(2)}</span></p></div>`;
-            owe -= canPay; c.amount -= canPay; if (c.amount <= 0.01) creditors.shift();
-          }
-        });
-      }
-      list.innerHTML = html;
-    }
-    function addExpense() {
-      const desc = document.getElementById('exp-desc').value; const amount = parseFloat(document.getElementById('exp-amount').value); const payer = document.getElementById('exp-payer').value; const splitType = document.getElementById('exp-split-type').value;
-      if (!desc || !amount) return alert("请填写说明和金额");
-      appState.expenses.push({ id: Date.now(), desc, amount, payer, isAA: splitType === 'AA' });
-      document.getElementById('exp-desc').value = ''; document.getElementById('exp-amount').value = ''; 
-      updateBudgetUI(); calculateSettlement(); renderProfile();
-    }
-    function deleteExpense(id) { appState.expenses = appState.expenses.filter(e => e.id !== id); updateBudgetUI(); calculateSettlement(); renderProfile(); }
-    function updateBudgetUI() {
-      let spent = appState.expenses.reduce((sum, item) => sum + item.amount, 0); let percent = Math.min(100, Math.round((spent / appState.totalBudget) * 100)) || 0;
-      document.getElementById('dash-spent').textContent = `¥${spent}`; document.getElementById('dash-total-budget').textContent = `¥${appState.totalBudget}`; document.getElementById('dash-budget-percent').textContent = `${percent}%`;
-      const chart = document.getElementById('donut-chart'); const card = document.getElementById('dash-expense-card'); const warning = document.getElementById('budget-warning');
-      chart.style.background = `conic-gradient(var(--primary) ${percent}%, var(--secondary) ${percent}% 100%)`;
-      if (spent > appState.totalBudget) {
-        card.classList.add('over-budget'); chart.style.background = `conic-gradient(var(--danger) 100%, var(--danger) 100%)`;
-        document.getElementById('dash-budget-percent').textContent = `超支!`; document.getElementById('dash-budget-percent').style.color = `var(--danger)`;
-        warning.classList.add('active');
-      } else { card.classList.remove('over-budget'); document.getElementById('dash-budget-percent').style.color = `var(--primary)`; warning.classList.remove('active'); }
-      const list = document.getElementById('expense-list');
-      if(list) { 
-        list.innerHTML = appState.expenses.slice().reverse().map(exp => {
-          let tagColor = exp.isAA ? 'var(--primary-light)' : 'var(--muted)';
-          let tagText = exp.isAA ? 'AA' : '自费';
-          return `
-          <div style="display:flex; justify-content:space-between; padding:15px 0; border-bottom:2px dashed rgba(0,0,0,0.05); font-weight:700;">
-            <div>
-              <span style="background:${tagColor}; color:#fff; padding:2px 8px; border-radius:10px; font-size:12px; margin-right:6px;">${tagText}</span>
-              <span style="background:var(--bg-color); color:var(--text); padding:2px 8px; border-radius:10px; font-size:12px; margin-right:8px;">${exp.payer}付</span>
-              ${exp.desc}
-            </div>
-            <div><span style="margin-right:15px; color:var(--danger);">¥${exp.amount}</span><span style="color: var(--muted); cursor: pointer; font-size:13px;" onclick="deleteExpense(${exp.id})">删除</span></div>
-          </div>
-        `}).join(''); 
-      }
-      writeStored('pc_expenses', appState.expenses);
-    }
-
-    function handleSpotEnter(e) { if (e.key === 'Enter') addCustomSpot(); }
-    async function addCustomSpot() { const input = document.getElementById('spot-input'); const name = input.value.trim(); if (!name) return; input.value = '搜索中...'; try { const dest = document.getElementById('input-dest').value; const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(dest + ' ' + name)}&limit=1`); const data = await res.json(); if (data.features && data.features.length > 0) { const lat = data.features[0].geometry.coordinates[1]; const lng = data.features[0].geometry.coordinates[0]; appState.customSpots.push({ name, lat, lng, transport: '🚗 驾车' }); input.value = ''; renderCustomMap(); if(window.queuePlanCakeCloudSave)window.queuePlanCakeCloudSave(); } else { alert("未找到该地点，请尝试输入更精确的名称"); input.value = ''; } } catch (err) { alert("网络错误，搜索失败"); input.value = ''; } }
-    function changeTransport(index, val) { appState.customSpots[index].transport = val; renderCustomMap(); if(window.queuePlanCakeCloudSave)window.queuePlanCakeCloudSave(); }
-    function removeSpot(index) { appState.customSpots.splice(index, 1); renderCustomMap(); if(window.queuePlanCakeCloudSave)window.queuePlanCakeCloudSave(); }
-    function calcDistance(lat1, lon1, lat2, lon2) { const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2); return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))).toFixed(1); }
-    function renderCustomMap() { if (!mapInstance) { mapInstance = L.map('map-container').setView([20, 0], 2); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(mapInstance); } mapInstance.eachLayer(layer => { if (layer instanceof L.Marker || layer instanceof L.Polyline) { mapInstance.removeLayer(layer); } }); const spots = appState.customSpots; const latlngs = []; const configList = document.getElementById('route-config'); configList.innerHTML = spots.length > 0 ? '' : '<div style="color:var(--muted); text-align:center; font-size:12px; font-weight:700;">请在上方搜索框添加景点来规划路线</div>'; const transportOptions = ['🚗 驾车', '🚶 步行', '🚌 公交', '🚲 骑行']; spots.forEach((spot, i) => { const latlng = [spot.lat, spot.lng]; latlngs.push(latlng); L.marker(latlng).addTo(mapInstance).bindPopup(`<b>${i+1}. ${spot.name}</b>`); if (i > 0) { const prevSpot = spots[i-1]; const prevLatLng = [prevSpot.lat, prevSpot.lng]; L.polyline([prevLatLng, latlng], { color: 'var(--primary)', weight: 4, dashArray: '6, 6' }).addTo(mapInstance); const dist = calcDistance(prevSpot.lat, prevSpot.lng, spot.lat, spot.lng); const midLat = (prevSpot.lat + spot.lat) / 2; const midLng = (prevSpot.lng + spot.lng) / 2; const transportIcon = L.divIcon({ className: 'custom-div-icon', html: `<div class="transport-icon">${prevSpot.transport} ${dist}km</div>`, iconSize: [80, 24], iconAnchor: [40, 12] }); L.marker([midLat, midLng], { icon: transportIcon }).addTo(mapInstance); configList.innerHTML += `<div class="config-item"><div><b>${i}. ${prevSpot.name}</b> ➔ <b>${i+1}. ${spot.name}</b> <span style="color:var(--muted); font-size:12px;">(${dist}km)</span></div><div><select onchange="changeTransport(${i-1}, this.value)">${transportOptions.map(opt => `<option value="${opt}" ${prevSpot.transport === opt ? 'selected' : ''}>${opt}</option>`).join('')}</select><span style="color:var(--danger); cursor:pointer; margin-left:8px; font-size:13px; font-weight:800;" onclick="removeSpot(${i})">删除</span></div></div>`; } }); if (latlngs.length > 0) { mapInstance.fitBounds(latlngs, { padding: [30, 30] }); } }
-    async function generatePlan() {
-      const dest = document.getElementById('input-dest').value.trim();
-      const start = document.getElementById('input-start').value;
-      const end = document.getElementById('input-end').value;
-      const people = document.getElementById('input-people').value;
-      const budgetInput = parseFloat(document.getElementById('input-budget').value);
-      const budget = Number.isFinite(budgetInput) && budgetInput > 0 ? budgetInput : 5000;
-      if (!dest) { alert('请先填写旅行目的地哦！'); document.getElementById('input-dest').focus(); return; }
-      if (!start || !end) { alert('请填写完整的出发和返程日期哦！'); return; }
-      const startDate = new Date(`${start}T00:00:00`);
-      const endDate = new Date(`${end}T00:00:00`);
-      if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime()) || endDate < startDate) {
-        alert('返程日期不能早于出发日期，请检查日期设置。'); return;
-      }
-      const days = Math.round((endDate - startDate) / 86400000) + 1; let prefs = []; document.querySelectorAll('#input-prefs .tag.active').forEach(t => prefs.push(t.textContent.trim())); fetchWeatherForCity(dest); fetchChecklistRecommendations(dest); appState.totalBudget = budget; updateBudgetUI(); document.getElementById('dash-dest').textContent = dest; document.getElementById('dash-date').textContent = `${start} 出发 · ${days}天`; document.getElementById('info-days').textContent = `${days} 天`; document.getElementById('info-people').textContent = `${people} 人`; document.getElementById('info-prefs').textContent = prefs.length > 0 ? prefs.join(' / ') : '无特殊偏好'; appState.customSpots = []; if (mapInstance) { mapInstance.remove(); mapInstance = null; } mapInstance = L.map('map-container').setView([20, 0], 2); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(mapInstance); try { const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(dest)}&limit=1`); const data = await res.json(); if (data.features?.length > 0) { const lat = data.features[0].geometry.coordinates[1]; const lng = data.features[0].geometry.coordinates[0]; mapInstance.flyTo([lat, lng], 12, { duration: 2 }); appState.customSpots.push({ name: dest + '市中心', lat, lng, transport: '🚗 驾车' }); renderCustomMap(); } } catch (err) {} const timeline = document.getElementById('timeline-list'); timeline.innerHTML = `<div style="text-align:center; margin-top:50px; color:var(--primary);"><div style="font-size:50px; animation:float 2s infinite alternate; margin-bottom:10px;">🎂</div><span style="font-weight:800;">AI 正在为你烘焙...</span></div>`; const prompt = `目的地:${dest}, 天数:${days}天, 旅行偏好:${prefs.join('、')}`; try { const response = await fetch('/api/parse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: prompt }) }); const data = await response.json(); if (data.ok && data.seed && data.seed.dailyPlan) { appState.dailyPlan = data.seed.dailyPlan; renderTimeline(data.seed.dailyPlan); } else { const mock = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`); appState.dailyPlan = mock; renderTimeline(mock); } } catch (e) { const mock = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`); appState.dailyPlan = mock; renderTimeline(mock); } renderProfile(); if (window.queuePlanCakeCloudSave) window.queuePlanCakeCloudSave(); }
-    function renderTimeline(dailyPlan) { const timeline = document.getElementById('timeline-list'); timeline.innerHTML = ''; dailyPlan.forEach((text, i) => { timeline.innerHTML += `<div class="timeline-item"><div class="day">Day ${i + 1}</div><div class="desc">${text}</div></div>`; }); }
-    
-    function previewPhoto(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function(e) { tempPhotoBase64 = e.target.result; document.getElementById('photo-preview').src = e.target.result; document.getElementById('photo-preview').style.display = 'block'; }; reader.readAsDataURL(input.files[0]); } }
-    function saveDiary() { const text = document.getElementById('diary-text').value; if (!text && !tempPhotoBase64) return alert("写点什么或者传张照片吧！"); appState.diaries.push({ id: Date.now(), date: localDateString(new Date()), text: text, photo: tempPhotoBase64 }); document.getElementById('diary-text').value = ''; document.getElementById('diary-photo').value = ''; document.getElementById('photo-preview').style.display = 'none'; tempPhotoBase64 = null; renderDiaries(); renderProfile(); }
-    function renderDiaries() { writeStored('pc_diaries', appState.diaries); const list = document.getElementById('diary-list'); list.innerHTML = appState.diaries.length === 0 ? '<div style="color:var(--muted); text-align:center; margin-top:50px; font-weight:700;">还没有日记，快记录下美好的瞬间吧 📸</div>' : ''; appState.diaries.slice().reverse().forEach(d => { list.innerHTML += `<div class="diary-card">${d.photo ? `<img src="${d.photo}">` : ''}<div class="diary-card-info"><div class="date" style="font-size:12px; color:var(--muted); margin-bottom:5px; font-weight:700;">📅 ${d.date}</div><div class="text" style="font-size:15px; line-height:1.6; font-weight:600;">${d.text.replace(/\n/g, '<br>')}</div><div class="del-btn" onclick="deleteDiary(${d.id})">删除</div></div></div>`; }); }
-    function deleteDiary(id) { if(confirm('确定要删除这条日记吗？')) { appState.diaries = appState.diaries.filter(d => d.id !== id); renderDiaries(); renderProfile(); } }
-    
-    function exportPDF() { const dest = document.getElementById('input-dest').value || '未填写'; const start = document.getElementById('input-start').value || '待定'; const end = document.getElementById('input-end').value || '待定'; const people = document.getElementById('input-people').value || '2'; if (appState.dailyPlan.length === 0) return alert("请先点击“开始烘焙行程”，生成行程后再导出哦！"); document.getElementById('pdf-dest-info').textContent = `📍 目的地：${dest}`; document.getElementById('pdf-date-info').textContent = `📅 日期：${start} 至 ${end}`; document.getElementById('pdf-people-info').textContent = `👥 人数：${people} 人`; let timelineHtml = ''; appState.dailyPlan.forEach((text, i) => { timelineHtml += `<div class="pdf-day"><div class="pdf-day-title">Day ${i + 1}</div><div>${text}</div></div>`; }); document.getElementById('pdf-timeline-list').innerHTML = timelineHtml; let expenseHtml = ''; let totalSpent = 0; appState.expenses.forEach(exp => { totalSpent += exp.amount; expenseHtml += `<div class="pdf-expense-row"><span>[${exp.isAA ? 'AA' : '自费'}] [${exp.payer}] ${exp.desc}</span><span>¥${exp.amount}</span></div>`; }); if(appState.expenses.length === 0) expenseHtml = '<div style="color:#999;">暂无记账记录</div>'; document.getElementById('pdf-expense-list').innerHTML = expenseHtml; document.getElementById('pdf-total').innerHTML = `总花费：¥${totalSpent} / 预算：¥${appState.totalBudget}`; let diaryHtml = ''; appState.diaries.forEach(d => { diaryHtml += `<div class="pdf-diary-card"><div style="font-size:12px; color:#999; margin-bottom:5px;">📅 ${d.date}</div><div>${d.text.replace(/\n/g, '<br>')}</div>${d.photo ? `<img src="${d.photo}">` : ''}</div>`; }); if(appState.diaries.length === 0) diaryHtml = '<div style="color:#999;">暂无日记记录</div>'; document.getElementById('pdf-diary-list').innerHTML = diaryHtml; const element = document.getElementById('pdf-template'); element.style.display = 'block'; const opt = { margin: 10, filename: `PlanCake_${dest}_旅行计划.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }; html2pdf().set(opt).from(element).save().then(() => { element.style.display = 'none'; }); }
-
-    // 初始化
-    updateBudgetUI(); 
-    renderMembers();
-    renderDiaries(); 
-    renderChecklist();
-    renderProfile();
-    fetchWeatherForCity(document.getElementById('input-dest').value); 
-    fetchChecklistRecommendations(document.getElementById('input-dest').value);
-    renderCustomMap();
-  </script>
-
-<script>
-// PlanCake-AI 2.0 云端账号与协作客户端。API 与网页同域部署在 /api/*。
-let pcUser=null, pcPlanId=null, pcCloudVersion=0, pcApplyingCloud=false, pcSaveTimer=null, pcLastSaved='', pcMembers=[];
-function pcApi(path, options={}){return fetch(path,{credentials:'same-origin',...options,headers:{'Content-Type':'application/json',...(options.headers||{})}}).then(async r=>{const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'请求失败');return d;});}
-function openAccount(){document.getElementById('pc-account-modal').style.display='flex';pcRenderAccount();}
-function closePcModal(id){document.getElementById(id).style.display='none';}
-function pcRenderAccount(){const logged=!!pcUser;document.getElementById('pc-auth-fields').style.display=logged?'none':'block';document.getElementById('pc-account-info').style.display=logged?'block':'none';document.getElementById('pc-account-button').textContent=logged?(pcUser.username||pcUser.email):'登录 / 注册';if(logged)document.getElementById('pc-account-label').textContent=`已登录：${pcUser.username}（${pcUser.email}）`}
-async function submitAuth(mode){const status=document.getElementById('pc-auth-status');status.textContent='正在处理…';try{const payload={email:document.getElementById('pc-auth-email').value.trim(),password:document.getElementById('pc-auth-password').value};if(mode==='register')payload.username=document.getElementById('pc-auth-name').value.trim();const d=await pcApi('/api/auth/'+mode,{method:'POST',body:JSON.stringify(payload)});pcUser=d.user;status.textContent='成功！正在加载你的云端规划…';await pcLoadPlan();pcRenderAccount();status.textContent='';}catch(e){status.textContent=e.message}}
-async function pcLoadPlan(){const d=await pcApi('/api/plans/current');pcPlanId=d.plan.id;pcCloudVersion=d.plan.version||1;pcMembers=d.members||[];pcApplyData(d.plan.data||{});pcLastSaved=JSON.stringify(d.plan.data||{});pcRenderMembers();}
-function pcSnapshot(){return {appState:{expenses:appState.expenses,diaries:appState.diaries,members:appState.members,checklist:appState.checklist,userProfile:appState.userProfile,totalBudget:appState.totalBudget,dailyPlan:appState.dailyPlan,customSpots:appState.customSpots,currentWeather:appState.currentWeather},form:{dest:document.getElementById('input-dest')?.value||'',start:document.getElementById('input-start')?.value||'',end:document.getElementById('input-end')?.value||'',people:document.getElementById('input-people')?.value||'2',budget:document.getElementById('input-budget')?.value||'5000'},theme:localStorage.getItem('pc_theme_idx')||'0'};}
-function pcApplyData(data){if(!data||!data.appState)return;pcApplyingCloud=true;try{Object.assign(appState,data.appState);if(data.form){document.getElementById('input-dest').value=data.form.dest||'';document.getElementById('input-start').value=data.form.start||document.getElementById('input-start').value;document.getElementById('input-end').value=data.form.end||document.getElementById('input-end').value;document.getElementById('input-people').value=data.form.people||'2';document.getElementById('input-budget').value=data.form.budget||'5000';}if(data.theme!==undefined)applyTheme(Math.max(0,Math.min(5,Number(data.theme)||0)));renderMembers();renderDiaries();renderChecklist();renderProfile();updateBudgetUI();if(appState.dailyPlan?.length)renderTimeline(appState.dailyPlan);if(appState.customSpots?.length)renderCustomMap();}finally{pcApplyingCloud=false;}}
-window.queuePlanCakeCloudSave=function(){if(!pcUser||pcApplyingCloud)return;clearTimeout(pcSaveTimer);pcSaveTimer=setTimeout(pcSaveCloud,900)};
-async function pcSaveCloud(){if(!pcUser||pcApplyingCloud)return;const data=pcSnapshot(), signature=JSON.stringify(data);if(signature===pcLastSaved)return;try{const d=await pcApi('/api/plans/current',{method:'PUT',body:JSON.stringify({data,version:pcCloudVersion})});pcCloudVersion=d.version;pcLastSaved=signature; }catch(e){if(e.message==='请先登录。'){pcUser=null;pcRenderAccount();return;}if(e.message==='请求失败'){console.warn('云端保存暂时失败',e)}else console.warn('云端保存失败：',e.message)}}
-
-function pcRenderMembers(){const box=document.getElementById('pc-member-list');if(!box)return;box.innerHTML='<b>协作成员</b>'+pcMembers.map(m=>`<div style="display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid #edf0f2;font-size:13px"><span>${m.username}（${m.role==='owner'?'创建者':'协作者'}）<br><small>${m.email}</small></span>${pcMembers.some(x=>x.id===pcUser?.id&&x.role==='owner')&&m.id!==pcUser?.id?`<button class="secondary" onclick="pcRemoveMember('${m.id}')">移除</button>`:''}</div>`).join('');}
-async function pcRemoveMember(id){if(!confirm('确定要移除这位协作者吗？'))return;try{await pcApi('/api/plans/members/'+encodeURIComponent(id),{method:'DELETE'});await pcLoadPlan();}catch(e){document.getElementById('pc-share-status').textContent=e.message}}
-async function createPcInvite(){const el=document.getElementById('pc-generated-code'),status=document.getElementById('pc-share-status');status.textContent='正在生成…';try{const d=await pcApi('/api/invites',{method:'POST',body:'{}'});el.innerHTML=`<div class="pc-code">${d.code}</div><button onclick="navigator.clipboard.writeText('${d.code}').then(()=>document.getElementById('pc-share-status').textContent='邀请码已复制')">复制邀请码</button><small>24 小时内有效，只能被一位朋友使用一次。</small>`;status.textContent='邀请码已生成。请只发给你想邀请的朋友。'}catch(e){status.textContent=e.message}}
-async function joinPcInvite(){const status=document.getElementById('pc-share-status');status.textContent='正在加入…';try{await pcApi('/api/invites/join',{method:'POST',body:JSON.stringify({code:document.getElementById('pc-join-code').value.trim()})});await pcLoadPlan();status.textContent='加入成功！现在你们共享同一份旅行规划。';}catch(e){status.textContent=e.message}}
-async function logoutPc(){try{await pcApi('/api/auth/logout',{method:'POST',body:'{}'})}catch(e){}pcUser=null;pcPlanId=null;pcRenderAccount();closePcModal('pc-account-modal')}
-async function pcCheckSession(){try{const d=await pcApi('/api/auth/me');pcUser=d.user;if(pcUser){await pcLoadPlan();pcRenderAccount();}}catch(e){console.warn('账号状态检查失败',e)}}
-async function pcPoll(){if(!pcUser||!pcPlanId||pcSaveTimer)return;try{const d=await pcApi('/api/plans/current');if(d.plan.version>pcCloudVersion){pcCloudVersion=d.plan.version;pcLastSaved=JSON.stringify(d.plan.data||{});pcApplyData(d.plan.data||{});}}catch(e){}}
-window.addEventListener('DOMContentLoaded',()=>{pcCheckSession();setInterval(pcPoll,4000);});
-</script>
-
-</body>
-</html>
+      } catch (err) { container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center;
