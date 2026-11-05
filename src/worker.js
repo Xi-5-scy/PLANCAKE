@@ -60,5 +60,8 @@ export default { async fetch(req,env){
    const memberId=path.split('/').pop(), p=await getPlan(env,user.id); if(!p||p.owner_id!==user.id)return json({error:'只有规划创建者可以移除成员。'},403); if(memberId===user.id)return json({error:'不能移除创建者本人。'},400); await env.DB.prepare('DELETE FROM plan_members WHERE plan_id=? AND user_id=?').bind(p.id,memberId).run(); return json({ok:true});
   }
   return json({error:'Not found'},404);
- }catch(e){ return json({error:'服务器暂时无法处理请求。',detail:env.ENVIRONMENT==='development'?String(e):undefined},500); }
+ }catch(e){
+ console.error('PlanCake API error:',e);
+ return json({error:'服务器暂时无法处理请求：'+String(e)},500);
+}
 }}
