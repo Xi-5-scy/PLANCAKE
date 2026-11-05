@@ -27,7 +27,6 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 10px; }
 
-    /* 顶部导航 */
     .top-navbar { height: 72px; background: #ffffff; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.02); z-index: 100; flex-shrink: 0; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; }
     .logo { font-size: 24px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 6px; cursor: pointer; }
     .top-tabs { display: flex; gap: 10px; }
@@ -35,11 +34,9 @@
     .top-tab:hover { background: var(--bg-color); color: var(--primary); }
     .top-tab.active { background: var(--bg-color); color: var(--primary); }
     
-    /* 协作按钮 */
     .btn-room { background: var(--secondary-light); color: #C28B79; padding: 10px 20px; border-radius: 16px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; border: 1px solid var(--secondary); }
     .btn-room:hover { background: var(--secondary); color: #fff; }
 
-    /* 布局 */
     .app-layout { display: flex; flex: 1; overflow: hidden; padding: 20px; gap: 20px; }
     .sidebar { width: 340px; background: #ffffff; display: flex; flex-direction: column; border-radius: 28px; box-shadow: var(--shadow-cute); z-index: 10; overflow: hidden; }
     .sidebar-form-wrapper { flex: 1; overflow-y: auto; padding: 20px 20px 0 20px; }
@@ -49,10 +46,6 @@
     .form-group label { display: block; font-size: 13px; font-weight: 800; margin-bottom: 6px; color: var(--primary); }
     .form-group input { width: 100%; padding: 12px; border: 2px solid rgba(0,0,0,0.04); border-radius: 14px; font-size: 13px; outline: none; background: #fff; font-weight: 600; color: var(--text); }
     
-    .tags { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 5px; }
-    .tag { padding: 8px 4px; border-radius: 12px; background: #fff; font-size: 12px; font-weight: 700; cursor: pointer; border: 2px solid transparent; display: flex; align-items: center; justify-content: center; color: var(--muted); }
-    .tag.active { background: var(--bg-color); color: var(--primary); border-color: var(--primary-light); }
-
     .btn-generate { width: 100%; padding: 15px; background: var(--primary); color: #fff; border: none; border-radius: 16px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 0 var(--btn-shadow); transition: transform 0.1s; display: flex; justify-content: center; gap: 8px; }
     .btn-generate:active { box-shadow: 0 0px 0 var(--btn-shadow); transform: translateY(4px); }
     .btn-export { width: 100%; padding: 12px; background: #fff; color: var(--primary); border: 2px solid var(--primary); border-radius: 14px; font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; }
@@ -68,7 +61,6 @@
     .weather-mid .temp { font-size: 32px; font-weight: 800; color: var(--text); }
     .weather-bottom { display: flex; gap: 15px; font-size: 12px; font-weight: 700; color: var(--muted); }
 
-    /* 主区域 */
     .main-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; padding-right: 10px; }
     .top-row { display: flex; gap: 20px; min-height: 170px; flex-shrink: 0; }
     .banner-card { flex: 2; background: linear-gradient(135deg, var(--primary), var(--primary-light)); border-radius: 28px; padding: 25px 30px; position: relative; color: #fff; display: flex; flex-direction: column; justify-content: space-between; }
@@ -102,7 +94,6 @@
     .timeline-item .day { font-size: 14px; font-weight: 800; color: var(--primary); margin-bottom: 5px; }
     .timeline-item .desc { font-size: 14px; background: var(--bg-color); padding: 14px; border-radius: 16px; line-height: 1.6; font-weight: 600; }
 
-    /* 弹窗样式 */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; }
     .modal-overlay.active { display: flex; }
     .modal-card { background: #fff; border-radius: 24px; padding: 30px; width: 380px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
@@ -110,7 +101,6 @@
     .modal-card input { width: 100%; padding: 15px; border: 2px dashed var(--primary-light); border-radius: 14px; font-size: 24px; text-align: center; letter-spacing: 5px; font-weight: 800; outline: none; margin-bottom: 15px; text-transform: uppercase; }
     .room-code-display { font-size: 36px; font-weight: 800; color: var(--danger); letter-spacing: 8px; margin: 20px 0; padding: 15px; background: var(--secondary-light); border-radius: 16px; border: 2px dashed var(--secondary); }
 
-    /* 其他页面通用 */
     .view-panel { display: none; height: 100%; }
     .view-panel.active { display: flex; flex-direction: column; }
     .budget-layout { display: flex; gap: 20px; height: 100%; }
@@ -154,7 +144,6 @@
       <div class="top-tab" onclick="switchNav('diary', this)">📔 日记</div>
       <div class="top-tab" onclick="switchNav('budget', this)">💰 记账</div>
     </div>
-    <!-- ⭐️ 协作按钮 ⭐️ -->
     <div id="room-btn" class="btn-room" onclick="openRoomModal()">👥 开启协作</div>
   </header>
 
@@ -195,7 +184,6 @@
     </aside>
 
     <main class="main-content">
-      <!-- 首页概览 -->
       <div id="view-dashboard" class="view-panel active">
         <div class="top-row">
           <div class="banner-card">
@@ -228,7 +216,6 @@
         </div>
       </div>
 
-      <!-- 记账分账 -->
       <div id="view-budget" class="view-panel">
         <div class="budget-layout">
           <div class="budget-left">
@@ -265,7 +252,6 @@
         </div>
       </div>
 
-      <!-- 旅行日记 -->
       <div id="view-diary" class="view-panel">
         <div class="diary-container">
           <div class="diary-form">
@@ -278,7 +264,6 @@
         </div>
       </div>
 
-      <!-- 行李清单 -->
       <div id="view-checklist" class="view-panel">
         <div class="checklist-layout">
           <div class="checklist-left">
@@ -301,7 +286,6 @@
         </div>
       </div>
 
-      <!-- 灵感发现 -->
       <div id="view-discover" class="view-panel">
         <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
           <h2>🌍 目的地灵感</h2>
@@ -312,15 +296,13 @@
     </main>
   </div>
 
-  <!-- ⭐️ 协作弹窗 ⭐️ -->
   <div class="modal-overlay" id="room-modal">
-    <div class="modal-card" id="room-modal-content">
-      <!-- 动态渲染内容 -->
-    </div>
+    <div class="modal-card" id="room-modal-content"></div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
+    // ⭐️ 核心配置与本地加载 ⭐️
     const themes = [
       { bg: '#E8F2F7', primary: '#9AB6C9', light: '#C2D6E1', shadow: '#7692A5' }, 
       { bg: '#FAF0F2', primary: '#D9A3B1', light: '#F0D3D8', shadow: '#B57D8B' }, 
@@ -330,53 +312,80 @@
       { bg: '#FDF2EE', primary: '#E8B4A2', light: '#F2D0C5', shadow: '#C28B79' }  
     ];
     
-    // 本地应用状态 (不再单独存 localStorage，依靠云端)
-    let appState = { 
-      expenses: [], 
-      diaries: [],
-      members: ['我', '朋友A'],
+    // ⭐️ 本地持久化：从 localStorage 读取上次的数据 ⭐️
+    const defaultState = { 
+      expenses: [], diaries: [], members: ['我', '朋友A'],
       checklist: [{ id: 1, text: '身份证/护照', done: false }],
-      totalBudget: 5000, 
-      dailyPlan: [], 
-      customSpots: [],
-      currentWeather: { temp: 25, desc: '多云' },
-      // 协作信息
-      roomId: null,
-      userName: '游客' + Math.floor(Math.random() * 1000) // 自动生成一个随机名字
+      totalBudget: 5000, dailyPlan: [], customSpots: [],
+      roomId: null, currentWeather: { temp: 25, desc: '多云' }
     };
+    
+    let appState = JSON.parse(localStorage.getItem('pc_app_data')) || defaultState;
     let mapInstance = null;
     let tempPhotoBase64 = null;
     let syncTimer = null;
     let isSyncing = false;
 
-    // ⭐️ 初始化：尝试恢复上次的房间 ⭐️
+    // ⭐️ 每次数据变动，先存本地，再推云端 ⭐️
+    function saveLocalData() {
+      localStorage.setItem('pc_app_data', JSON.stringify(appState));
+    }
+
+    // 初始化
     window.addEventListener('DOMContentLoaded', () => {
       applyTheme(0);
+      renderAllUI();
       
-      const urlParams = new URLSearchParams(window.location.search);
-      const roomIdFromUrl = urlParams.get('room');
       const savedRoomId = localStorage.getItem('pc_room_id');
-
-      if (roomIdFromUrl) {
-        joinRoom(roomIdFromUrl);
-      } else if (savedRoomId) {
+      if (savedRoomId) {
         appState.roomId = savedRoomId;
         updateRoomBtn();
-        startSync(); // 自动重新连接
+        startSync();
       } else {
         updateRoomBtn();
+        fetchWeatherForCity(appState.customSpots[0]?.name || '成都');
       }
-      
-      // 初始化一些默认 UI
-      fetchWeatherForCity('成都');
-      renderMembers();
-      renderDiaries();
-      renderChecklist();
-      updateBudgetUI();
-      renderCustomMap();
+
+      // 每次关闭或刷新页面时，确保数据保存
+      window.addEventListener('beforeunload', saveLocalData);
     });
 
-    // ⭐️ 协作核心逻辑 ⭐️
+    // 本地+云端双重保存触发
+    function triggerSync() {
+      saveLocalData(); // 立即存本地，绝对不丢
+      if (!appState.roomId || isSyncing) return; // 如果没进房间，只存本地
+      
+      isSyncing = true;
+      const dataToSync = { ...appState, roomId: null };
+      fetch('/api/room', {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ roomId: appState.roomId, data: dataToSync })
+      }).catch(e => console.log('Push sync error', e))
+        .finally(() => { isSyncing = false; });
+    }
+
+    function startSync() {
+      if (syncTimer) clearInterval(syncTimer);
+      syncTimer = setInterval(async () => {
+        if (!appState.roomId || isSyncing) return;
+        try {
+          const res = await fetch(`/api/room?id=${appState.roomId}`);
+          const result = await res.json();
+          if (result.ok) {
+            const cloudDataStr = JSON.stringify(result.data);
+            const localDataStr = JSON.stringify({ ...appState, roomId: null }); 
+            if (cloudDataStr !== localDataStr) {
+              const currentRoom = appState.roomId;
+              appState = { ...result.data, roomId: currentRoom };
+              saveLocalData();
+              renderAllUI();
+            }
+          }
+        } catch(e) { console.log('Sync error', e); }
+      }, 3000);
+    }
+
+    // ⭐️ 协作逻辑（创建/加入） ⭐️
     function updateRoomBtn() {
       const btn = document.getElementById('room-btn');
       if (appState.roomId) {
@@ -393,28 +402,20 @@
     function openRoomModal() {
       const modal = document.getElementById('room-modal');
       const content = document.getElementById('room-modal-content');
-      
       if (appState.roomId) {
-        // 已经加入房间
         content.innerHTML = `
           <h2>👥 正在协作中</h2>
-          <p style="margin-bottom:15px; color:var(--muted);">房间邀请码</p>
           <div class="room-code-display">${appState.roomId}</div>
-          <p style="font-size:13px; color:var(--muted); margin-bottom:20px;">把这个码发给朋友，他们输入后即可加入一起编辑。</p>
+          <p style="font-size:13px; color:var(--muted); margin-bottom:20px;">把这个码发给朋友，他们输入后即可加入。</p>
           <button class="btn-generate" onclick="copyRoomLink()">🔗 复制邀请链接</button>
           <button style="width:100%; padding:12px; margin-top:10px; background:none; border:none; color:var(--danger); cursor:pointer;" onclick="leaveRoom()">退出当前协作</button>
           <button style="width:100%; padding:12px; margin-top:5px; background:none; border:none; color:var(--muted); cursor:pointer;" onclick="closeModal()">关闭</button>
         `;
       } else {
-        // 未加入房间
         content.innerHTML = `
           <h2>👥 开启多人协作</h2>
-          <p style="font-size:14px; color:var(--muted); margin-bottom:20px;">创建新房间或输入朋友的邀请码</p>
-          
           <button class="btn-generate" onclick="createRoom()">✨ 创建新旅行房间</button>
-          
           <div style="margin: 20px 0; border-top: 1px dashed #eee;"></div>
-          
           <input type="text" id="join-code-input" placeholder="输入 6 位邀请码" maxlength="6">
           <button class="btn-generate" style="background:#E5CD91; box-shadow:0 4px 0 #C0A86C;" onclick="joinRoomByCode()">加入朋友房间</button>
           <button style="width:100%; padding:12px; margin-top:10px; background:none; border:none; color:var(--muted); cursor:pointer;" onclick="closeModal()">取消</button>
@@ -422,151 +423,84 @@
       }
       modal.classList.add('active');
     }
-
     function closeModal() { document.getElementById('room-modal').classList.remove('active'); }
 
-    // 创建房间
     async function createRoom() {
       try {
-        // 打包当前本地数据
         const initData = { ...appState, roomId: null }; 
-        
-        const res = await fetch('/api/room', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ data: initData })
-        });
+        const res = await fetch('/api/room', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data: initData }) });
         const result = await res.json();
-        
         if (result.ok) {
           appState.roomId = result.roomId;
           localStorage.setItem('pc_room_id', result.roomId);
-          updateRoomBtn();
-          startSync();
-          openRoomModal(); // 刷新弹窗
-        } else {
-          alert('创建失败：' + result.error);
+          saveLocalData();
+          updateRoomBtn(); startSync(); openRoomModal();
         }
       } catch (e) { alert('网络错误'); }
     }
 
-    // 加入房间
     async function joinRoomByCode() {
       const code = document.getElementById('join-code-input').value.trim().toUpperCase();
       if (!code || code.length !== 6) return alert('请输入 6 位邀请码');
       await joinRoom(code);
     }
 
-    // 核心同步函数：拉取数据
     async function joinRoom(roomId) {
       try {
         const res = await fetch(`/api/room?id=${roomId}`);
         const result = await res.json();
-        
         if (result.ok) {
-          // 覆盖本地数据
           appState = { ...appState, ...result.data, roomId: roomId };
           localStorage.setItem('pc_room_id', roomId);
-          
-          // 重新渲染所有 UI
-          updateRoomBtn();
-          renderAllUI();
-          closeModal();
-          startSync();
+          saveLocalData();
+          updateRoomBtn(); renderAllUI(); closeModal(); startSync();
         } else {
           alert('加入失败：' + result.error);
-          if(roomId !== localStorage.getItem('pc_room_id')) localStorage.removeItem('pc_room_id');
         }
       } catch (e) { alert('网络错误，房间不存在'); }
-    }
-
-    // 轮询同步机制
-    function startSync() {
-      if (syncTimer) clearInterval(syncTimer);
-      // 每 3 秒从云端拉取一次最新数据
-      syncTimer = setInterval(async () => {
-        if (!appState.roomId || isSyncing) return;
-        try {
-          const res = await fetch(`/api/room?id=${appState.roomId}`);
-          const result = await res.json();
-          if (result.ok) {
-            // 简单比对：如果云端数据与本地不同，则覆盖本地（极简版冲突解决）
-            const cloudDataStr = JSON.stringify(result.data);
-            const localDataStr = JSON.stringify({ ...appState, roomId: null }); // 排除 roomId 比对
-            
-            // 注意：为了避免覆盖正在输入的内容，可以做一些判断，但这里为了简单直接覆盖重绘
-            // 实际生产环境中需要更复杂的版本控制。这里因为数据是几十KB，直接全量覆盖。
-            if (cloudDataStr !== localDataStr) {
-              // 保留本地独有的协作状态
-              const currentRoom = appState.roomId;
-              appState = { ...result.data, roomId: currentRoom };
-              renderAllUI();
-            }
-          }
-        } catch(e) { console.log('Sync error', e); }
-      }, 3000);
-    }
-
-    // 推送数据到云端
-    async function triggerSync() {
-      if (!appState.roomId || isSyncing) return;
-      isSyncing = true;
-      try {
-        const dataToSync = { ...appState, roomId: null };
-        await fetch('/api/room', {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ roomId: appState.roomId, data: dataToSync })
-        });
-      } catch(e) { console.log('Push sync error', e); }
-      finally { isSyncing = false; }
     }
 
     function copyRoomLink() {
       const url = `${window.location.origin}${window.location.pathname}?room=${appState.roomId}`;
       navigator.clipboard.writeText(url);
-      alert(`邀请链接已复制！\n${url}\n\n发给朋友，他们直接点击链接就能加入。`);
+      alert(`邀请链接已复制！\n${url}\n\n发给朋友，他们打开直接加入。`);
     }
 
     function leaveRoom() {
       if(confirm('退出后将回到你个人的本地状态，确定退出吗？')) {
         localStorage.removeItem('pc_room_id');
+        appState.roomId = null;
+        saveLocalData();
         location.reload();
       }
     }
 
-    // ⭐️ 数据变更联动：每次修改数据后都要推送 ⭐️
+    // ⭐️ 全局渲染 ⭐️
     function renderAllUI() {
-      document.getElementById('input-dest').value = appState.dailyPlan.length > 0 ? (appState.dailyPlan.dest || '成都') : '成都';
+      document.getElementById('input-dest').value = appState.destination || '成都';
+      document.getElementById('input-people').value = appState.members.length;
+      document.getElementById('input-budget').value = appState.totalBudget;
+      
       document.getElementById('dash-dest').textContent = document.getElementById('input-dest').value;
       document.getElementById('dash-date').textContent = appState.dailyPlan.length > 0 ? '已生成' : '准备出发';
       document.getElementById('info-days').textContent = appState.dailyPlan.length > 0 ? `${appState.dailyPlan.length} 天` : '--';
       document.getElementById('info-people').textContent = `${appState.members.length} 人`;
       
-      updateBudgetUI();
-      renderMembers();
-      renderChecklist();
-      renderDiaries();
-      renderTimeline(appState.dailyPlan);
+      updateBudgetUI(); renderMembers(); renderChecklist(); renderDiaries(); renderTimeline(appState.dailyPlan);
     }
 
-    // 简单的 UI 渲染逻辑 (复用你之前的代码，仅加入 triggerSync 调用)
     function updateBudgetUI() {
       let spent = appState.expenses.reduce((sum, item) => sum + item.amount, 0); 
       let percent = Math.min(100, Math.round((spent / appState.totalBudget) * 100)) || 0;
       document.getElementById('dash-spent').textContent = `¥${spent}`; 
       document.getElementById('dash-total-budget').textContent = `¥${appState.totalBudget}`; 
       document.getElementById('dash-budget-percent').textContent = `${percent}%`;
-      
       const chart = document.getElementById('donut-chart'); 
       const card = document.getElementById('dash-expense-card'); 
       const warning = document.getElementById('budget-warning');
-      
       chart.style.background = `conic-gradient(var(--primary) ${percent}%, var(--secondary) ${percent}% 100%)`;
-      
-      if (spent > appState.totalBudget) {
-        card.classList.add('over-budget'); warning.classList.add('active');
-      } else { 
-        card.classList.remove('over-budget'); warning.classList.remove('active'); 
-      }
+      if (spent > appState.totalBudget) { card.classList.add('over-budget'); warning.classList.add('active'); } 
+      else { card.classList.remove('over-budget'); warning.classList.remove('active'); }
       
       const list = document.getElementById('expense-list');
       if(list) { 
@@ -593,7 +527,6 @@
       const avg = totalSpent / appState.members.length;
       let balances = appState.members.map(m => ({ name: m, amount: paidAmounts[m] - avg }));
       let html = ''; let debtors = balances.filter(b => b.amount < -0.01).sort((a,b) => a.amount - b.amount); let creditors = balances.filter(b => b.amount > 0.01).sort((a,b) => b.amount - a.amount);
-      
       debtors.forEach(d => {
         let owe = Math.abs(d.amount);
         while (owe > 0.01 && creditors.length > 0) {
@@ -630,7 +563,7 @@
       timeline.innerHTML = dailyPlan.map((text, i) => `<div class="timeline-item"><div class="day">Day ${i + 1}</div><div class="desc">${text}</div></div>`).join('');
     }
 
-    // 交互事件触发云同步
+    // 交互事件
     function addExpense() {
       const desc = document.getElementById('exp-desc').value; const amount = parseFloat(document.getElementById('exp-amount').value); const payer = document.getElementById('exp-payer').value; const splitType = document.getElementById('exp-split-type').value;
       if (!desc || !amount) return alert("请填写说明和金额");
@@ -638,9 +571,8 @@
       document.getElementById('exp-desc').value = ''; document.getElementById('exp-amount').value = '';
       updateBudgetUI(); renderMembers(); triggerSync();
     }
-
     function deleteExpense(id) { appState.expenses = appState.expenses.filter(e => e.id !== id); updateBudgetUI(); renderMembers(); triggerSync(); }
-
+    
     function addMember() {
       const name = document.getElementById('new-member-name').value.trim();
       if (!name || appState.members.includes(name)) return;
@@ -652,12 +584,8 @@
       appState.members = appState.members.filter(m => m !== name); renderMembers(); triggerSync();
     }
     function updateMembersCount(count) {
-      // 简单同步一下人数
-      if(parseInt(count) > appState.members.length) {
-        for(let i=appState.members.length; i<parseInt(count); i++) appState.members.push(`朋友${i}`);
-      } else {
-        appState.members = appState.members.slice(0, parseInt(count));
-      }
+      if(parseInt(count) > appState.members.length) { for(let i=appState.members.length; i<parseInt(count); i++) appState.members.push(`朋友${i}`); } 
+      else { appState.members = appState.members.slice(0, parseInt(count)); }
       renderMembers(); triggerSync();
     }
 
@@ -668,7 +596,6 @@
     function saveDiary() { const text = document.getElementById('diary-text').value; if (!text && !tempPhotoBase64) return; appState.diaries.push({ id: Date.now(), date: new Date().toLocaleDateString(), text, photo: tempPhotoBase64 }); document.getElementById('diary-text').value = ''; document.getElementById('photo-preview').style.display = 'none'; tempPhotoBase64 = null; renderDiaries(); triggerSync(); }
     function deleteDiary(id) { appState.diaries = appState.diaries.filter(d => d.id !== id); renderDiaries(); triggerSync(); }
 
-    // 其他辅助功能保留
     function switchNav(viewId, el) {
       document.querySelectorAll('.top-tab').forEach(n => n.classList.remove('active'));
       document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
@@ -688,6 +615,7 @@
         if (data.ok && data.seed && data.seed.dailyPlan) { appState.dailyPlan = data.seed.dailyPlan; } 
         else { appState.dailyPlan = Array.from({length: days}).map(() => `前往${dest}核心景点打卡。`); }
       } catch (e) { appState.dailyPlan = Array.from({length: days}).map(() => `前往${dest}游玩。`); }
+      appState.destination = dest;
       renderTimeline(appState.dailyPlan); triggerSync();
     }
 
@@ -697,7 +625,7 @@
     async function fetchInspiration() { const dest = document.getElementById('input-dest').value; document.getElementById('inspire-content').innerHTML = 'AI 正在寻找...'; setTimeout(()=>{ document.getElementById('inspire-content').innerHTML = `<div class="inspire-card"><h3>📍 ${dest} 景点</h3><div class="inspire-item">著名地标1</div></div>`; }, 1000); }
     function addCustomSpot() { /* 简化处理 */ }
     function renderCustomMap() { if (!mapInstance) { mapInstance = L.map('map-container').setView([20, 0], 2); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(mapInstance); } }
-    function exportPDF() { alert("PDF 功能请参考之前代码，此处省略以聚焦云端协同。"); }
+    function exportPDF() { alert("PDF 功能请参考之前代码。"); }
   </script>
 </body>
 </html>
