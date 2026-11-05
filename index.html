@@ -128,7 +128,7 @@
     /* 视图面板 */
     .view-panel { display: none; height: 100%; }
     .view-panel.active { display: block; }
-    #view-diary.view-panel.active, #view-discover.view-panel.active, #view-budget.view-panel.active, #view-checklist.view-panel.active, #view-profile.view-panel.active { display: flex; flex-direction: column; height: 100%; }
+    #view-diary.view-panel.active, #view-discover.view-panel.active, #view-budget.view-panel.active, #view-checklist.view-panel.active, #view-profile.view-panel.active, #view-achievements.view-panel.active { display: flex; flex-direction: column; height: 100%; }
 
     /* 灵感发现 */
     .discover-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
@@ -321,7 +321,7 @@
       <div class="top-tab" onclick="switchNav('discover', this)">🌍 灵感发现</div>
       <div class="top-tab" onclick="switchNav('checklist', this)">🎒 行李清单</div>
       <div class="top-tab" onclick="switchNav('diary', this)">📔 旅行日记</div>
-      <div class="top-tab" onclick="switchNav('budget', this)">💰 预算与分账</div>
+      <div class="top-tab" onclick="switchNav('budget', this)">💰 预算与分账</div><div class="top-tab" onclick="switchNav('achievements', this)">🏅 旅行成就</div>
     </div>
     <!-- 顶部右侧：个人头像入口 -->
     <button id="pc-account-button" class="pc-account-button" onclick="openAccount()">登录 / 注册</button>
@@ -334,6 +334,7 @@
   <div class="app-layout">
     <aside class="sidebar">
       <div class="sidebar-form-wrapper">
+        <section class="sidebar-form" id="pc-plans-panel"><strong>🧳 我的旅行规划</strong><div id="pc-plan-cards" style="display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px"></div><div style="display:flex;gap:6px;margin-top:8px"><input id="pc-new-plan-title" placeholder="新规划标题"><button onclick="pcCreatePlan()">＋</button></div></section>
         <div class="sidebar-form">
           <div class="form-group">
             <label>📍 目的地</label>
@@ -524,7 +525,7 @@
         </div>
       </div>
 
-      <!-- ⭐️ 个人资料页面 ⭐️ -->
+      <div id="view-achievements" class="view-panel" style="overflow:auto;padding:24px"><h2 style="color:var(--primary);margin-bottom:12px">🏅 旅行成就</h2><div id="achievement-level" style="background:white;border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:var(--shadow-cute)"></div><h3 style="margin-bottom:12px">已解锁的徽章与勋章</h3><div id="achievement-badges" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px"></div></div>      <!-- ⭐️ 个人资料页面 ⭐️ -->
       <div id="view-profile" class="view-panel">
         <div class="profile-container">
           
@@ -735,10 +736,10 @@
       document.getElementById('stat-trips').textContent = appState.dailyPlan.length > 0 ? '1' : '0';
       document.getElementById('stat-expenses').textContent = appState.expenses.length;
       document.getElementById('stat-diaries').textContent = appState.diaries.length;
-      document.getElementById('stat-items').textContent = appState.checklist.length;
+      document.getElementById('stat-items').textContent = appState.checklist.length;\n      renderAchievements();
     }
 
-    function uploadAvatar(input) {
+    function renderAchievements(){const trips=appState.dailyPlan.length?1:0,diaries=appState.diaries.length,expenses=appState.expenses.length,spots=appState.customSpots.length;const points=trips*100+diaries*25+expenses*5+spots*10;const level=Math.floor(points/200)+1;const defs=[['🧭','启程旅行家','生成第一份旅行行程',trips>=1],['📔','旅途记录者','写下第一篇旅行日记',diaries>=1],['💰','精打细算','记录第一笔旅行开支',expenses>=1],['📍','城市探索者','收藏 5 个行程地点',spots>=5],['✨','旅行达人','累计获得 500 成就点',points>=500]];document.getElementById('achievement-level').innerHTML=`<div style="font-size:18px;font-weight:800">⭐ 旅行等级 ${level}</div><div style="margin-top:6px">成就点数：${points} · 距离下一级还差 ${200-points%200} 点</div>`;document.getElementById('achievement-badges').innerHTML=defs.map(([icon,name,desc,ok])=>`<div style="background:white;border-radius:16px;padding:16px;opacity:${ok?1:.48};box-shadow:var(--shadow-cute);border:2px solid ${ok?'var(--primary-light)':'#eee'}"><div style="font-size:32px">${icon}</div><b>${name}</b><div style="font-size:12px;color:var(--muted);margin-top:5px">${ok?'已解锁 · ':''}${desc}</div></div>`).join('');}    function uploadAvatar(input) {
       if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
@@ -1020,7 +1021,7 @@ function pcRenderAccount(){const logged=!!pcUser;document.getElementById('pc-aut
 async function pcLoadProfile(){const d=await pcApi('/api/profile');const p=d.profile;pcUser={...pcUser,...p};appState.userProfile={name:p.username,avatar:p.profile_avatar||'',bio:p.profile_bio||''};writeStored('pc_user_profile',appState.userProfile);renderProfile();pcRenderAccount();}
 window.pcSaveProfile=async function(showAlert=false){if(!pcUser)return;try{const d=await pcApi('/api/profile',{method:'PUT',body:JSON.stringify({username:appState.userProfile.name,bio:appState.userProfile.bio||'',avatar:appState.userProfile.avatar||''})});pcUser={...pcUser,...d.profile};renderProfile();pcRenderAccount();if(showAlert)alert('🎉 资料已保存到云端！');}catch(e){alert('资料保存失败：'+e.message)}};
 async function submitAuth(mode){const status=document.getElementById('pc-auth-status');status.textContent='正在处理…';try{const payload={email:document.getElementById('pc-auth-email').value.trim(),password:document.getElementById('pc-auth-password').value};if(mode==='register')payload.username=document.getElementById('pc-auth-name').value.trim();const d=await pcApi('/api/auth/'+mode,{method:'POST',body:JSON.stringify(payload)});pcUser=d.user;status.textContent='成功！正在加载你的云端规划…';await pcLoadProfile();await pcLoadPlan();pcRenderAccount();status.textContent='';}catch(e){status.textContent=e.message}}
-async function pcRefreshPlans(){const d=await pcApi('/api/plans');const box=document.getElementById('pc-plan-list');if(!box)return;box.innerHTML=d.plans.map(p=>`<div style="display:flex;gap:8px;align-items:center;padding:7px 0"><button onclick="pcSelectPlan('${p.id}')">${p.id===pcPlanId?'✓ ':''}${p.title} · ${p.role==='owner'?'创建者':'协作者'}</button>${p.role==='owner'?`<button class="secondary" onclick="pcDeletePlan('${p.id}')">删除</button>`:''}</div>`).join('')||'暂无规划';}
+async function pcRefreshPlans(){const d=await pcApi('/api/plans');const render=p=>`<article style="background:#fff;border:2px solid ${p.id===pcPlanId?'var(--primary)':'#edf0f2'};border-radius:12px;padding:9px;cursor:pointer" onclick="pcSelectPlan('${p.id}')"><b>🗺️ ${p.title}</b><div style="font-size:11px;color:var(--muted)">${p.role==='owner'?'创建者':'协作者'} · ${JSON.parse(p.data||'{}').form?.dest||'待填写目的地'}</div>${p.role==='owner'?`<button class="secondary" onclick="event.stopPropagation();pcDeletePlan('${p.id}')">删除</button>`:''}</article>`;document.getElementById('pc-plan-cards').innerHTML=d.plans.map(render).join('')||'暂无规划';const box=document.getElementById('pc-plan-list');if(box)box.innerHTML=d.plans.map(render).join('')||'暂无规划';}
 async function pcCreatePlan(){const title=document.getElementById('pc-new-plan-title').value.trim();if(!title)return alert('请填写规划标题');try{await pcSaveCloud();await pcApi('/api/plans',{method:'POST',body:JSON.stringify({title,data:{appState:{expenses:[],diaries:[],members:['我','朋友A'],checklist:[],dailyPlan:[],customSpots:[]},form:{dest:'',start:'',end:'',people:'2',budget:'5000'}}})});document.getElementById('pc-new-plan-title').value='';await pcLoadPlan();await pcRefreshPlans();}catch(e){alert(e.message)}}
 async function pcSelectPlan(id){try{await pcSaveCloud();await pcApi(`/api/plans/${id}/select`,{method:'POST',body:'{}'});await pcLoadPlan();await pcRefreshPlans();}catch(e){alert(e.message)}}
 async function pcDeletePlan(id){if(!confirm('删除后该规划及其成员关系不可恢复，确定删除？'))return;try{await pcApi(`/api/plans/${id}`,{method:'DELETE'});pcPlanId=null;await pcRefreshPlans();const d=await pcApi('/api/plans');if(d.plans.length)await pcSelectPlan(d.plans[0].id);else await pcCreatePlan();}catch(e){alert(e.message)}}async function pcLoadPlan(){const d=await pcApi('/api/plans/current');pcPlanId=d.plan.id;pcCloudVersion=d.plan.version||1;pcMembers=d.members||[];pcApplyData(d.plan.data||{});pcLastSaved=JSON.stringify(d.plan.data||{});pcRenderMembers();}
@@ -1041,6 +1042,7 @@ window.addEventListener('DOMContentLoaded',()=>{pcCheckSession();setInterval(pcP
 
 </body>
 </html>
+
 
 
 
