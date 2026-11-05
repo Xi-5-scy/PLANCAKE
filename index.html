@@ -299,6 +299,17 @@
       .diary-card img { width: 100%; max-width: none; }
     }
 
+
+    .pc-account-button{border:0;border-radius:999px;padding:10px 16px;background:var(--primary);color:white;font-weight:800;cursor:pointer;white-space:nowrap}
+    .pc-modal-backdrop{position:fixed;inset:0;background:#24313c88;z-index:9999;display:none;align-items:center;justify-content:center;padding:18px}
+    .pc-modal{width:min(460px,100%);max-height:90vh;overflow:auto;background:white;border-radius:22px;padding:24px;box-shadow:0 20px 70px #0003;color:#46515a}
+    .pc-modal h2{margin:0 0 8px;font-size:23px}.pc-modal p{color:#77818a;font-size:13px;line-height:1.6;margin-bottom:16px}
+    .pc-modal input{width:100%;padding:12px 14px;border:1px solid #dce3e8;border-radius:12px;margin:6px 0 12px;font-size:15px}
+    .pc-modal label{font-size:13px;font-weight:800}.pc-modal button{border:0;border-radius:12px;padding:12px 16px;background:#8eafc4;color:white;font-weight:800;cursor:pointer;margin:5px 5px 5px 0}
+    .pc-modal button.secondary{background:#eef3f6;color:#52616b}.pc-modal .pc-close{float:right;background:transparent;color:#687782;font-size:22px;padding:0 6px}
+    .pc-status{font-size:12px;color:#71808a;min-height:18px}.pc-share-card{border:1px solid #e1e8ed;border-radius:14px;padding:14px;margin-top:14px}
+    .pc-code{font-size:24px;letter-spacing:2px;font-weight:900;color:#648da7;text-align:center;padding:12px;background:#f2f7fa;border-radius:12px;margin:10px 0}
+    @media(max-width:760px){.pc-account-button{padding:8px 10px;font-size:12px}.top-navbar{gap:8px}.pc-modal{padding:18px}}
   </style>
 </head>
 <body>
@@ -313,6 +324,7 @@
       <div class="top-tab" onclick="switchNav('budget', this)">💰 预算与分账</div>
     </div>
     <!-- 顶部右侧：个人头像入口 -->
+    <button id="pc-account-button" class="pc-account-button" onclick="openAccount()">登录 / 注册</button>
     <div class="nav-avatar" onclick="switchNav('profile', document.querySelectorAll('.top-tab')[0])" title="个人中心">
       <img id="nav-avatar-img" src="" alt="👤" style="display:none;">
       <span id="nav-avatar-default" style="font-size:20px;">👤</span>
@@ -600,6 +612,16 @@
     </div>
   </div>
 
+
+  <div id="pc-account-modal" class="pc-modal-backdrop" onclick="if(event.target===this)closePcModal('pc-account-modal')">
+    <div class="pc-modal"><button class="pc-close" onclick="closePcModal('pc-account-modal')">×</button>
+      <h2>🍰 PlanCake-AI 账号</h2><p>注册或登录后，旅行规划将保存到云端，并可邀请朋友共同编辑。</p>
+      <div id="pc-auth-fields"><label>用户名（注册时填写）</label><input id="pc-auth-name" placeholder="例如：旅行小蛋糕"><label>邮箱</label><input id="pc-auth-email" type="email" placeholder="name@example.com"><label>密码（至少 10 位）</label><input id="pc-auth-password" type="password" placeholder="请输入密码"><div class="pc-status" id="pc-auth-status"></div>
+      <button onclick="submitAuth('register')">注册账号</button><button class="secondary" onclick="submitAuth('login')">登录</button></div>
+      <div id="pc-account-info" style="display:none"><p id="pc-account-label"></p><div class="pc-share-card"><b>好友协作</b><p>生成一个只能成功使用一次、24 小时内有效的邀请码。朋友登录后输入邀请码即可共同编辑这份规划。</p><button onclick="createPcInvite()">生成一次性邀请码</button><div id="pc-generated-code"></div><div id="pc-member-list" class="pc-share-card"><b>协作成员</b><div class="pc-status">登录后加载成员列表</div></div><label>输入朋友发给你的邀请码</label><input id="pc-join-code" placeholder="PC-XXXX-XXXXXX"><button onclick="joinPcInvite()">加入朋友的规划</button><div class="pc-status" id="pc-share-status"></div></div><button class="secondary" onclick="logoutPc()">退出登录</button></div>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     // ⭐️ 主题配置 ⭐️
@@ -619,6 +641,7 @@
       document.documentElement.style.setProperty('--primary-light', t.light);
       document.documentElement.style.setProperty('--btn-shadow', t.shadow);
       try { localStorage.setItem('pc_theme_idx', String(index)); } catch (error) { console.warn(error); }
+      if (typeof window.queuePlanCakeCloudSave === 'function') window.queuePlanCakeCloudSave();
       document.querySelectorAll('.color-dot').forEach((dot, i) => {
         if (i === index) dot.classList.add('active'); else dot.classList.remove('active');
       });
@@ -647,6 +670,7 @@
     function writeStored(key, value) {
       try {
         localStorage.setItem(key, JSON.stringify(value));
+        if (typeof window.queuePlanCakeCloudSave === 'function') window.queuePlanCakeCloudSave();
         return true;
       } catch (error) {
         console.warn(`PlanCake：保存本地数据失败（${key}）。`, error);
@@ -938,9 +962,9 @@
     }
 
     function handleSpotEnter(e) { if (e.key === 'Enter') addCustomSpot(); }
-    async function addCustomSpot() { const input = document.getElementById('spot-input'); const name = input.value.trim(); if (!name) return; input.value = '搜索中...'; try { const dest = document.getElementById('input-dest').value; const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(dest + ' ' + name)}&limit=1`); const data = await res.json(); if (data.features && data.features.length > 0) { const lat = data.features[0].geometry.coordinates[1]; const lng = data.features[0].geometry.coordinates[0]; appState.customSpots.push({ name, lat, lng, transport: '🚗 驾车' }); input.value = ''; renderCustomMap(); } else { alert("未找到该地点，请尝试输入更精确的名称"); input.value = ''; } } catch (err) { alert("网络错误，搜索失败"); input.value = ''; } }
-    function changeTransport(index, val) { appState.customSpots[index].transport = val; renderCustomMap(); }
-    function removeSpot(index) { appState.customSpots.splice(index, 1); renderCustomMap(); }
+    async function addCustomSpot() { const input = document.getElementById('spot-input'); const name = input.value.trim(); if (!name) return; input.value = '搜索中...'; try { const dest = document.getElementById('input-dest').value; const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(dest + ' ' + name)}&limit=1`); const data = await res.json(); if (data.features && data.features.length > 0) { const lat = data.features[0].geometry.coordinates[1]; const lng = data.features[0].geometry.coordinates[0]; appState.customSpots.push({ name, lat, lng, transport: '🚗 驾车' }); input.value = ''; renderCustomMap(); if(window.queuePlanCakeCloudSave)window.queuePlanCakeCloudSave(); } else { alert("未找到该地点，请尝试输入更精确的名称"); input.value = ''; } } catch (err) { alert("网络错误，搜索失败"); input.value = ''; } }
+    function changeTransport(index, val) { appState.customSpots[index].transport = val; renderCustomMap(); if(window.queuePlanCakeCloudSave)window.queuePlanCakeCloudSave(); }
+    function removeSpot(index) { appState.customSpots.splice(index, 1); renderCustomMap(); if(window.queuePlanCakeCloudSave)window.queuePlanCakeCloudSave(); }
     function calcDistance(lat1, lon1, lat2, lon2) { const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2); return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))).toFixed(1); }
     function renderCustomMap() { if (!mapInstance) { mapInstance = L.map('map-container').setView([20, 0], 2); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(mapInstance); } mapInstance.eachLayer(layer => { if (layer instanceof L.Marker || layer instanceof L.Polyline) { mapInstance.removeLayer(layer); } }); const spots = appState.customSpots; const latlngs = []; const configList = document.getElementById('route-config'); configList.innerHTML = spots.length > 0 ? '' : '<div style="color:var(--muted); text-align:center; font-size:12px; font-weight:700;">请在上方搜索框添加景点来规划路线</div>'; const transportOptions = ['🚗 驾车', '🚶 步行', '🚌 公交', '🚲 骑行']; spots.forEach((spot, i) => { const latlng = [spot.lat, spot.lng]; latlngs.push(latlng); L.marker(latlng).addTo(mapInstance).bindPopup(`<b>${i+1}. ${spot.name}</b>`); if (i > 0) { const prevSpot = spots[i-1]; const prevLatLng = [prevSpot.lat, prevSpot.lng]; L.polyline([prevLatLng, latlng], { color: 'var(--primary)', weight: 4, dashArray: '6, 6' }).addTo(mapInstance); const dist = calcDistance(prevSpot.lat, prevSpot.lng, spot.lat, spot.lng); const midLat = (prevSpot.lat + spot.lat) / 2; const midLng = (prevSpot.lng + spot.lng) / 2; const transportIcon = L.divIcon({ className: 'custom-div-icon', html: `<div class="transport-icon">${prevSpot.transport} ${dist}km</div>`, iconSize: [80, 24], iconAnchor: [40, 12] }); L.marker([midLat, midLng], { icon: transportIcon }).addTo(mapInstance); configList.innerHTML += `<div class="config-item"><div><b>${i}. ${prevSpot.name}</b> ➔ <b>${i+1}. ${spot.name}</b> <span style="color:var(--muted); font-size:12px;">(${dist}km)</span></div><div><select onchange="changeTransport(${i-1}, this.value)">${transportOptions.map(opt => `<option value="${opt}" ${prevSpot.transport === opt ? 'selected' : ''}>${opt}</option>`).join('')}</select><span style="color:var(--danger); cursor:pointer; margin-left:8px; font-size:13px; font-weight:800;" onclick="removeSpot(${i})">删除</span></div></div>`; } }); if (latlngs.length > 0) { mapInstance.fitBounds(latlngs, { padding: [30, 30] }); } }
     async function generatePlan() {
@@ -957,7 +981,7 @@
       if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime()) || endDate < startDate) {
         alert('返程日期不能早于出发日期，请检查日期设置。'); return;
       }
-      const days = Math.round((endDate - startDate) / 86400000) + 1; let prefs = []; document.querySelectorAll('#input-prefs .tag.active').forEach(t => prefs.push(t.textContent.trim())); fetchWeatherForCity(dest); fetchChecklistRecommendations(dest); appState.totalBudget = budget; updateBudgetUI(); document.getElementById('dash-dest').textContent = dest; document.getElementById('dash-date').textContent = `${start} 出发 · ${days}天`; document.getElementById('info-days').textContent = `${days} 天`; document.getElementById('info-people').textContent = `${people} 人`; document.getElementById('info-prefs').textContent = prefs.length > 0 ? prefs.join(' / ') : '无特殊偏好'; appState.customSpots = []; if (mapInstance) { mapInstance.remove(); mapInstance = null; } mapInstance = L.map('map-container').setView([20, 0], 2); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(mapInstance); try { const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(dest)}&limit=1`); const data = await res.json(); if (data.features?.length > 0) { const lat = data.features[0].geometry.coordinates[1]; const lng = data.features[0].geometry.coordinates[0]; mapInstance.flyTo([lat, lng], 12, { duration: 2 }); appState.customSpots.push({ name: dest + '市中心', lat, lng, transport: '🚗 驾车' }); renderCustomMap(); } } catch (err) {} const timeline = document.getElementById('timeline-list'); timeline.innerHTML = `<div style="text-align:center; margin-top:50px; color:var(--primary);"><div style="font-size:50px; animation:float 2s infinite alternate; margin-bottom:10px;">🎂</div><span style="font-weight:800;">AI 正在为你烘焙...</span></div>`; const prompt = `目的地:${dest}, 天数:${days}天, 旅行偏好:${prefs.join('、')}`; try { const response = await fetch('/api/parse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: prompt }) }); const data = await response.json(); if (data.ok && data.seed && data.seed.dailyPlan) { appState.dailyPlan = data.seed.dailyPlan; renderTimeline(data.seed.dailyPlan); } else { const mock = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`); appState.dailyPlan = mock; renderTimeline(mock); } } catch (e) { const mock = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`); appState.dailyPlan = mock; renderTimeline(mock); } renderProfile(); }
+      const days = Math.round((endDate - startDate) / 86400000) + 1; let prefs = []; document.querySelectorAll('#input-prefs .tag.active').forEach(t => prefs.push(t.textContent.trim())); fetchWeatherForCity(dest); fetchChecklistRecommendations(dest); appState.totalBudget = budget; updateBudgetUI(); document.getElementById('dash-dest').textContent = dest; document.getElementById('dash-date').textContent = `${start} 出发 · ${days}天`; document.getElementById('info-days').textContent = `${days} 天`; document.getElementById('info-people').textContent = `${people} 人`; document.getElementById('info-prefs').textContent = prefs.length > 0 ? prefs.join(' / ') : '无特殊偏好'; appState.customSpots = []; if (mapInstance) { mapInstance.remove(); mapInstance = null; } mapInstance = L.map('map-container').setView([20, 0], 2); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(mapInstance); try { const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(dest)}&limit=1`); const data = await res.json(); if (data.features?.length > 0) { const lat = data.features[0].geometry.coordinates[1]; const lng = data.features[0].geometry.coordinates[0]; mapInstance.flyTo([lat, lng], 12, { duration: 2 }); appState.customSpots.push({ name: dest + '市中心', lat, lng, transport: '🚗 驾车' }); renderCustomMap(); } } catch (err) {} const timeline = document.getElementById('timeline-list'); timeline.innerHTML = `<div style="text-align:center; margin-top:50px; color:var(--primary);"><div style="font-size:50px; animation:float 2s infinite alternate; margin-bottom:10px;">🎂</div><span style="font-weight:800;">AI 正在为你烘焙...</span></div>`; const prompt = `目的地:${dest}, 天数:${days}天, 旅行偏好:${prefs.join('、')}`; try { const response = await fetch('/api/parse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: prompt }) }); const data = await response.json(); if (data.ok && data.seed && data.seed.dailyPlan) { appState.dailyPlan = data.seed.dailyPlan; renderTimeline(data.seed.dailyPlan); } else { const mock = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`); appState.dailyPlan = mock; renderTimeline(mock); } } catch (e) { const mock = Array.from({length: days}).map(() => `上午前往${dest}最著名的地标打卡；下午逛逛特色街区，品尝地道小吃；晚上享用当地特色晚餐并休息。`); appState.dailyPlan = mock; renderTimeline(mock); } renderProfile(); if (window.queuePlanCakeCloudSave) window.queuePlanCakeCloudSave(); }
     function renderTimeline(dailyPlan) { const timeline = document.getElementById('timeline-list'); timeline.innerHTML = ''; dailyPlan.forEach((text, i) => { timeline.innerHTML += `<div class="timeline-item"><div class="day">Day ${i + 1}</div><div class="desc">${text}</div></div>`; }); }
     
     function previewPhoto(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function(e) { tempPhotoBase64 = e.target.result; document.getElementById('photo-preview').src = e.target.result; document.getElementById('photo-preview').style.display = 'block'; }; reader.readAsDataURL(input.files[0]); } }
@@ -977,5 +1001,30 @@
     fetchChecklistRecommendations(document.getElementById('input-dest').value);
     renderCustomMap();
   </script>
+
+<script>
+// PlanCake-AI 2.0 云端账号与协作客户端。API 与网页同域部署在 /api/*。
+let pcUser=null, pcPlanId=null, pcCloudVersion=0, pcApplyingCloud=false, pcSaveTimer=null, pcLastSaved='', pcMembers=[];
+function pcApi(path, options={}){return fetch(path,{credentials:'same-origin',...options,headers:{'Content-Type':'application/json',...(options.headers||{})}}).then(async r=>{const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'请求失败');return d;});}
+function openAccount(){document.getElementById('pc-account-modal').style.display='flex';pcRenderAccount();}
+function closePcModal(id){document.getElementById(id).style.display='none';}
+function pcRenderAccount(){const logged=!!pcUser;document.getElementById('pc-auth-fields').style.display=logged?'none':'block';document.getElementById('pc-account-info').style.display=logged?'block':'none';document.getElementById('pc-account-button').textContent=logged?(pcUser.username||pcUser.email):'登录 / 注册';if(logged)document.getElementById('pc-account-label').textContent=`已登录：${pcUser.username}（${pcUser.email}）`}
+async function submitAuth(mode){const status=document.getElementById('pc-auth-status');status.textContent='正在处理…';try{const payload={email:document.getElementById('pc-auth-email').value.trim(),password:document.getElementById('pc-auth-password').value};if(mode==='register')payload.username=document.getElementById('pc-auth-name').value.trim();const d=await pcApi('/api/auth/'+mode,{method:'POST',body:JSON.stringify(payload)});pcUser=d.user;status.textContent='成功！正在加载你的云端规划…';await pcLoadPlan();pcRenderAccount();status.textContent='';}catch(e){status.textContent=e.message}}
+async function pcLoadPlan(){const d=await pcApi('/api/plans/current');pcPlanId=d.plan.id;pcCloudVersion=d.plan.version||1;pcMembers=d.members||[];pcApplyData(d.plan.data||{});pcLastSaved=JSON.stringify(d.plan.data||{});pcRenderMembers();}
+function pcSnapshot(){return {appState:{expenses:appState.expenses,diaries:appState.diaries,members:appState.members,checklist:appState.checklist,userProfile:appState.userProfile,totalBudget:appState.totalBudget,dailyPlan:appState.dailyPlan,customSpots:appState.customSpots,currentWeather:appState.currentWeather},form:{dest:document.getElementById('input-dest')?.value||'',start:document.getElementById('input-start')?.value||'',end:document.getElementById('input-end')?.value||'',people:document.getElementById('input-people')?.value||'2',budget:document.getElementById('input-budget')?.value||'5000'},theme:localStorage.getItem('pc_theme_idx')||'0'};}
+function pcApplyData(data){if(!data||!data.appState)return;pcApplyingCloud=true;try{Object.assign(appState,data.appState);if(data.form){document.getElementById('input-dest').value=data.form.dest||'';document.getElementById('input-start').value=data.form.start||document.getElementById('input-start').value;document.getElementById('input-end').value=data.form.end||document.getElementById('input-end').value;document.getElementById('input-people').value=data.form.people||'2';document.getElementById('input-budget').value=data.form.budget||'5000';}if(data.theme!==undefined)applyTheme(Math.max(0,Math.min(5,Number(data.theme)||0)));renderMembers();renderDiaries();renderChecklist();renderProfile();updateBudgetUI();if(appState.dailyPlan?.length)renderTimeline(appState.dailyPlan);if(appState.customSpots?.length)renderCustomMap();}finally{pcApplyingCloud=false;}}
+window.queuePlanCakeCloudSave=function(){if(!pcUser||pcApplyingCloud)return;clearTimeout(pcSaveTimer);pcSaveTimer=setTimeout(pcSaveCloud,900)};
+async function pcSaveCloud(){if(!pcUser||pcApplyingCloud)return;const data=pcSnapshot(), signature=JSON.stringify(data);if(signature===pcLastSaved)return;try{const d=await pcApi('/api/plans/current',{method:'PUT',body:JSON.stringify({data,version:pcCloudVersion})});pcCloudVersion=d.version;pcLastSaved=signature; }catch(e){if(e.message==='请先登录。'){pcUser=null;pcRenderAccount();return;}if(e.message==='请求失败'){console.warn('云端保存暂时失败',e)}else console.warn('云端保存失败：',e.message)}}
+
+function pcRenderMembers(){const box=document.getElementById('pc-member-list');if(!box)return;box.innerHTML='<b>协作成员</b>'+pcMembers.map(m=>`<div style="display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid #edf0f2;font-size:13px"><span>${m.username}（${m.role==='owner'?'创建者':'协作者'}）<br><small>${m.email}</small></span>${pcMembers.some(x=>x.id===pcUser?.id&&x.role==='owner')&&m.id!==pcUser?.id?`<button class="secondary" onclick="pcRemoveMember('${m.id}')">移除</button>`:''}</div>`).join('');}
+async function pcRemoveMember(id){if(!confirm('确定要移除这位协作者吗？'))return;try{await pcApi('/api/plans/members/'+encodeURIComponent(id),{method:'DELETE'});await pcLoadPlan();}catch(e){document.getElementById('pc-share-status').textContent=e.message}}
+async function createPcInvite(){const el=document.getElementById('pc-generated-code'),status=document.getElementById('pc-share-status');status.textContent='正在生成…';try{const d=await pcApi('/api/invites',{method:'POST',body:'{}'});el.innerHTML=`<div class="pc-code">${d.code}</div><button onclick="navigator.clipboard.writeText('${d.code}').then(()=>document.getElementById('pc-share-status').textContent='邀请码已复制')">复制邀请码</button><small>24 小时内有效，只能被一位朋友使用一次。</small>`;status.textContent='邀请码已生成。请只发给你想邀请的朋友。'}catch(e){status.textContent=e.message}}
+async function joinPcInvite(){const status=document.getElementById('pc-share-status');status.textContent='正在加入…';try{await pcApi('/api/invites/join',{method:'POST',body:JSON.stringify({code:document.getElementById('pc-join-code').value.trim()})});await pcLoadPlan();status.textContent='加入成功！现在你们共享同一份旅行规划。';}catch(e){status.textContent=e.message}}
+async function logoutPc(){try{await pcApi('/api/auth/logout',{method:'POST',body:'{}'})}catch(e){}pcUser=null;pcPlanId=null;pcRenderAccount();closePcModal('pc-account-modal')}
+async function pcCheckSession(){try{const d=await pcApi('/api/auth/me');pcUser=d.user;if(pcUser){await pcLoadPlan();pcRenderAccount();}}catch(e){console.warn('账号状态检查失败',e)}}
+async function pcPoll(){if(!pcUser||!pcPlanId||pcSaveTimer)return;try{const d=await pcApi('/api/plans/current');if(d.plan.version>pcCloudVersion){pcCloudVersion=d.plan.version;pcLastSaved=JSON.stringify(d.plan.data||{});pcApplyData(d.plan.data||{});}}catch(e){}}
+window.addEventListener('DOMContentLoaded',()=>{pcCheckSession();setInterval(pcPoll,4000);});
+</script>
+
 </body>
 </html>
