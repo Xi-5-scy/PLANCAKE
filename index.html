@@ -106,7 +106,7 @@
     .view-panel { display: none; height: 100%; }
     .view-panel.active { display: flex; flex-direction: column; }
 
-    /* ⭐️ 旅行日记（恢复精美排版） ⭐️ */
+    /* 旅行日记 */
     .diary-container { display: flex; gap: 20px; height: 100%; }
     .diary-form { width: 340px; background: #fff; padding: 25px; border-radius: 28px; box-shadow: var(--shadow-cute); flex-shrink: 0; height: fit-content;}
     .diary-form textarea { width: 100%; height: 140px; padding: 18px; border: 2px solid rgba(0,0,0,0.04); border-radius: 16px; resize: none; margin-bottom: 15px; font-size: 14px; outline: none; font-weight:600; background: var(--bg-color); transition: border 0.3s; }
@@ -119,7 +119,7 @@
     .diary-card-info .del-btn { color: var(--danger); font-size: 13px; font-weight: 800; cursor: pointer; display: block; margin-top: 15px; text-align: right; opacity: 0.6; transition: opacity 0.2s; }
     .diary-card-info .del-btn:hover { opacity: 1; }
 
-    /* ⭐️ 行李清单（找回进度条） ⭐️ */
+    /* 行李清单 */
     .checklist-layout { display: flex; gap: 20px; height: 100%; }
     .checklist-left { flex: 1.5; background: #fff; padding: 30px; border-radius: 28px; box-shadow: var(--shadow-cute); display: flex; flex-direction: column; }
     .checklist-progress { background: var(--bg-color); border-radius: 16px; padding: 18px 20px; margin-bottom: 20px; border: 2px dashed rgba(0,0,0,0.04); }
@@ -169,7 +169,6 @@
 
   <header class="top-navbar">
     <div class="logo" onclick="switchNav('dashboard', document.querySelectorAll('.top-tab')[0])"><span>🍰</span> PlanCake</div>
-    <!-- ⭐️ 恢复四字标签 ⭐️ -->
     <div class="top-tabs">
       <div class="top-tab active" onclick="switchNav('dashboard', this)">🏠 行程概览</div>
       <div class="top-tab" onclick="switchNav('discover', this)">🌍 灵感发现</div>
@@ -184,7 +183,8 @@
     <aside class="sidebar">
       <div class="sidebar-form-wrapper">
         <div class="sidebar-form">
-          <div class="form-group"><label>📍 目的地</label><input type="text" id="input-dest" value="成都" onchange="fetchWeatherForCity(this.value); fetchChecklistRecommendations(this.value);"></div>
+          <!-- ⭐️ 移除了默认的成都，改为空和 placeholder ⭐️ -->
+          <div class="form-group"><label>📍 目的地</label><input type="text" id="input-dest" placeholder="想去哪里玩？" onchange="fetchWeatherForCity(this.value); fetchChecklistRecommendations(this.value);"></div>
           <div class="form-group" style="display:flex; gap:8px;">
             <div style="flex:1;"><label>📅 出发</label><input type="date" id="input-start"></div>
             <div style="flex:1;"><label>📅 返回</label><input type="date" id="input-end"></div>
@@ -210,8 +210,8 @@
           </div>
         </div>
         <div class="weather-card" id="weather-widget">
-          <div class="weather-top"><span id="weather-city">成都</span><span id="weather-icon">⛅</span></div>
-          <div class="weather-mid"><div class="temp" id="weather-temp">--°C</div><div id="weather-desc">...</div></div>
+          <div class="weather-top"><span id="weather-city">--</span><span id="weather-icon">⛅</span></div>
+          <div class="weather-mid"><div class="temp" id="weather-temp">--°C</div><div id="weather-desc">等待输入...</div></div>
         </div>
       </div>
     </aside>
@@ -285,7 +285,6 @@
         </div>
       </div>
 
-      <!-- ⭐️ 旅行日记（恢复） ⭐️ -->
       <div id="view-diary" class="view-panel">
         <h2 style="margin-bottom:20px; color:var(--primary); font-weight:800;">📔 我的旅行日记</h2>
         <div class="diary-container">
@@ -300,7 +299,6 @@
         </div>
       </div>
 
-      <!-- ⭐️ 行李清单（恢复进度条） ⭐️ -->
       <div id="view-checklist" class="view-panel">
         <h2 style="margin-bottom:20px; color:var(--primary); font-weight:800;">🎒 智能打包清单</h2>
         <div class="checklist-layout">
@@ -357,11 +355,13 @@
       { bg: '#FDF2EE', primary: '#E8B4A2', light: '#F2D0C5', shadow: '#C28B79' }  
     ];
     
+    // ⭐️ 彻底移除默认的成都 ⭐️
     const defaultState = { 
       expenses: [], diaries: [], members: ['我', '朋友A'],
       checklist: [{ id: 1, text: '身份证/护照', done: false }],
       totalBudget: 5000, dailyPlan: [], customSpots: [],
-      roomId: null, currentWeather: { temp: 25, desc: '多云' }
+      roomId: null, currentWeather: { temp: 25, desc: '多云' },
+      destination: ''
     };
     
     let appState = JSON.parse(localStorage.getItem('pc_app_data')) || defaultState;
@@ -383,7 +383,10 @@
         startSync();
       } else {
         updateRoomBtn();
-        fetchWeatherForCity(appState.customSpots[0]?.name || '成都');
+        // 如果没有目的地，天气显示等待
+        if (appState.destination) {
+          fetchWeatherForCity(appState.destination);
+        }
       }
       window.addEventListener('beforeunload', saveLocalData);
     });
@@ -460,18 +463,26 @@
     }
     function closeModal() { document.getElementById('room-modal').classList.remove('active'); }
 
+    // ⭐️ 增加详细的报错提示 ⭐️
     async function createRoom() {
       try {
         const initData = { ...appState, roomId: null }; 
         const res = await fetch('/api/room', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data: initData }) });
+        
+        if (!res.ok) throw new Error("服务器返回错误 " + res.status);
         const result = await res.json();
+        
         if (result.ok) {
           appState.roomId = result.roomId;
           localStorage.setItem('pc_room_id', result.roomId);
           saveLocalData();
           updateRoomBtn(); startSync(); openRoomModal();
+        } else {
+          alert("创建失败：" + (result.error || "未知错误，请检查 Cloudflare 数据库是否有 rooms 表"));
         }
-      } catch (e) { alert('网络错误'); }
+      } catch (e) { 
+        alert("网络或服务器错误：" + e.message + "\n\n请确保你已经去 Cloudflare D1 控制台建了 rooms 表。"); 
+      }
     }
 
     async function joinRoomByCode() {
@@ -483,16 +494,18 @@
     async function joinRoom(roomId) {
       try {
         const res = await fetch(`/api/room?id=${roomId}`);
+        if (!res.ok) throw new Error("服务器返回错误 " + res.status);
         const result = await res.json();
+        
         if (result.ok) {
           appState = { ...appState, ...result.data, roomId: roomId };
           localStorage.setItem('pc_room_id', roomId);
           saveLocalData();
           updateRoomBtn(); renderAllUI(); closeModal(); startSync();
         } else {
-          alert('加入失败：' + result.error);
+          alert('加入失败：' + (result.error || "房间不存在"));
         }
-      } catch (e) { alert('网络错误，房间不存在'); }
+      } catch (e) { alert('网络错误：' + e.message); }
     }
 
     function copyRoomLink() {
@@ -510,20 +523,30 @@
       }
     }
 
-    // ⭐️ 渲染所有 UI ⭐️
     function renderAllUI() {
-      document.getElementById('input-dest').value = appState.destination || '成都';
+      // 如果没目的地，就留空
+      document.getElementById('input-dest').value = appState.destination || '';
       document.getElementById('input-people').value = appState.members.length;
       document.getElementById('input-budget').value = appState.totalBudget;
       
-      document.getElementById('dash-dest').textContent = document.getElementById('input-dest').value;
+      // 如果没目的地，显示“去哪里玩？”而不是默认成都
+      const destDisplay = appState.destination || '去哪里玩？';
+      document.getElementById('dash-dest').textContent = destDisplay;
+      
       document.getElementById('dash-date').textContent = appState.dailyPlan.length > 0 ? '已生成' : '准备出发';
       document.getElementById('info-days').textContent = appState.dailyPlan.length > 0 ? `${appState.dailyPlan.length} 天` : '--';
       document.getElementById('info-people').textContent = `${appState.members.length} 人`;
       
       updateBudgetUI(); renderMembers(); renderChecklist(); renderDiaries(); renderTimeline(appState.dailyPlan);
-      // 自动更新穿衣建议
-      if(appState.currentWeather) updateClothingRecommendation(appState.currentWeather.temp, appState.currentWeather.desc);
+      
+      // 如果本地存了天气，恢复穿衣建议
+      if(appState.currentWeather && appState.destination) {
+        updateClothingRecommendation(appState.currentWeather.temp, appState.currentWeather.desc);
+        document.getElementById('weather-widget').style.display = 'block';
+        document.getElementById('weather-city').textContent = appState.destination;
+        document.getElementById('weather-temp').textContent = `${appState.currentWeather.temp}°C`;
+        document.getElementById('weather-desc').textContent = appState.currentWeather.desc;
+      }
     }
 
     function updateBudgetUI() {
@@ -575,7 +598,6 @@
       list.innerHTML = html;
     }
 
-    // ⭐️ 恢复进度条渲染 ⭐️
     function renderChecklist() {
       const list = document.getElementById('checklist-list');
       list.innerHTML = '';
@@ -621,7 +643,6 @@
       timeline.innerHTML = dailyPlan.map((text, i) => `<div class="timeline-item"><div class="day">Day ${i + 1}</div><div class="desc">${text}</div></div>`).join('');
     }
 
-    // 交互
     function addExpense() {
       const desc = document.getElementById('exp-desc').value; const amount = parseFloat(document.getElementById('exp-amount').value); const payer = document.getElementById('exp-payer').value; const splitType = document.getElementById('exp-split-type').value;
       if (!desc || !amount) return alert("请填写说明和金额");
@@ -678,6 +699,7 @@
     
     async function generatePlan() {
       const dest = document.getElementById('input-dest').value; const start = document.getElementById('input-start').value; const end = document.getElementById('input-end').value;
+      if(!dest) return alert('请先填写目的地哦！');
       const days = Math.max(1, Math.round((new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24)) + 1);
       document.getElementById('timeline-list').innerHTML = `<div style="text-align:center; margin-top:50px;"><div style="font-size:50px; animation:float 2s infinite alternate; margin-bottom:10px;">🎂</div><span style="font-weight:800;">AI 正在为你烘焙...</span></div>`;
       try { const response = await fetch('/api/parse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: `目的地:${dest}, 天数:${days}天` }) }); const data = await response.json();
@@ -685,7 +707,9 @@
         else { appState.dailyPlan = Array.from({length: days}).map(() => `前往${dest}核心景点打卡。`); }
       } catch (e) { appState.dailyPlan = Array.from({length: days}).map(() => `前往${dest}游玩。`); }
       appState.destination = dest;
-      renderTimeline(appState.dailyPlan); triggerSync();
+      renderTimeline(appState.dailyPlan); 
+      renderAllUI(); // 重新渲染以更新顶部标题
+      triggerSync();
     }
 
     function fetchWeatherForCity(cityName) { 
@@ -708,6 +732,7 @@
     
     async function fetchInspiration() { 
       const dest = document.getElementById('input-dest').value; 
+      if(!dest) return alert('请先在左侧填写目的地哦！');
       document.getElementById('inspire-content').innerHTML = '<div style="text-align:center; padding:50px; font-weight:800; color:var(--primary);">AI 正在寻找...</div>'; 
       setTimeout(()=>{ document.getElementById('inspire-content').innerHTML = `<div class="inspire-card"><h3>📍 ${dest} 著名景点</h3><div class="inspire-item">著名地标1</div></div><div class="inspire-card"><h3>🍽️ ${dest} 特色美食</h3><div class="inspire-item">特色小吃</div></div>`; }, 1000); 
     }
