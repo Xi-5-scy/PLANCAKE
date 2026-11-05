@@ -736,7 +736,8 @@
       document.getElementById('stat-trips').textContent = appState.dailyPlan.length > 0 ? '1' : '0';
       document.getElementById('stat-expenses').textContent = appState.expenses.length;
       document.getElementById('stat-diaries').textContent = appState.diaries.length;
-      document.getElementById('stat-items').textContent = appState.checklist.length;\n      renderAchievements();
+      document.getElementById('stat-items').textContent = appState.checklist.length;
+      renderAchievements();
     }
 
     function renderAchievements(){const trips=appState.dailyPlan.length?1:0,diaries=appState.diaries.length,expenses=appState.expenses.length,spots=appState.customSpots.length;const points=trips*100+diaries*25+expenses*5+spots*10;const level=Math.floor(points/200)+1;const defs=[['🧭','启程旅行家','生成第一份旅行行程',trips>=1],['📔','旅途记录者','写下第一篇旅行日记',diaries>=1],['💰','精打细算','记录第一笔旅行开支',expenses>=1],['📍','城市探索者','收藏 5 个行程地点',spots>=5],['✨','旅行达人','累计获得 500 成就点',points>=500]];document.getElementById('achievement-level').innerHTML=`<div style="font-size:18px;font-weight:800">⭐ 旅行等级 ${level}</div><div style="margin-top:6px">成就点数：${points} · 距离下一级还差 ${200-points%200} 点</div>`;document.getElementById('achievement-badges').innerHTML=defs.map(([icon,name,desc,ok])=>`<div style="background:white;border-radius:16px;padding:16px;opacity:${ok?1:.48};box-shadow:var(--shadow-cute);border:2px solid ${ok?'var(--primary-light)':'#eee'}"><div style="font-size:32px">${icon}</div><b>${name}</b><div style="font-size:12px;color:var(--muted);margin-top:5px">${ok?'已解锁 · ':''}${desc}</div></div>`).join('');}    function uploadAvatar(input) {
@@ -1042,6 +1043,8 @@ window.addEventListener('DOMContentLoaded',()=>{pcCheckSession();setInterval(pcP
 
 </body>
 </html>
+
+
 
 
 
